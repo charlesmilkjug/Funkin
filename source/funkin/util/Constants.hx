@@ -34,14 +34,14 @@ class Constants
 
   static function get_GENERATED_BY():String
   {
-    return '${Constants.TITLE} - ${Constants.VERSION}';
+    return '${Constants.TITLE} - ${Constants.VERSION} CUSTOM BUILD';
   }
 
   /**
    * A suffix to add to the game version.
    * Add a suffix to prototype builds and remove it for releases.
    */
-  public static final VERSION_SUFFIX:String = #if (DEBUG || FORCE_DEBUG_VERSION) ' PROTOTYPE' #else '' #end;
+  public static final VERSION_SUFFIX:String = #if (DEBUG || FORCE_DEBUG_VERSION) ' PROTOTYPE' #else ' CUSTOM BUILD' #end;
 
   #if (debug || FORCE_DEBUG_VERSION)
   static function get_VERSION():String
@@ -195,12 +195,12 @@ class Constants
   /**
    * Default player character for charts.
    */
-  public static final DEFAULT_CHARACTER:String = 'bf';
+  public static var DEFAULT_CHARACTER:String = 'bf';
 
   /**
    * Default player character for health icons.
    */
-  public static final DEFAULT_HEALTH_ICON:String = 'face';
+  public static var DEFAULT_HEALTH_ICON:String = 'face';
 
   /**
    * Default stage for charts.
@@ -210,53 +210,53 @@ class Constants
   /**
    * Default song for if the PlayState messes up.
    */
-  public static final DEFAULT_SONG:String = 'tutorial';
+  public static var DEFAULT_SONG:String = 'tutorial';
 
   /**
    * Default variation for charts.
    */
-  public static final DEFAULT_VARIATION:String = 'default';
+  public static var DEFAULT_VARIATION:String = 'default';
 
   /**
    * Standardized variations for charts
    */
-  public static final DEFAULT_VARIATION_LIST:Array<String> = ['default', 'erect', 'pico'];
+  public static var DEFAULT_VARIATION_LIST:Array<String> = ['default', 'erect', 'pico'];
 
   /**
    * The default intensity multiplier for camera bops.
    * Prolly needs to be tuned bc it's a multiplier now.
    */
-  public static final DEFAULT_BOP_INTENSITY:Float = 1.015;
+  public static var DEFAULT_BOP_INTENSITY:Float = 1.015;
 
   /**
    * The default rate for camera zooms (in beats per zoom).
    */
-  public static final DEFAULT_ZOOM_RATE:Int = 4;
+  public static var DEFAULT_ZOOM_RATE:Int = 4;
 
   /**
    * The default BPM for charts, so things don't break if none is specified.
    */
-  public static final DEFAULT_BPM:Float = 100.0;
+  public static var DEFAULT_BPM:Float = 100.0;
 
   /**
    * The default name for songs.
    */
-  public static final DEFAULT_SONGNAME:String = 'Unknown';
+  public static var DEFAULT_SONGNAME:String = 'Unknown';
 
   /**
    * The default artist for songs.
    */
-  public static final DEFAULT_ARTIST:String = 'Unknown';
+  public static var DEFAULT_ARTIST:String = 'Unknown';
 
   /**
    * The default note style for songs.
    */
-  public static final DEFAULT_NOTE_STYLE:String = 'funkin';
+  public static var DEFAULT_NOTE_STYLE:String = 'funkin';
 
   /**
    * The default album for songs in Freeplay.
    */
-  public static final DEFAULT_ALBUM_ID:String = 'volume1';
+  public static var DEFAULT_ALBUM_ID:String = 'volume1';
 
   /**
    * The default timing format for songs.
@@ -266,7 +266,7 @@ class Constants
   /**
    * The default scroll speed for songs.
    */
-  public static final DEFAULT_SCROLLSPEED:Float = 1.0;
+  public static var DEFAULT_SCROLLSPEED:Float = 1.0;
 
   /**
    * Default numerator for the time signature.
@@ -291,7 +291,7 @@ class Constants
   /**
    * The maximum interval within which a note can be hit, in milliseconds.
    */
-  public static final HIT_WINDOW_MS:Float = 160.0;
+  public static var HIT_WINDOW_MS:Float = 160.0;
 
   /**
    * Constant for the number of seconds in a minute.
@@ -374,18 +374,18 @@ class Constants
    * The player's maximum health.
    * If the player is at this value, they can't gain any more health.
    */
-  public static final HEALTH_MAX:Float = 2.0;
+  public static var HEALTH_MAX:Float = 2.0;
 
   /**
    * The player's starting health.
    */
-  public static final HEALTH_STARTING = HEALTH_MAX / 2.0;
+  public static var HEALTH_STARTING = HEALTH_MAX / 2.0;
 
   /**
    * The player's minimum health.
    * If the player is at or below this value, they lose.
    */
-  public static final HEALTH_MIN:Float = 0.0;
+  public static var HEALTH_MIN:Float = 0.0;
 
   /**
    * The amount of health the player gains when hitting a note with the KILLER rating.
@@ -497,7 +497,7 @@ class Constants
    * If true, the player will not receive the ghost miss penalty if there are no notes within the hit window.
    * This is the thing people have been begging for forever lolol.
    */
-  public static final GHOST_TAPPING:Bool = false;
+  public static var GHOST_TAPPING:Bool = false;
 
   /**
    * The maximum number of previous file paths for the Chart Editor to remember.
@@ -512,26 +512,26 @@ class Constants
   /**
    * The scale factor to use when increasing the size of pixel art graphics.
    */
-  public static final PIXEL_ART_SCALE:Float = 6;
+  public static var PIXEL_ART_SCALE:Float = 6;
 
   /**
    * The volume at which to play the countdown before the song starts.
    */
-  public static final COUNTDOWN_VOLUME:Float = 0.6;
+  public static var COUNTDOWN_VOLUME:Float = 0.6;
 
   /**
    * The horizontal offset of the strumline from the left edge of the screen.
    */
-  public static final STRUMLINE_X_OFFSET:Float = 48;
+  public static var STRUMLINE_X_OFFSET:Float = 48;
 
   /**
    * The vertical offset of the strumline from the top edge of the screen.
    */
-  public static final STRUMLINE_Y_OFFSET:Float = 24;
+  public static var STRUMLINE_Y_OFFSET:Float = 24;
 
   /**
    * The rate at which the camera lerps to its target.
    * 0.04 = 4% of distance per frame.
    */
-  public static final DEFAULT_CAMERA_FOLLOW_RATE:Float = 0.04;
+  public static var DEFAULT_CAMERA_FOLLOW_RATE:Float = 0.04;
 }
