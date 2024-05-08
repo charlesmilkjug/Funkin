@@ -25,12 +25,24 @@
 	<window if="mobile" orientation="landscape" fullscreen="true" width="0" height="0" resizable="false" />
 	<!-- _____________________________ Path Settings ____________________________ -->
 
+	<!-- If compiled via github actions, show debug version number. -->
+	<define name="FORCE_DEBUG_VERSION" if="GITHUB_BUILD" />
+	<define name="NO_REDIRECT_ASSETS_FOLDER" if="GITHUB_BUILD" />
+	<define name="TOUCH_HERE_TO_PLAY" if="web" />
+
+	<section if="debug" unless="NO_REDIRECT_ASSETS_FOLDER || html5 || GITHUB_BUILD">
+		<!--
+			Use the parent assets folder rather than the exported one
+			No more will we accidentally undo our changes!
+		-->
+		<define name="REDIRECT_ASSETS_FOLDER" />
+	</section>
+
+	<classpath name="source" />
 	<set name="BUILD_DIR" value="export/debug" if="debug" />
 	<set name="BUILD_DIR" value="export/release" unless="debug" />
 	<set name="BUILD_DIR" value="export/32bit" if="32bit" />
-	<classpath name="source" />
-	<assets path="assets/preload" rename="assets" exclude="*.ogg|*.wav" if="web" />
-	<assets path="assets/preload" rename="assets" exclude="*.mp3|*.wav" unless="web" />
+
 	<define name="PRELOAD_ALL" unless="web" />
 	<define name="NO_PRELOAD_ALL" unless="PRELOAD_ALL" />
 	<section if="PRELOAD_ALL">
@@ -62,51 +74,46 @@
 		<library name="videos" preload="false" />
 	</section>
 	<library name="art" preload="false" />
-	<assets path="assets/songs" library="songs" exclude="*.fla|*.ogg|*.wav" if="web" />
-	<assets path="assets/songs" library="songs" exclude="*.fla|*.mp3|*.wav" unless="web" />
-	<!-- Videos go in their own library because web never needs to preload them, they can just be streamed. -->
-	<assets path="assets/videos" library="videos" />
-	<assets path="assets/shared" library="shared" exclude="*.fla|*.ogg|*.wav" if="web" />
-	<assets path="assets/shared" library="shared" exclude="*.fla|*.mp3|*.wav" unless="web" />
-	<assets path="assets/tutorial" library="tutorial" exclude="*.fla|*.ogg|*.wav" if="web" />
-	<assets path="assets/tutorial" library="tutorial" exclude="*.fla|*.mp3|*.wav" unless="web" />
-	<assets path="assets/week1" library="week1" exclude="*.fla|*.ogg|*.wav" if="web" />
-	<assets path="assets/week1" library="week1" exclude="*.fla|*.mp3|*.wav" unless="web" />
-	<assets path="assets/week2" library="week2" exclude="*.fla|*.ogg|*.wav" if="web" />
-	<assets path="assets/week2" library="week2" exclude="*.fla|*.mp3|*.wav" unless="web" />
-	<assets path="assets/week3" library="week3" exclude="*.fla|*.ogg|*.wav" if="web" />
-	<assets path="assets/week3" library="week3" exclude="*.fla|*.mp3|*.wav" unless="web" />
-	<assets path="assets/week4" library="week4" exclude="*.fla|*.ogg|*.wav" if="web" />
-	<assets path="assets/week4" library="week4" exclude="*.fla|*.mp3|*.wav" unless="web" />
-	<assets path="assets/week5" library="week5" exclude="*.fla|*.ogg|*.wav" if="web" />
-	<assets path="assets/week5" library="week5" exclude="*.fla|*.mp3|*.wav" unless="web" />
-	<assets path="assets/week6" library="week6" exclude="*.fla|*.ogg|*.wav" if="web" />
-	<assets path="assets/week6" library="week6" exclude="*.fla|*.mp3|*.wav" unless="web" />
-	<assets path="assets/week7" library="week7" exclude="*.fla|*.ogg|*.wav" if="web" />
-	<assets path="assets/week7" library="week7" exclude="*.fla|*.mp3|*.wav" unless="web" />
-	<assets path="assets/weekend1" library="weekend1" exclude="*.fla|*.ogg|*.wav" if="web" />
-	<assets path="assets/weekend1" library="weekend1" exclude="*.fla|*.mp3|*.wav" unless="web" />
-	<!-- <assets path='example_mods' rename='mods' embed='false'/> -->
-	<!--
-		AUTOMATICALLY MOVING EXAMPLE MODS INTO THE BUILD CAUSES ISSUES
-		Currently, this line will add the mod files to the library manifest,
-		which causes issues if the mod is not enabled.
-		If we can exclude the `mods` folder from the manifest, we can re-enable this line.
-		<assets path='example_mods' rename='mods' embed='false' exclude="*.md" />
-	-->
-	<assets path="art/readme.txt" rename="do NOT readme.txt" library="art"/>
-	<assets path="CHANGELOG.md" rename="changelog.txt" library="art"/>
+	<section unless="REDIRECT_ASSETS_FOLDER">
+		<assets path="assets/preload" rename="assets" exclude="*.ogg|*.wav" if="web" />
+		<assets path="assets/preload" rename="assets" exclude="*.mp3|*.wav" unless="web" />
+		<assets path="assets/songs" library="songs" exclude="*.fla|*.ogg|*.wav" if="web" />
+		<assets path="assets/songs" library="songs" exclude="*.fla|*.mp3|*.wav" unless="web" />
+
+		<!-- Videos go in their own library because web never needs to preload them, they can just be streamed. -->
+		<assets path="assets/videos" library="videos" />
+		<assets path="assets/shared" library="shared" exclude="*.fla|*.ogg|*.wav" if="web" />
+		<assets path="assets/shared" library="shared" exclude="*.fla|*.mp3|*.wav" unless="web" />
+		<assets path="assets/tutorial" library="tutorial" exclude="*.fla|*.ogg|*.wav" if="web" />
+		<assets path="assets/tutorial" library="tutorial" exclude="*.fla|*.mp3|*.wav" unless="web" />
+		<assets path="assets/week1" library="week1" exclude="*.fla|*.ogg|*.wav" if="web" />
+		<assets path="assets/week1" library="week1" exclude="*.fla|*.mp3|*.wav" unless="web" />
+		<assets path="assets/week2" library="week2" exclude="*.fla|*.ogg|*.wav" if="web" />
+		<assets path="assets/week2" library="week2" exclude="*.fla|*.mp3|*.wav" unless="web" />
+		<assets path="assets/week3" library="week3" exclude="*.fla|*.ogg|*.wav" if="web" />
+		<assets path="assets/week3" library="week3" exclude="*.fla|*.mp3|*.wav" unless="web" />
+		<assets path="assets/week4" library="week4" exclude="*.fla|*.ogg|*.wav" if="web" />
+		<assets path="assets/week4" library="week4" exclude="*.fla|*.mp3|*.wav" unless="web" />
+		<assets path="assets/week5" library="week5" exclude="*.fla|*.ogg|*.wav" if="web" />
+		<assets path="assets/week5" library="week5" exclude="*.fla|*.mp3|*.wav" unless="web" />
+		<assets path="assets/week6" library="week6" exclude="*.fla|*.ogg|*.wav" if="web" />
+		<assets path="assets/week6" library="week6" exclude="*.fla|*.mp3|*.wav" unless="web" />
+		<assets path="assets/week7" library="week7" exclude="*.fla|*.ogg|*.wav" if="web" />
+		<assets path="assets/week7" library="week7" exclude="*.fla|*.mp3|*.wav" unless="web" />
+		<assets path="assets/weekend1" library="weekend1" exclude="*.fla|*.ogg|*.wav" if="web" />
+		<assets path="assets/weekend1" library="weekend1" exclude="*.fla|*.mp3|*.wav" unless="web" />
+
+		<assets path='example_mods' rename='mods' embed='false' type='template' />
+		<assets path="art/readme.txt" rename="do NOT readme.txt" library="art"/>
+		<assets path="CHANGELOG.md" rename="changelog.txt" library="art"/>
+	</section>
+
 	<!-- NOTE FOR FUTURE SELF SINCE FONTS ARE ALWAYS FUCKY
 		TO FIX ONE OF THEM, I CONVERTED IT TO OTF. DUNNO IF YOU NEED TO
 		THEN UHHH I USED THE NAME OF THE FONT WITH SETFORMAT() ON THE TEXT!!!
 		NOT USING A DIRECT THING TO THE ASSET!!!
 	-->
 	<assets path="assets/fonts" embed="true" />
-
-	<!-- If compiled via github actions, show debug version number. -->
-	<define name="FORCE_DEBUG_VERSION" if="GITHUB_BUILD" />
-	<define name="NO_REDIRECT_ASSETS_FOLDER" if="GITHUB_BUILD" />
-	<define name="TOUCH_HERE_TO_PLAY" if="web" />
 
 	<!-- _______________________________ Libraries ______________________________ -->
 	<haxelib name="lime" /> <!-- Game engine backend -->
@@ -126,7 +133,6 @@
 	<haxelib name="hxCodec" if="desktop" unless="hl" /> <!-- Video playback -->
 	<haxelib name="discord_rpc" if="desktop" unless="hl" /> <!-- Discord RPC -->
 	<haxelib name="funkin.vis"/>
-
 
 	<haxelib name="json2object" /> <!-- JSON parsing -->
 	<haxelib name="thx.semver" /> <!-- Version string handling -->
@@ -212,15 +218,6 @@
 
 	<!-- Uncomment this to wipe your input settings. -->
 	<!-- <haxedef name="CLEAR_INPUT_SAVE"/> -->
-
-	<section if="debug" unless="NO_REDIRECT_ASSETS_FOLDER || html5 || GITHUB_BUILD">
-		<!--
-			Use the parent assets folder rather than the exported one
-			No more will we accidentally undo our changes!
-		-->
-		<haxedef name="REDIRECT_ASSETS_FOLDER" />
-	</section>
-
 
 	<section>
 		<!--
