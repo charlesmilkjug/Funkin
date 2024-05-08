@@ -154,6 +154,11 @@ class PlayState extends MusicBeatSubState
   public var currentSong:Song = null;
 
   /**
+   * Usually currentSong, unless a songId-variation script exists
+   */
+  public var currentSongScript:Song = null;
+
+  /**
    * The currently selected difficulty.
    */
   public var currentDifficulty:String = Constants.DEFAULT_DIFFICULTY;
@@ -589,6 +594,8 @@ class PlayState extends MusicBeatSubState
 
     // Apply parameters.
     currentSong = params.targetSong;
+    currentSongScript = currentSong;
+
     if (params.targetDifficulty != null) currentDifficulty = params.targetDifficulty;
     if (params.targetVariation != null) currentVariation = params.targetVariation;
     isPracticeMode = params.practiceMode ?? false;
@@ -598,6 +605,12 @@ class PlayState extends MusicBeatSubState
     playbackRate = params.playbackRate ?? 1.0;
     overrideMusic = params.overrideMusic ?? false;
     previousCameraFollowPoint = params.cameraFollowPoint;
+
+    if (currentVariation != 'default')
+    {
+      var id = '${currentSong.id}-${currentVariation}';
+      if (SongRegistry.instance.isScriptedEntry(id)) currentSongScript = SongRegistry.instance.fetchEntry(id);
+    }
 
     // Don't do anything else here! Wait until create() when we attach to the camera.
   }
@@ -1141,7 +1154,7 @@ class PlayState extends MusicBeatSubState
     if (currentStage != null) currentStage.dispatchToCharacters(event);
 
     // Dispatch event to song script.
-    ScriptEventDispatcher.callEvent(currentSong, event);
+    ScriptEventDispatcher.callEvent(currentSongScript, event);
 
     // Dispatch event to conversation script.
     ScriptEventDispatcher.callEvent(currentConversation, event);
@@ -1361,7 +1374,7 @@ class PlayState extends MusicBeatSubState
     super.debug_refreshModules();
 
     var event:ScriptEvent = new ScriptEvent(CREATE, false);
-    ScriptEventDispatcher.callEvent(currentSong, event);
+    ScriptEventDispatcher.callEvent(currentSongScript, event);
   }
 
   override function stepHit():Bool
@@ -1828,7 +1841,7 @@ class PlayState extends MusicBeatSubState
     regenNoteData();
 
     var event:ScriptEvent = new ScriptEvent(CREATE, false);
-    ScriptEventDispatcher.callEvent(currentSong, event);
+    ScriptEventDispatcher.callEvent(currentSongScript, event);
 
     generatedMusic = true;
   }
