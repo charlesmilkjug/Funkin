@@ -56,12 +56,12 @@ jobs:
       run: |
         haxelib run lime build ${{ matrix.target }} -v -release --times -DGITHUB_BUILD
       timeout-minutes: 120
-
-    - name: Upload build artifacts
-      uses: ./.github/actions/upload-itch
+        
+    - name: Publish Artifact
+      uses: actions/upload-artifact@v2.2.4
       with:
-        butler-key: ${{ secrets.BUTLER_API_KEY}}
-        target: ${{ matrix.target }}
+         name: ${{ matrix.target }} Build
+         path: export/release/${{ matrix.target }}/bin
 
   build-game-in-container:
     runs-on: build-set
@@ -122,8 +122,8 @@ jobs:
         haxelib run lime build ${{ matrix.target }} -v -release --times -DGITHUB_BUILD
       timeout-minutes: 120
 
-    - name: Upload build artifacts
-      uses: ./.github/actions/upload-itch
+    - name: Publish artifacts
+      uses: actions/upload-artifact@v2.2.4
       with:
-        butler-key: ${{ secrets.BUTLER_API_KEY}}
-        target: ${{ matrix.target }}
+        name: ${{ matrix.target }} Build
+        path: export/release/${{ matrix.target }}/bin
