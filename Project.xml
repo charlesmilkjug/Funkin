@@ -198,7 +198,6 @@
 	<icon path="art/iconOG.png" />
 
 	<haxedef name="CAN_OPEN_LINKS" />
-	<haxedef name="CAN_CHEAT" />
 
 	<!-- I don't remember what this is for. -->
 	<haxedef name="haxeui_no_mouse_reset" />
