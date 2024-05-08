@@ -41,7 +41,7 @@ class Constants
    * A suffix to add to the game version.
    * Add a suffix to prototype builds and remove it for releases.
    */
-  public static final VERSION_SUFFIX:String = #if (DEBUG || FORCE_DEBUG_VERSION) ' PROTOTYPE' #else '' #end;
+  public static final VERSION_SUFFIX:String = #if (DEBUG || FORCE_DEBUG_VERSION) ' PROTOTYPE' #else ' CUSTOM BUILD' #end;
 
   #if (debug || FORCE_DEBUG_VERSION)
   static function get_VERSION():String
@@ -497,7 +497,7 @@ class Constants
    * If true, the player will not receive the ghost miss penalty if there are no notes within the hit window.
    * This is the thing people have been begging for forever lolol.
    */
-  public static final GHOST_TAPPING:Bool = false;
+  public static final GHOST_TAPPING:Bool = true;
 
   /**
    * The maximum number of previous file paths for the Chart Editor to remember.
