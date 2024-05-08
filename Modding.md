@@ -1,6 +1,3 @@
-# RIGHT NOW THE MODS FOLDER DOES NOT WORK ENTIRELY JUST YET!!!
-## THIS IS WORK IN PROGRESS!!!
-
 # QUICK AND DIRTY MOD GUIDE
 
 With the 0.2.6 update, I added a bit of a slightly nicer mod support backend.
@@ -11,3 +8,6 @@ You may have noticed that there's a new folder in the assets. MODS. Within it yo
 modList.txt will load any folder into the game. Put the folder you want to load into a new line in modList.txt, and reboot the game.
 
 Now you may be wondering, what do I put in the folder? Well later down it'll get a bit more complicated, especially as I'll make the IN-GAME mod loader nicer.
+
+## update.
+It works now, characters, weeks, scripts (.hxc), & stages have been softcoded. Still no mobile support though, we'll get to that later, but now modding is finally easier, yay!
