@@ -2,7 +2,7 @@
 
 Code style is enforced using Visual Studio Code extensions.
 
-## .hx
+## .hx/.hxc
 Formatting is handled by the `nadako.vshaxe` extension, which includes Haxe Formatter.
 Haxe Formatter automatically resolves issues such as intentation style and line breaks, and can be configured in `hxformat.json`.
 
