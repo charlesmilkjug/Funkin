@@ -74,6 +74,7 @@
 		<library name="videos" preload="false" />
 	</section>
 	<library name="art" preload="false" />
+
 	<section unless="REDIRECT_ASSETS_FOLDER">
 		<assets path="assets/preload" rename="assets" exclude="*.ogg|*.wav" if="web" />
 		<assets path="assets/preload" rename="assets" exclude="*.mp3|*.wav" unless="web" />
@@ -104,9 +105,10 @@
 		<assets path="assets/weekend1" library="weekend1" exclude="*.fla|*.mp3|*.wav" unless="web" />
 
 		<assets path='example_mods' rename='mods' embed='false' type='template' />
-		<assets path="art/readme.txt" rename="do NOT readme.txt" library="art"/>
-		<assets path="CHANGELOG.md" rename="changelog.txt" library="art"/>
 	</section>
+
+	<assets path="art/readme.txt" rename="do NOT readme.txt" library="art"/>
+	<assets path="CHANGELOG.md" rename="changelog.txt" library="art"/>
 
 	<!-- NOTE FOR FUTURE SELF SINCE FONTS ARE ALWAYS FUCKY
 		TO FIX ONE OF THEM, I CONVERTED IT TO OTF. DUNNO IF YOU NEED TO
