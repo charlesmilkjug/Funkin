@@ -53,9 +53,14 @@ class Save
   public function new(?data:RawSaveData)
   {
     if (data == null) this.data = Save.getDefault();
-    else this.data = data;
+    else
+      this.data = data;
   }
 
+  /**
+   * Returns the defaults for a save file.
+   * @return RawSaveData
+   */
   public static function getDefault():RawSaveData
   {
     return {
@@ -86,6 +91,8 @@ class Save
           zoomCamera: true,
           debugDisplay: false,
           autoPause: true,
+          gameplayBackgroundAlpha: 0,
+
           inputOffset: 0,
           audioVisualOffset: 0,
 
@@ -870,6 +877,14 @@ typedef SaveDataOptions =
    * @default `true`
    */
   var autoPause:Bool;
+
+  /**
+   * How dark the background behind the strumline and approaching arrows should be.
+   *
+   * 0 = transparent, 1 = fully opaque.
+   * @default `0`
+   */
+  var gameplayBackgroundAlpha:Float;
 
   /**
    * Offset the users inputs by this many ms.

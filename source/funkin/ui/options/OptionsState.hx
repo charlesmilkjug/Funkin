@@ -60,7 +60,7 @@ class OptionsState extends MusicBeatState
     super.create();
   }
 
-  function addPage<T:Page>(name:PageName, page:T)
+  function addPage<T:Page>(name:PageName, page:T):T
   {
     page.onSwitch.add(switchPage);
     pages[name] = page;
@@ -69,7 +69,7 @@ class OptionsState extends MusicBeatState
     return page;
   }
 
-  function setPage(name:PageName)
+  function setPage(name:PageName):Void
   {
     if (pages.exists(currentName))
     {
@@ -86,14 +86,14 @@ class OptionsState extends MusicBeatState
     }
   }
 
-  override function finishTransIn()
+  override function finishTransIn():Void
   {
     super.finishTransIn();
 
     currentPage.enabled = true;
   }
 
-  function switchPage(name:PageName)
+  function switchPage(name:PageName):Void
   {
     // TODO: Animate this transition?
     setPage(name);
@@ -108,7 +108,7 @@ class OptionsState extends MusicBeatState
     switchPage(Options);
   }
 
-  function exitToMainMenu()
+  function exitToMainMenu():Void
   {
     currentPage.enabled = false;
     // TODO: Animate this transition?
@@ -273,4 +273,5 @@ enum PageName
   Colors;
   Mods;
   Preferences;
+  Sliders;
 }
