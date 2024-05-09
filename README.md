@@ -1,4 +1,4 @@
-# Friday Night Funkin' 
+# Friday Night Funkin' (CUSTOM BUILD)
 
 Friday Night Funkin' is a rhythm game. Built using HaxeFlixel for Ludem Dare 47.
 
