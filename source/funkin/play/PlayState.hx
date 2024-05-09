@@ -904,7 +904,9 @@ class PlayState extends MusicBeatSubState
         Conductor.instance.formatOffset = 0.0;
       }
 
-      Conductor.instance.update(); // Normal conductor update.
+      Conductor.instance.update(Conductor.instance.songPosition
+        - (Conductor.instance.instrumentalOffset + Conductor.instance.formatOffset + Conductor.instance.audioVisualOffset)
+        + elapsed * 1000 * playbackRate); // Normal conductor update.
     }
 
     var androidPause:Bool = false;
@@ -1364,8 +1366,8 @@ class PlayState extends MusicBeatSubState
 
     if (!startingSong
       && FlxG.sound.music != null
-      && (Math.abs(FlxG.sound.music.time - (Conductor.instance.songPosition + Conductor.instance.instrumentalOffset)) > 200
-        || Math.abs(vocals.checkSyncError(Conductor.instance.songPosition + Conductor.instance.instrumentalOffset)) > 200))
+      && (Math.abs(FlxG.sound.music.time - (Conductor.instance.songPosition + Conductor.instance.instrumentalOffset)) > 200 * playbackRate
+        || Math.abs(vocals.checkSyncError(Conductor.instance.songPosition + Conductor.instance.instrumentalOffset)) > 200 * playbackRate))
     {
       trace("VOCALS NEED RESYNC");
       if (vocals != null) trace(vocals.checkSyncError(Conductor.instance.songPosition + Conductor.instance.instrumentalOffset));
@@ -1997,10 +1999,11 @@ class PlayState extends MusicBeatSubState
 
     vocals.pause();
 
-    FlxG.sound.music.play(FlxG.sound.music.time);
+    FlxG.sound.music.time = Conductor.instance.songPosition;
+    FlxG.sound.music.play(Conductor.instance.songPosition);
 
-    vocals.time = FlxG.sound.music.time;
-    vocals.play(false, FlxG.sound.music.time);
+    vocals.time = Conductor.instance.songPosition;
+    vocals.play(false, Conductor.instance.songPosition);
   }
 
   /**
