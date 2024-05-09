@@ -1979,7 +1979,7 @@ class PlayState extends MusicBeatSubState
     // TODO: Add functionality for modules to update the score text.
     if (isBotPlayMode)
     {
-      scoreText.text = 'Bot Play Enabled';
+      scoreText.text = 'BOTPLAY';
     }
     else
     {
