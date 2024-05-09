@@ -1389,7 +1389,7 @@ class PlayState extends MusicBeatSubState
     if (currentSong != null)
     {
       shouldShowComboText = (Conductor.instance.currentBeat % 8 == 7);
-      var daSection = .getSong()[Std.int(Conductor.instance.currentBeat / 16)];
+      var daSection = getSong()[Std.int(Conductor.instance.currentBeat / 16)];
       shouldShowComboText = shouldShowComboText && (daSection != null && daSection.mustHitSection);
       shouldShowComboText = shouldShowComboText && (Highscore.tallies.combo > 5);
 
