@@ -408,17 +408,11 @@ class InitState extends FlxState
   }
 
   function defineSong():String
-  {
     return MacroUtil.getDefine('SONG');
-  }
 
   function defineLevel():String
-  {
     return MacroUtil.getDefine('LEVEL');
-  }
 
   function defineDifficulty():String
-  {
     return MacroUtil.getDefine('DIFFICULTY');
-  }
 }

@@ -1384,18 +1384,19 @@ class PlayState extends MusicBeatSubState
     // Break up into individual lines to aid debugging.
 
     var shouldShowComboText:Bool = false;
+
     // TODO: Re-enable combo text (how to do this without sections?).
-    // if (currentSong != null)
-    // {
-    //  shouldShowComboText = (Conductor.instance.currentBeat % 8 == 7);
-    //  var daSection = .getSong()[Std.int(Conductor.instance.currentBeat / 16)];
-    //  shouldShowComboText = shouldShowComboText && (daSection != null && daSection.mustHitSection);
-    //  shouldShowComboText = shouldShowComboText && (Highscore.tallies.combo > 5);
-    //
-    //  var daNextSection = .getSong()[Std.int(Conductor.instance.currentBeat / 16) + 1];
-    //  var isEndOfSong = .getSong().length < Std.int(Conductor.instance.currentBeat / 16);
-    //  shouldShowComboText = shouldShowComboText && (isEndOfSong || (daNextSection != null && !daNextSection.mustHitSection));
-    // }
+    if (currentSong != null)
+    {
+      shouldShowComboText = (Conductor.instance.currentBeat % 8 == 7);
+      var daSection = .getSong()[Std.int(Conductor.instance.currentBeat / 16)];
+      shouldShowComboText = shouldShowComboText && (daSection != null && daSection.mustHitSection);
+      shouldShowComboText = shouldShowComboText && (Highscore.tallies.combo > 5);
+
+      var daNextSection = getSong()[Std.int(Conductor.instance.currentBeat / 16) + 1];
+      var isEndOfSong = getSong().length < Std.int(Conductor.instance.currentBeat / 16);
+      shouldShowComboText = shouldShowComboText && (isEndOfSong || (daNextSection != null && !daNextSection.mustHitSection));
+    }
 
     if (shouldShowComboText)
     {
@@ -1407,7 +1408,7 @@ class PlayState extends MusicBeatSubState
 
       var frameShit:Float = (1 / 24) * 2; // equals 2 frames in the animation
 
-      new FlxTimer().start(((Conductor.instance.beatLengthMs / 1000) * 1.25) - frameShit, function(tmr) {
+      new FlxTimer().start(((Conductor.instance.beatLengthMs / 1000) * 1.25) - frameShit, (tmr) -> {
         animShit.forceFinish();
       });
     }

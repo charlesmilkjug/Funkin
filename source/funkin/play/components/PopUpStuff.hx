@@ -84,13 +84,13 @@ class PopUpStuff extends FlxTypedGroup<FlxSprite>
     var comboSpr:FunkinSprite = FunkinSprite.create(pixelShitPart1 + 'combo' + pixelShitPart2);
     comboSpr.y = (FlxG.camera.height * 0.44) + offsets[1];
     comboSpr.x = (FlxG.width * 0.507) + offsets[0];
-    // comboSpr.x -= FlxG.camera.scroll.x * 0.2;
+    comboSpr.x -= FlxG.camera.scroll.x * 0.2;
 
     comboSpr.acceleration.y = 600;
     comboSpr.velocity.y -= 150;
     comboSpr.velocity.x += FlxG.random.int(1, 10);
 
-    // add(comboSpr);
+    add(comboSpr);
 
     if (PlayState.instance.currentStageId.startsWith('school'))
     {
