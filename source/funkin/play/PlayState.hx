@@ -1419,17 +1419,17 @@ class PlayState extends MusicBeatSubState
     var shouldShowComboText:Bool = false;
 
     // TODO: Re-enable combo text (how to do this without sections?).
-    if (currentSong != null)
-    {
-      shouldShowComboText = (Conductor.instance.currentBeat % 8 == 7);
-      var daSection = getSong()[Std.int(Conductor.instance.currentBeat / 16)];
-      shouldShowComboText = shouldShowComboText && (daSection != null && daSection.mustHitSection);
-      shouldShowComboText = shouldShowComboText && (Highscore.tallies.combo > 5);
+    /* if (currentSong != null)
+      {
+        shouldShowComboText = (Conductor.instance.currentBeat % 8 == 7);
+        var daSection = getSong()[Std.int(Conductor.instance.currentBeat / 16)];
+        shouldShowComboText = shouldShowComboText && (daSection != null && daSection.mustHitSection);
+        shouldShowComboText = shouldShowComboText && (Highscore.tallies.combo > 5);
 
-      var daNextSection = getSong()[Std.int(Conductor.instance.currentBeat / 16) + 1];
-      var isEndOfSong = getSong().length < Std.int(Conductor.instance.currentBeat / 16);
-      shouldShowComboText = shouldShowComboText && (isEndOfSong || (daNextSection != null && !daNextSection.mustHitSection));
-    }
+        var daNextSection = getSong()[Std.int(Conductor.instance.currentBeat / 16) + 1];
+        var isEndOfSong = getSong().length < Std.int(Conductor.instance.currentBeat / 16);
+        shouldShowComboText = shouldShowComboText && (isEndOfSong || (daNextSection != null && !daNextSection.mustHitSection));
+    }*/
 
     if (shouldShowComboText)
     {
@@ -2617,7 +2617,7 @@ class PlayState extends MusicBeatSubState
       // If daRating is 'miss', that means we made a mistake and should not continue.
       FlxG.log.warn('popUpScore judged a note as a miss!');
       // TODO: Remove this.
-      // comboPopUps.displayRating('miss');
+      comboPopUps.displayRating('miss');
       return;
     }
 

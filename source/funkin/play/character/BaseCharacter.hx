@@ -565,12 +565,12 @@ class BaseCharacter extends Bopper
    * @param miss If true, play the miss animation instead of the sing animation.
    * @param suffix A suffix to append to the animation name, like `alt`.
    */
-  public function playSingAnimation(dir:NoteDirection, miss:Bool = false, ?suffix:String = ''):Void
+  public function playSingAnimation(dir:NoteDirection, miss:Bool = false, ?suffix:String = '', ?forced:Bool = true):Void
   {
     var anim:String = 'sing${dir.nameUpper}${miss ? 'miss' : ''}${suffix != '' ? '-${suffix}' : ''}';
 
     // restart even if already playing, because the character might sing the same note twice.
-    playAnimation(anim, true);
+    playAnimation(anim, forced);
   }
 
   public override function playAnimation(name:String, restart:Bool = false, ignoreOther:Bool = false, reversed:Bool = false):Void
