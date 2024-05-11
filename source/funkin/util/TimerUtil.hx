@@ -4,6 +4,7 @@ import flixel.util.FlxTimer;
 import funkin.Conductor;
 import funkin.util.tools.FloatTools;
 import haxe.Timer;
+import flixel.util.FlxSignal;
 
 class TimerUtil
 {
