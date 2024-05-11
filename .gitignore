@@ -1,15 +1,30 @@
-.DS_STORE
+*.DS_Store
 .haxelib/
 .vs/
 APIStuff.hx
 dump/
+crash-handler/build/*
 export/
 RECOVER_*.fla
 shitAudio/
 .build_time
 .swp
+.vscode/*
+*.code-workspace
+vs_Community.exe
 
 # Exclude JS stuff
 node_modules/
 package.json
 package-lock.json
+
+# Local history which shouldn't be shared.
+.history
+.ionide
+
+# ! means a file should be added regardless of it it gets ignored prior.
+# Including to allow others to use already set-up configuration tweaked for the project.
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json

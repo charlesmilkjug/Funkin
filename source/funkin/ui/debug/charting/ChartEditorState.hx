@@ -260,7 +260,7 @@ class ChartEditorState extends UIState // UIState derives from MusicBeatState
   /**
    * Precisions of notes you can snap to.
    */
-  public static final SNAP_QUANTS:Array<Int> = [4, 8, 12, 16, 20, 24, 32, 48, 64, 96, 192];
+  public static final SNAP_QUANTS:Array<Int> = [2, 4, 8, 12, 16, 20, 24, 32, 48, 64, 96, 192, 384];
 
   /**
    * The default note snapping value.
