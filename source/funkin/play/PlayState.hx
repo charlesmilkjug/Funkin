@@ -1200,12 +1200,6 @@ class PlayState extends MusicBeatSubState
         cameraZoomTween.active = false;
         cameraTweensPausedBySubState.add(cameraZoomTween);
       }
-      if (additiveScrollSpeedTween != null && additiveScrollSpeedTween.active)
-      {
-        additiveScrollSpeedTween.active = false;
-        cameraTweensPausedBySubState.add(additiveScrollSpeedTween);
-      }
-
       for (tween in scrollSpeedTweens)
       {
         if (tween != null && tween.active)

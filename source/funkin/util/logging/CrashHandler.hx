@@ -93,31 +93,34 @@ class CrashHandler
     displayErrorMessage(generateErrorMessage(error));
   }
 
+  var path:String;
+
   static function displayErrorMessage(message:String):Void
   {
-    #if sys
-    try
-    {
-      var crashDialoguePath:String = "handler/FunkinCrash" #if windows + ".exe" #end;
+    /*#if sys
+      try
+      {
+        var crashDialoguePath:String = "handler/FunkinCrash" #if windows + ".exe" #end;
 
-      if (FileSystem.exists("./" + crashDialoguePath))
-      {
-        Sys.println("Found crash dialog: " + crashDialoguePath);
-        #if linux crashDialoguePath = "./" + crashDialoguePath; #end
-        new sys.io.Process(crashDialoguePath, [path]);
+        if (sys.FileSystem.exists("./" + crashDialoguePath))
+        {
+          Sys.println("Found crash dialog: " + crashDialoguePath);
+          #if linux crashDialoguePath = "./" + crashDialoguePath; #end
+          new sys.io.Process(crashDialoguePath, [path]);
+        }
+        else
+        {
+          // I had to do this, or else the stupid CI wouldn't even build. :distress:
+          Sys.println("No crash dialog found! Making a simple alert instead...");
+          lime.app.Application.current.window.alert(message, "Fatal Uncaught Exception");
+        }
       }
-      else
-      {
-        // I had to do this, or else the stupid CI wouldn't even build. :distress:
-        Sys.println("No crash dialog found! Making a simple alert instead...");
-        lime.app.Application.current.window.alert(message, "Fatal Uncaught Exception");
-      }
-    }
-    catch (e)
-      trace('crash handler broke, get over it.');
-    #else
+      catch (e)
+        trace('crash handler broke, get over it.');
+      #else */
+
     lime.app.Application.current.window.alert(message, "Fatal Uncaught Exception");
-    #end
+    // #end
   }
 
   #if sys

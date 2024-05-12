@@ -217,11 +217,6 @@ class Strumline extends FlxSpriteGroup
     return null;
   }
 
-  public function resetScrollSpeed():Void
-  {
-    scrollSpeedAdditive = 0;
-  }
-
   public function getHoldNoteSprite(noteData:SongNoteData):SustainTrail
   {
     if (noteData == null || ((noteData.length ?? 0.0) <= 0.0)) return null;
