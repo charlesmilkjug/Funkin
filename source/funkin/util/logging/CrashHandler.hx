@@ -117,7 +117,8 @@ class CrashHandler
       }
       catch (e)
         trace('crash handler broke, get over it.');
-      #else */
+      #else
+     */
 
     lime.app.Application.current.window.alert(message, "Fatal Uncaught Exception");
     // #end
