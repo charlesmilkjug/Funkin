@@ -93,8 +93,6 @@ class CrashHandler
     displayErrorMessage(generateErrorMessage(error));
   }
 
-  var path:String;
-
   static function displayErrorMessage(message:String):Void
   {
     /*#if sys

@@ -260,7 +260,7 @@ class FunkinPreloader extends FlxBasePreloader
     fnfText.height = 20;
     fnfText.x = 75;
     fnfText.y = -5;
-    fnfText.text = 'FNF';
+    fnfText.text = 'FNF CUSTOM BUILD';
     box.addChild(fnfText);
 
     enhancedText.selectable = false;
