@@ -569,9 +569,9 @@ class Save
     switch (inputType)
     {
       case Keys:
-        return (playerId == 1) ? data?.options?.controls?.p1.keyboard : data?.options?.controls?.p2.keyboard;
+        return (playerId == 0) ? data?.options?.controls?.p1.keyboard : data?.options?.controls?.p2.keyboard;
       case Gamepad(_):
-        return (playerId == 1) ? data?.options?.controls?.p1.gamepad : data?.options?.controls?.p2.gamepad;
+        return (playerId == 0) ? data?.options?.controls?.p1.gamepad : data?.options?.controls?.p2.gamepad;
     }
   }
 
@@ -586,7 +586,27 @@ class Save
 
   public function setControls(playerId:Int, inputType:Device, controls:SaveControlsData):Void
   {
-    getControls(playerId, inputType) = controls;
+    switch (inputType)
+    {
+      case Keys:
+        if (playerId == 0)
+        {
+          data.options.controls.p1.keyboard = controls;
+        }
+        else
+        {
+          data.options.controls.p2.keyboard = controls;
+        }
+      case Gamepad(_):
+        if (playerId == 0)
+        {
+          data.options.controls.p1.gamepad = controls;
+        }
+        else
+        {
+          data.options.controls.p2.gamepad = controls;
+        }
+    }
 
     flush();
   }

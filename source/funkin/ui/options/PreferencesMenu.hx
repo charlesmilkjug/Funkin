@@ -100,10 +100,10 @@ class PreferencesMenu extends Page
 
   function createPrefItemCounter(prefName:String, prefDesc:String, onChange:Int->Void, defaultValue:Int, minValue:Int, maxValue:Int, step:Int = 1):Void
   {
-    final posY = 120 * items.length;
+    final posY = 120 * textItems.length;
     final counter = new CounterPreferenceItem(20, posY + 55, defaultValue, minValue, maxValue, onChange);
-    counter.ID = items.length;
-    items.createItem(120, posY + 30, prefName, AtlasFont.BOLD);
+    counter.ID = textItems.length;
+    textItems.createItem(120, posY + 30, prefName, AtlasFont.BOLD);
     preferenceItems.add(counter);
   }
 
