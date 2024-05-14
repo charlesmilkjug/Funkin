@@ -197,7 +197,7 @@ class CounterPreferenceItem extends FlxText
   public function new(x:Float, y:Float, defaultValue:Int = 0, minValue:Int = 0, maxValue:Int = 1, onChange:Int->Void, step:Int = 1)
   {
     super(x, y, 0, null, 42);
-    this.font = "VCR OSD Mono";
+    this.font = Paths.font('vcr.ttf');
     this.alignment = RIGHT;
     this.setBorderStyle(OUTLINE, flixel.util.FlxColor.BLACK, 1.5);
 

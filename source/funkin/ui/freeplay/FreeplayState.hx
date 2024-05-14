@@ -410,11 +410,11 @@ class FreeplayState extends MusicBeatSubState
     FlxTween.tween(overhangStuff, {y: 0}, 0.3, {ease: FlxEase.quartOut});
 
     var fnfFreeplay:FlxText = new FlxText(8, 8, 0, 'FREEPLAY', 48);
-    fnfFreeplay.font = 'VCR OSD Mono';
+    fnfFreeplay.font = Paths.font('vcr.ttf');
     fnfFreeplay.visible = false;
 
     ostName = new FlxText(8, 8, FlxG.width - 8 - 8, 'OFFICIAL OST', 48);
-    ostName.font = 'VCR OSD Mono';
+    ostName.font = Paths.font('vcr.ttf');
     ostName.alignment = RIGHT;
     ostName.visible = false;
 
