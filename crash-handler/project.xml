@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
-    <meta title="Friday Night Funkin' - Crash Handler" package="CrashDialog" version="1.0.0" company="" />
+    <meta title="Friday Night Funkin' Plus Plus - Crash Handler" package="CrashDialog" version="1.0.0" company="" />
     <app main="CrashDialog" file="FunkinCrash" path="build/openfl" />
 
     <window background="#FFFFFF" fps="60" resizable="false"/>

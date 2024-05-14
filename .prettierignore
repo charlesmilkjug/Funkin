@@ -10,4 +10,4 @@ assets/weekend1/images
 # TODO: These don't work.
 !assets/preload/data/
 
-assets/exclude/data/credits.json
+# assets/exclude/data/credits.json

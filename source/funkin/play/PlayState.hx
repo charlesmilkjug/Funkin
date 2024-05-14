@@ -736,7 +736,7 @@ class PlayState extends MusicBeatSubState
     // Initialize some debug stuff.
     #if (debug || FORCE_DEBUG_VERSION)
     // Display the version number (and git commit hash) in the bottom right corner.
-    this.rightWatermarkText.text = Constants.VERSION;
+    this.rightWatermarkText.text = "${currentChart.songName} ($storyDifficultyText) | " + Constants.VERSION;
 
     FlxG.console.registerObject('playState', this);
     #end

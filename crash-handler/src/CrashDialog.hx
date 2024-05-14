@@ -66,7 +66,7 @@ class CrashDialog
 
 				var messageLabel:Label = mainView.findComponent("message-label", Label);
 				messageLabel.text = quotes[Std.random(quotes.length)]
-					+ "\n\nWell, it looks like Friday Night Funkin' crashed, huh.\nCome on, it's not the end of the world, we can just work around this..";
+					+ "\n\nWell, it looks like Friday Night Funkin'++ crashed, huh.\nCome on, it's not the end of the world, we can just work around this..";
 				messageLabel.percentWidth = 100;
 				messageLabel.textAlign = "center";
 
