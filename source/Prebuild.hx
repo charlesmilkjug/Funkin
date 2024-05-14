@@ -12,7 +12,7 @@ class Prebuild
   static function main():Void
   {
     saveBuildTime();
-    trace('Building game, please wait...');
+    haxe.Log.trace('Building game, please wait...', null);
   }
 
   static function saveBuildTime():Void

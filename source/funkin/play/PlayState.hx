@@ -2336,7 +2336,7 @@ class PlayState extends MusicBeatSubState
     for (note in notesInRange)
       notesByDirection[note.direction].push(note);
 
-    while (inputPressQueue.length > 0)
+    while (inputPressQueue.length != 0)
     {
       var input:PreciseInputEvent = inputPressQueue.shift();
 
@@ -2344,25 +2344,17 @@ class PlayState extends MusicBeatSubState
 
       var notesInDirection:Array<NoteSprite> = notesByDirection[input.noteDirection];
 
-      if (!Constants.GHOST_TAPPING && notesInDirection.length == 0)
+      if ((!Preferences.ghostTapping || (Preferences.ghostTapping && (holdNotesInRange.length + notesInRange.length != 0)))
+        && notesInDirection.length == 0)
       {
-        // Pressed a wrong key with no notes nearby.
+        // Pressed a wrong key with no notes nearby or pressed a wrong key with no notes nearby AND with notes in a different direction available.
         // Perform a ghost miss (anti-spam).
         ghostNoteMiss(input.noteDirection, notesInRange.length > 0);
 
         // Play the strumline animation.
         playerStrumline.playPress(input.noteDirection);
       }
-      else if (Constants.GHOST_TAPPING && (holdNotesInRange.length + notesInRange.length > 0) && notesInDirection.length == 0)
-      {
-        // Pressed a wrong key with no notes nearby AND with notes in a different direction available.
-        // Perform a ghost miss (anti-spam).
-        ghostNoteMiss(input.noteDirection, notesInRange.length > 0);
-
-        // Play the strumline animation.
-        playerStrumline.playPress(input.noteDirection);
-      }
-      else if (notesInDirection.length > 0)
+      else if (notesInDirection.length != 0)
       {
         // Choose the first note, deprioritizing low priority notes.
         var targetNote:Null<NoteSprite> = notesInDirection.find((note) -> !note.lowPriority);
@@ -2385,7 +2377,7 @@ class PlayState extends MusicBeatSubState
       }
     }
 
-    while (inputReleaseQueue.length > 0)
+    while (inputReleaseQueue.length != 0)
     {
       var input:PreciseInputEvent = inputReleaseQueue.shift();
 
