@@ -55,10 +55,10 @@ class DebugMenuSubState extends MusicBeatSubState
     // Create each menu item.
     // Call onMenuChange when the first item is created to move the camera .
     onMenuChange(createItem("CHART EDITOR", openChartEditor));
-    // createItem("Input Offset Testing", openInputOffsetTesting);
+    #if debug createItem("Input Offset Testing", openInputOffsetTesting); #end
     createItem("ANIMATION EDITOR", openAnimationEditor);
-    // createItem("STAGE EDITOR", openStageEditor);
-    // createItem("TEST STICKERS", testStickers);
+    #if debug createItem("STAGE EDITOR", openStageEditor); #end
+    #if debug createItem("TEST STICKERS", testStickers); #end
     #if sys
     createItem("OPEN CRASH LOG FOLDER", openLogFolder);
     #end
