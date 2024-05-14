@@ -7,6 +7,8 @@ This game was made with love to Newgrounds and it's community. Extra love to Tom
 - [Playable web demo on Newgrounds!](https://www.newgrounds.com/portal/view/770371)
 - [Demo download builds for Windows, Mac, and Linux from Itch.io!](https://ninja-muffin24.itch.io/funkin)
 
+(just please dont touch the LICENSE.md, istg ITS THERE FOR A DAMN OBVIOUS REASON)
+
 # Getting Started
 
 **PLEASE USE THE LINKS ABOVE IF YOU JUST WANT TO PLAY THE GAME**

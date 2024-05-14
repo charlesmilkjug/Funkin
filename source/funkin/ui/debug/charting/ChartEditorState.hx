@@ -159,6 +159,7 @@ class ChartEditorState extends UIState // UIState derives from MusicBeatState
   public static final CHART_EDITOR_TOOLBOX_EVENT_DATA_LAYOUT:String = Paths.ui('chart-editor/toolbox/event-data');
   public static final CHART_EDITOR_TOOLBOX_FREEPLAY_LAYOUT:String = Paths.ui('chart-editor/toolbox/freeplay');
   public static final CHART_EDITOR_TOOLBOX_PLAYTEST_PROPERTIES_LAYOUT:String = Paths.ui('chart-editor/toolbox/playtest-properties');
+  public static final CHART_EDITOR_TOOLBOX_SCRIPT_EDITOR_LAYOUT:String = Paths.ui('chart-editor/toolbox/script-editor');
 
   // Validation
   public static final SUPPORTED_MUSIC_FORMATS:Array<String> = #if sys ['ogg'] #else ['mp3'] #end;
@@ -2736,13 +2737,13 @@ class ChartEditorState extends UIState // UIState derives from MusicBeatState
     buttonSelectOpponent = new Button();
     buttonSelectOpponent.allowFocus = false;
     buttonSelectOpponent.text = "Opponent"; // Default text.
-    buttonSelectOpponent.x = GRID_X_POS;
-    buttonSelectOpponent.y = GRID_INITIAL_Y_POS - NOTE_SELECT_BUTTON_HEIGHT - 8;
     buttonSelectOpponent.width = GRID_SIZE * 4;
     buttonSelectOpponent.height = NOTE_SELECT_BUTTON_HEIGHT;
     buttonSelectOpponent.tooltip = "Click to set selection to all notes on this side.\nShift-click to add all notes on this side to selection.";
     buttonSelectOpponent.zIndex = 110;
     add(buttonSelectOpponent);
+    buttonSelectOpponent.x = GRID_X_POS;
+    buttonSelectOpponent.y = GRID_INITIAL_Y_POS - NOTE_SELECT_BUTTON_HEIGHT - 8;
 
     buttonSelectOpponent.onClick = (_) -> {
       var notesToSelect:Array<SongNoteData> = currentSongChartNoteData;
@@ -2760,13 +2761,14 @@ class ChartEditorState extends UIState // UIState derives from MusicBeatState
     buttonSelectPlayer = new Button();
     buttonSelectPlayer.allowFocus = false;
     buttonSelectPlayer.text = "Player"; // Default text.
-    buttonSelectPlayer.x = buttonSelectOpponent.x + buttonSelectOpponent.width;
-    buttonSelectPlayer.y = buttonSelectOpponent.y;
+
     buttonSelectPlayer.width = GRID_SIZE * 4;
     buttonSelectPlayer.height = NOTE_SELECT_BUTTON_HEIGHT;
     buttonSelectPlayer.tooltip = "Click to set selection to all notes on this side.\nShift-click to add all notes on this side to selection.";
     buttonSelectPlayer.zIndex = 110;
     add(buttonSelectPlayer);
+    buttonSelectPlayer.x = buttonSelectOpponent.x + buttonSelectOpponent.width;
+    buttonSelectPlayer.y = buttonSelectOpponent.y;
 
     buttonSelectPlayer.onClick = (_) -> {
       var notesToSelect:Array<SongNoteData> = currentSongChartNoteData;
@@ -2785,13 +2787,13 @@ class ChartEditorState extends UIState // UIState derives from MusicBeatState
     buttonSelectEvent.allowFocus = false;
     buttonSelectEvent.icon = Paths.image('ui/chart-editor/events/Default');
     buttonSelectEvent.iconPosition = "top";
-    buttonSelectEvent.x = buttonSelectPlayer.x + buttonSelectPlayer.width;
-    buttonSelectEvent.y = buttonSelectPlayer.y;
     buttonSelectEvent.width = GRID_SIZE;
     buttonSelectEvent.height = NOTE_SELECT_BUTTON_HEIGHT;
     buttonSelectEvent.tooltip = "Click to set selection to all events.\nShift-click to add all events to selection.";
     buttonSelectEvent.zIndex = 110;
     add(buttonSelectEvent);
+    buttonSelectEvent.x = buttonSelectPlayer.x + buttonSelectPlayer.width;
+    buttonSelectEvent.y = buttonSelectPlayer.y;
 
     buttonSelectEvent.onClick = (_) -> {
       if (FlxG.keys.pressed.SHIFT)
@@ -3078,6 +3080,7 @@ class ChartEditorState extends UIState // UIState derives from MusicBeatState
     menubarItemToggleToolboxPlaytestProperties.onChange = event -> this.setToolboxState(CHART_EDITOR_TOOLBOX_PLAYTEST_PROPERTIES_LAYOUT, event.value);
     menubarItemToggleToolboxPlayerPreview.onChange = event -> this.setToolboxState(CHART_EDITOR_TOOLBOX_PLAYER_PREVIEW_LAYOUT, event.value);
     menubarItemToggleToolboxOpponentPreview.onChange = event -> this.setToolboxState(CHART_EDITOR_TOOLBOX_OPPONENT_PREVIEW_LAYOUT, event.value);
+    menubarItemToggleToolboxScriptEditor.onChange = event -> this.setToolboxState(CHART_EDITOR_TOOLBOX_SCRIPT_EDITOR_LAYOUT, event.value);
 
     // TODO: Pass specific HaxeUI components to add context menus to them.
     // registerContextMenu(null, Paths.ui('chart-editor/context/test'));

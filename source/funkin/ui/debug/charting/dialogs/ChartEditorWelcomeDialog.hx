@@ -38,6 +38,8 @@ class ChartEditorWelcomeDialog extends ChartEditorBaseDialog
     this.splashCreateFromSongErectOnly.onClick = _ -> onClickLinkCreateErectOnly();
     this.splashCreateFromSongBasicErect.onClick = _ -> onClickLinkCreateBasicErect();
     this.splashImportChartLegacy.onClick = _ -> onClickLinkImportChartLegacy();
+    this.splashImportPsychChart.onClick = _ -> onClickLinkImportPsychChart();
+    this.splashImportCNEChart.onClick = _ -> onClickLinkImportCNEChart();
 
     // Add items to the Recent Charts list
     #if sys
@@ -244,4 +246,16 @@ class ChartEditorWelcomeDialog extends ChartEditorBaseDialog
     // Open the "Import Chart" dialog
     chartEditorState.openImportChartWizard('legacy', false);
   }
+
+  /**
+   * Called when the user clicks the "Import Custom Engine Chart: Psych Engine" link in the dialog.
+   * Reassign this function to change the behavior.
+   */
+  public function onClickLinkImportPsychChart():Void {}
+
+  /**
+   * Called when the user clicks the "Import Custom Engine Chart: Codename Engine" link in the dialog.
+   * Reassign this function to change the behavior.
+   */
+  public function onClickLinkImportCNEChart():Void {}
 }

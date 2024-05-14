@@ -40,6 +40,7 @@ import funkin.ui.debug.charting.toolboxes.ChartEditorFreeplayToolbox;
 import funkin.ui.debug.charting.toolboxes.ChartEditorEventDataToolbox;
 import funkin.ui.debug.charting.toolboxes.ChartEditorNoteDataToolbox;
 import funkin.ui.debug.charting.toolboxes.ChartEditorDifficultyToolbox;
+import funkin.ui.debug.charting.toolboxes.ChartEditorScriptEditor;
 import haxe.ui.containers.Frame;
 import haxe.ui.containers.Grid;
 import haxe.ui.containers.TreeView;
@@ -99,6 +100,8 @@ class ChartEditorToolboxHandler
           onShowToolboxPlayerPreview(state, toolbox);
         case ChartEditorState.CHART_EDITOR_TOOLBOX_OPPONENT_PREVIEW_LAYOUT:
           onShowToolboxOpponentPreview(state, toolbox);
+        case ChartEditorState.CHART_EDITOR_TOOLBOX_SCRIPT_EDITOR_LAYOUT:
+          cast(toolbox, ChartEditorBaseToolbox).refresh();
         default:
           // This happens if you try to load an unknown layout.
           trace('ChartEditorToolboxHandler.showToolbox() - Unknown toolbox ID: $id');
@@ -130,6 +133,8 @@ class ChartEditorToolboxHandler
           onHideToolboxPlayerPreview(state, toolbox);
         case ChartEditorState.CHART_EDITOR_TOOLBOX_OPPONENT_PREVIEW_LAYOUT:
           onHideToolboxOpponentPreview(state, toolbox);
+        case ChartEditorState.CHART_EDITOR_TOOLBOX_SCRIPT_EDITOR_LAYOUT:
+          onHideToolboxScriptEditor(state, toolbox);
         default:
           // This happens if you try to load an unknown layout.
           trace('ChartEditorToolboxHandler.hideToolbox() - Unknown toolbox ID: $id');
@@ -210,6 +215,8 @@ class ChartEditorToolboxHandler
         toolbox = buildToolboxPlayerPreviewLayout(state);
       case ChartEditorState.CHART_EDITOR_TOOLBOX_OPPONENT_PREVIEW_LAYOUT:
         toolbox = buildToolboxOpponentPreviewLayout(state);
+      case ChartEditorState.CHART_EDITOR_TOOLBOX_SCRIPT_EDITOR_LAYOUT:
+        toolbox = buildToolboxScriptEditorLayout(state);
       default:
         // This happens if you try to load an unknown layout.
         trace('ChartEditorToolboxHandler.initToolbox() - Unknown toolbox ID: $id');
@@ -367,6 +374,15 @@ class ChartEditorToolboxHandler
     return toolbox;
   }
 
+  static function buildToolboxScriptEditorLayout(state:ChartEditorState):Null<ChartEditorBaseToolbox>
+  {
+    var toolbox:ChartEditorBaseToolbox = ChartEditorScriptEditor.build(state);
+
+    if (toolbox == null) return null;
+
+    return toolbox;
+  }
+
   static function buildToolboxPlayerPreviewLayout(state:ChartEditorState):Null<CollapsibleDialog>
   {
     var toolbox:CollapsibleDialog = cast RuntimeComponentBuilder.fromAsset(ChartEditorState.CHART_EDITOR_TOOLBOX_PLAYER_PREVIEW_LAYOUT);
@@ -424,4 +440,6 @@ class ChartEditorToolboxHandler
   static function onShowToolboxOpponentPreview(state:ChartEditorState, toolbox:CollapsibleDialog):Void {}
 
   static function onHideToolboxOpponentPreview(state:ChartEditorState, toolbox:CollapsibleDialog):Void {}
+
+  static function onHideToolboxScriptEditor(state:ChartEditorState, toolbox:CollapsibleDialog):Void {}
 }
