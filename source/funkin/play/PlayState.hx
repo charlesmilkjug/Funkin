@@ -2114,7 +2114,7 @@ class PlayState extends MusicBeatSubState
 
         // Call an event to allow canceling the note hit.
         // NOTE: This is what handles the character animations!
-        var event:NoteScriptEvent = new HitNoteScriptEvent(note, 0.0, 0, 'perfect', 0);
+        var event:NoteScriptEvent = new HitNoteScriptEvent(note, 0.0, 0, 'perfect', false, 0);
         dispatchEvent(event);
 
         // Calling event.cancelEvent() skips all the other logic! Neat!
@@ -2210,7 +2210,7 @@ class PlayState extends MusicBeatSubState
 
         // Call an event to allow canceling the note hit.
         // NOTE: This is what handles the character animations!
-        var event:NoteScriptEvent = new HitNoteScriptEvent(note, 0.0, 0, 'perfect', 0);
+        var event:NoteScriptEvent = new HitNoteScriptEvent(note, 0.0, 0, 'perfect', false, 0);
         dispatchEvent(event);
 
         // Calling event.cancelEvent() skips all the other logic! Neat!
@@ -2422,14 +2422,23 @@ class PlayState extends MusicBeatSubState
     }
 
     // Send the note hit event.
-    var event:HitNoteScriptEvent = new HitNoteScriptEvent(note, healthChange, score, daRating, Highscore.tallies.combo + 1);
+    var event:HitNoteScriptEvent = new HitNoteScriptEvent(note, healthChange, score, daRating, isComboBreak, Highscore.tallies.combo + 1, noteDiff,
+      daRating == 'sick');
     dispatchEvent(event);
 
     // Calling event.cancelEvent() skips all the other logic! Neat!
     if (event.eventCanceled) return;
 
+    Highscore.tallies.totalNotesHit++;
+    // Display the hit on the strums
+    playerStrumline.hitNote(note, !isComboBreak);
+    if (event.doesNotesplash) playerStrumline.playNoteSplash(note.noteData.getDirection());
+    if (note.isHoldNote && note.holdNoteSprite != null) playerStrumline.playNoteHoldCover(note.holdNoteSprite);
+    vocals.playerVolume = 1;
+
     // Display the combo meter and add the calculation to the score.
-    popUpScore(note, event.score, event.judgement, event.healthChange);
+    applyScore(event.score, event.judgement, event.healthChange, event.isComboBreak);
+    popUpScore(event.judgement);
   }
 
   /**
@@ -2440,8 +2449,8 @@ class PlayState extends MusicBeatSubState
   {
     // If we are here, we already CALLED the onNoteMiss script hook!
 
-    health += healthChange;
-    songScore -= 10;
+    /* health += healthChange;
+      songScore -= 10; */
 
     if (!isPracticeMode)
     {
@@ -2482,14 +2491,9 @@ class PlayState extends MusicBeatSubState
     }
     vocals.playerVolume = 0;
 
-    Highscore.tallies.missed++;
+    if (Highscore.tallies.combo != 0) if (Highscore.tallies.combo >= 10) comboPopUps.displayCombo(0);
 
-    if (Highscore.tallies.combo != 0)
-    {
-      // Break the combo.
-      if (Highscore.tallies.combo >= 10) comboPopUps.displayCombo(0);
-      Highscore.tallies.combo = 0;
-    }
+    applyScore(-10, 'miss', healthChange, true);
 
     if (playSound)
     {
@@ -2621,54 +2625,26 @@ class PlayState extends MusicBeatSubState
   }
 
   /**
-   * Handles health, score, and rating popups when a note is hit.
+   * Handles applying health, score, and ratings.
    */
-  function popUpScore(daNote:NoteSprite, score:Int, daRating:String, healthChange:Float):Void
+  function applyScore(score:Int, daRating:String, healthChange:Float, isComboBreak:Bool)
   {
-    if (daRating == 'miss')
-    {
-      // If daRating is 'miss', that means we made a mistake and should not continue.
-      FlxG.log.warn('popUpScore judged a note as a miss!');
-      // untested,
-      comboPopUps.displayRating('miss');
-      return;
-    }
-
-    vocals.playerVolume = 1;
-
-    var isComboBreak = false;
     switch (daRating)
     {
       case 'killer':
         Highscore.tallies.killer += 1;
-        health += Constants.HEALTH_KILLER_BONUS;
-        isComboBreak = Constants.JUDGEMENT_KILLER_COMBO_BREAK;
       case 'sick':
         Highscore.tallies.sick += 1;
-        Highscore.tallies.totalNotesHit++;
-        isComboBreak = Constants.JUDGEMENT_SICK_COMBO_BREAK;
       case 'good':
         Highscore.tallies.good += 1;
-        Highscore.tallies.totalNotesHit++;
-        isComboBreak = Constants.JUDGEMENT_GOOD_COMBO_BREAK;
       case 'bad':
         Highscore.tallies.bad += 1;
-        Highscore.tallies.totalNotesHit++;
-        isComboBreak = Constants.JUDGEMENT_BAD_COMBO_BREAK;
       case 'shit':
         Highscore.tallies.shit += 1;
-        Highscore.tallies.totalNotesHit++;
-        isComboBreak = Constants.JUDGEMENT_SHIT_COMBO_BREAK;
       case 'miss':
         Highscore.tallies.missed += 1;
-        health -= Constants.HEALTH_MISS_PENALTY;
-        isComboBreak = Constants.JUDGEMENT_MISS_COMBO_BREAK;
-      default:
-        FlxG.log.error('Wuh? Buh? Guh? Note hit judgement was $daRating!');
     }
-
     health += healthChange;
-
     if (isComboBreak)
     {
       // Break the combo, but don't increment tallies.misses.
@@ -2680,15 +2656,23 @@ class PlayState extends MusicBeatSubState
       Highscore.tallies.combo++;
       if (Highscore.tallies.combo > Highscore.tallies.maxCombo) Highscore.tallies.maxCombo = Highscore.tallies.combo;
     }
-
-    playerStrumline.hitNote(daNote, !isComboBreak);
-
-    if (daRating == 'sick')
-    {
-      playerStrumline.playNoteSplash(daNote.noteData.getDirection());
-    }
-
     songScore += score;
+  }
+
+  /**
+   * Handles rating popups when a note is hit.
+   */
+  function popUpScore(daRating:String, ?combo:Int):Void
+  {
+    if (daRating == 'miss')
+    {
+      // If daRating is 'miss', that means we made a mistake and should not continue.
+      FlxG.log.warn('popUpScore judged a note as a miss!');
+      // TODO: Remove this.
+      // comboPopUps.displayRating('miss');
+      return;
+    }
+    if (combo == null) combo = Highscore.tallies.combo;
 
     if (!isPracticeMode)
     {
@@ -2728,12 +2712,7 @@ class PlayState extends MusicBeatSubState
       }
     }
     comboPopUps.displayRating(daRating);
-    if (Highscore.tallies.combo >= 10 || Highscore.tallies.combo == 0) comboPopUps.displayCombo(Highscore.tallies.combo);
-
-    if (daNote.isHoldNote && daNote.holdNoteSprite != null)
-    {
-      playerStrumline.playNoteHoldCover(daNote.holdNoteSprite);
-    }
+    if (combo >= 10 || combo == 0) comboPopUps.displayCombo(combo);
 
     vocals.playerVolume = 1;
   }
@@ -3284,6 +3263,8 @@ class PlayState extends MusicBeatSubState
     cancelCameraZoomTween();
   }
 
+  var prevScrollTargets:Array<Dynamic> = []; // used to snap scroll speed when things go unruely
+
   /**
    * The magical function that shall tween the scroll speed.
    */
@@ -3291,7 +3272,17 @@ class PlayState extends MusicBeatSubState
   {
     // Cancel the current tween if it's active.
     cancelScrollSpeedTweens();
-    for (i in strumlines)
+
+    // Snap to previous event value to prevent the tween breaking when another event cancels the previous tween.
+    for (i in prevScrollTargets)
+    {
+      var value:Float = i[1];
+      var strum:Strumline = Reflect.getProperty(this, i[0]);
+      strum.scrollSpeed = value;
+    }
+
+    // for next event, clean array.
+    prevScrollTargets = [];
     {
       var value:Float = speed;
       var strum:Strumline = Reflect.getProperty(this, i);
@@ -3307,6 +3298,8 @@ class PlayState extends MusicBeatSubState
             'scrollSpeed': value
           }, duration, {ease: ease}));
       }
+      // make sure charts dont break if the charter is dumb and stupid
+      prevScrollTargets.push([value, i]);
     }
   }
 

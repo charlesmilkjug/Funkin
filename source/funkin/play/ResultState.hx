@@ -221,19 +221,23 @@ class ResultState extends MusicBeatSubState
 
     hStuf += 2;
     var extraYOffset:Float = 5;
-    var tallySick:TallyCounter = new TallyCounter(230, (hStuf * 5) + extraYOffset, params.scoreData.tallies.sick, 0xFF89E59E);
+
+    var tallyKiller:TallyCounter = new TallyCounter(230, (hStuf * 5) + extraYOffset, params.scoreData.tallies.killer, 0xFF8F89E5);
+    ratingGrp.add(tallyKiller);
+
+    var tallySick:TallyCounter = new TallyCounter(230, (hStuf * 6) + extraYOffset, params.scoreData.tallies.sick, 0xFF89E59E);
     ratingGrp.add(tallySick);
 
-    var tallyGood:TallyCounter = new TallyCounter(210, (hStuf * 6) + extraYOffset, params.scoreData.tallies.good, 0xFF89C9E5);
+    var tallyGood:TallyCounter = new TallyCounter(210, (hStuf * 7) + extraYOffset, params.scoreData.tallies.good, 0xFF89C9E5);
     ratingGrp.add(tallyGood);
 
-    var tallyBad:TallyCounter = new TallyCounter(190, (hStuf * 7) + extraYOffset, params.scoreData.tallies.bad, 0xFFE6CF8A);
+    var tallyBad:TallyCounter = new TallyCounter(190, (hStuf * 8) + extraYOffset, params.scoreData.tallies.bad, 0xFFE6CF8A);
     ratingGrp.add(tallyBad);
 
-    var tallyShit:TallyCounter = new TallyCounter(220, (hStuf * 8) + extraYOffset, params.scoreData.tallies.shit, 0xFFE68C8A);
+    var tallyShit:TallyCounter = new TallyCounter(220, (hStuf * 9) + extraYOffset, params.scoreData.tallies.shit, 0xFFE68C8A);
     ratingGrp.add(tallyShit);
 
-    var tallyMissed:TallyCounter = new TallyCounter(260, (hStuf * 9) + extraYOffset, params.scoreData.tallies.missed, 0xFFC68AE6);
+    var tallyMissed:TallyCounter = new TallyCounter(260, (hStuf * 10) + extraYOffset, params.scoreData.tallies.missed, 0xFFC68AE6);
     ratingGrp.add(tallyMissed);
 
     var score:ResultScore = new ResultScore(35, 305, 10, params.scoreData.score);
