@@ -2406,6 +2406,8 @@ class PlayState extends MusicBeatSubState
     var healthChange = 0.0;
     switch (daRating)
     {
+      case 'killer':
+        healthChange = Constants.HEALTH_KILLER_BONUS;
       case 'sick':
         healthChange = Constants.HEALTH_SICK_BONUS;
       case 'good':
@@ -2624,7 +2626,7 @@ class PlayState extends MusicBeatSubState
     {
       // If daRating is 'miss', that means we made a mistake and should not continue.
       FlxG.log.warn('popUpScore judged a note as a miss!');
-      // TODO: Remove this.
+      // untested,
       comboPopUps.displayRating('miss');
       return;
     }
@@ -2634,6 +2636,10 @@ class PlayState extends MusicBeatSubState
     var isComboBreak = false;
     switch (daRating)
     {
+      case 'killer':
+        Highscore.tallies.killer += 1;
+        health += Constants.HEALTH_KILLER_BONUS;
+        isComboBreak = Constants.JUDGEMENT_KILLER_COMBO_BREAK;
       case 'sick':
         Highscore.tallies.sick += 1;
         Highscore.tallies.totalNotesHit++;
@@ -2650,6 +2656,10 @@ class PlayState extends MusicBeatSubState
         Highscore.tallies.shit += 1;
         Highscore.tallies.totalNotesHit++;
         isComboBreak = Constants.JUDGEMENT_SHIT_COMBO_BREAK;
+      case 'miss':
+        Highscore.tallies.missed += 1;
+        health -= Constants.HEALTH_MISS_PENALTY;
+        isComboBreak = Constants.JUDGEMENT_MISS_COMBO_BREAK;
       default:
         FlxG.log.error('Wuh? Buh? Guh? Note hit judgement was $daRating!');
     }
@@ -2817,6 +2827,7 @@ class PlayState extends MusicBeatSubState
           score: songScore,
           tallies:
             {
+              killer: Highscore.tallies.killer,
               sick: Highscore.tallies.sick,
               good: Highscore.tallies.good,
               bad: Highscore.tallies.bad,
@@ -2865,6 +2876,7 @@ class PlayState extends MusicBeatSubState
               tallies:
                 {
                   // TODO: Sum up the values for the whole level!
+                  killer: 0,
                   sick: 0,
                   good: 0,
                   bad: 0,
@@ -3130,6 +3142,7 @@ class PlayState extends MusicBeatSubState
             score: PlayStatePlaylist.isStoryMode ? PlayStatePlaylist.campaignScore : songScore,
             tallies:
               {
+                killer: talliesToUse.killer,
                 sick: talliesToUse.sick,
                 good: talliesToUse.good,
                 bad: talliesToUse.bad,
