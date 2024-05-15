@@ -23,12 +23,7 @@ class WindowUtil
   public static function openURL(targetUrl:String):Void
   {
     #if CAN_OPEN_LINKS
-    #if linux
-    Sys.command('/usr/bin/xdg-open ' + targetUrl + ' &');
-    #else
-    // This should work on Windows and HTML5.
-    FlxG.openURL(targetUrl);
-    #end
+    #if linux Sys.command('/usr/bin/xdg-open $targetUrl &'); #else FlxG.openURL(targetUrl); /* This should work on Windows and HTML5. */ #end
     #else
     throw 'Cannot open URLs on this platform.';
     #end
@@ -49,7 +44,7 @@ class WindowUtil
     Sys.command('open', [targetPath]);
     #end
     #else
-    throw 'Cannot open URLs on this platform.';
+    throw 'Cannot open folders on this platform.';
     #end
   }
 
@@ -69,7 +64,7 @@ class WindowUtil
     Sys.command('open', [targetPath]);
     #end
     #else
-    throw 'Cannot open URLs on this platform.';
+    throw 'Cannot open a file selection dialog on this platform.';
     #end
   }
 

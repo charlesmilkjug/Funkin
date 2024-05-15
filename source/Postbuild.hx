@@ -11,9 +11,7 @@ class Postbuild
   static inline final BUILD_TIME_FILE:String = '.build_time';
 
   static function main():Void
-  {
     printBuildTime();
-  }
 
   static function printBuildTime():Void
   {
@@ -34,7 +32,5 @@ class Postbuild
   }
 
   static function roundToTwoDecimals(value:Float):Float
-  {
     return Math.round(value * 100) / 100;
-  }
 }
