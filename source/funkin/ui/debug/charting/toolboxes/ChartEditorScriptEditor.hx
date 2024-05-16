@@ -4,9 +4,11 @@ import funkin.util.FileUtil;
 import haxe.ui.containers.dialogs.Dialogs;
 import haxe.ui.events.UIEvent;
 
+using StringTools;
+
 /**
  * Built-in HScript Editor
- * (for now, it's basically a normal text editor, stay tuned :3)
+ * (for now, it's bassically a normal text editor, stay tunned :3)
  */
 @:access(funkin.ui.debug.charting.ChartEditorState)
 @:build(haxe.ui.ComponentBuilder.build("assets/exclude/data/ui/chart-editor/toolboxes/script-editor.xml"))
@@ -14,6 +16,7 @@ class ChartEditorScriptEditor extends ChartEditorBaseToolbox
 {
   var curScript:String;
   var curSongName:String;
+  var specialChars:Array<String> = ['\'', '.'];
 
   public function new(chartEditorState2:ChartEditorState)
   {
@@ -47,7 +50,9 @@ class ChartEditorScriptEditor extends ChartEditorBaseToolbox
     FileUtil.browseForTextFile("Read Script", [
       {extension: "hxc", label: "HScript"}], function(fileinfo) {
         curScript = fileinfo.text;
-        this.refresh();
+        curScript = curScript.replace('\t', '    ');
+        scriptText.text = curScript;
+        trace("Script Read!");
     });
   }
 
@@ -56,12 +61,35 @@ class ChartEditorScriptEditor extends ChartEditorBaseToolbox
     this.x = 150;
     this.y = 250;
 
+    // refresh();
+    fetch(true);
+  }
+
+  public override function refresh():Void
+  {
+    fetch();
+    scriptText.text = curScript;
+    trace("Script Editor Refreshed!");
+  }
+
+  /**
+   * fetch the song script name if exist
+   * @param load - refresh the Text Area (Optional)
+   */
+  function fetch(?load:Bool = false):Void
+  {
     curSongName = chartEditorState.currentSongName.replace(' ', '');
+    for (i in specialChars)
+    {
+      if (StringTools.contains(curSongName, i)) curSongName = curSongName.replace(i, '');
+    }
+    trace(curSongName);
     #if sys
     if (FileUtil.doesFileExist(Paths.file('scripts/songs/${curSongName.toLowerCase()}.hxc')))
     {
       curScript = FileUtil.readStringFromPath(Paths.file('scripts/songs/${curSongName.toLowerCase()}.hxc'));
       curScript = curScript.replace('\t', '    ');
+      trace("Script found! Loading");
     }
     else
     {
@@ -73,13 +101,10 @@ class ChartEditorScriptEditor extends ChartEditorBaseToolbox
     curScript = "ERROR: Script Editor not implemented for this platform";
     #end
 
-    refresh();
-  }
-
-  public override function refresh():Void
-  {
-    scriptText.text = curScript;
-    trace("Script Editor Refreshed!");
+    if (load)
+    {
+      scriptText.text = curScript;
+    }
   }
 
   public static function build(chartEditorState:ChartEditorState):ChartEditorScriptEditor

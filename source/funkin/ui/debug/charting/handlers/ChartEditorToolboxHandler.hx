@@ -101,7 +101,7 @@ class ChartEditorToolboxHandler
         case ChartEditorState.CHART_EDITOR_TOOLBOX_OPPONENT_PREVIEW_LAYOUT:
           onShowToolboxOpponentPreview(state, toolbox);
         case ChartEditorState.CHART_EDITOR_TOOLBOX_SCRIPT_EDITOR_LAYOUT:
-          cast(toolbox, ChartEditorBaseToolbox).refresh();
+          onShowToolboxScriptEditor(state, toolbox);
         default:
           // This happens if you try to load an unknown layout.
           trace('ChartEditorToolboxHandler.showToolbox() - Unknown toolbox ID: $id');
@@ -438,6 +438,8 @@ class ChartEditorToolboxHandler
   }
 
   static function onShowToolboxOpponentPreview(state:ChartEditorState, toolbox:CollapsibleDialog):Void {}
+
+  static function onShowToolboxScriptEditor(state:ChartEditorState, toolbox:CollapsibleDialog):Void {}
 
   static function onHideToolboxOpponentPreview(state:ChartEditorState, toolbox:CollapsibleDialog):Void {}
 

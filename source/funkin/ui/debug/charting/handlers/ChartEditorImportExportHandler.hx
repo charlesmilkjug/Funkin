@@ -104,6 +104,7 @@ class ChartEditorImportExportHandler
     state.postLoadInstrumental();
 
     state.refreshToolbox(ChartEditorState.CHART_EDITOR_TOOLBOX_METADATA_LAYOUT);
+    state.refreshToolbox(ChartEditorState.CHART_EDITOR_TOOLBOX_SCRIPT_EDITOR_LAYOUT);
 
     state.success('Success', 'Loaded song (${rawSongMetadata[0].songName})');
 
