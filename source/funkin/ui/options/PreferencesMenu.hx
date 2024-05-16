@@ -64,7 +64,7 @@ class PreferencesMenu extends Page
       Preferences.ghostTapping = value;
     }, Preferences.ghostTapping);
     #if !web
-    createPrefItemCounter('Framerate', 'It\'s self explanatory', function(value:Int):Void {
+    createPrefItemCounter('Framerate', 'Self explanatory', function(value:Int):Void {
       Preferences.framerate = value;
     }, Preferences.framerate, Constants.MIN_FRAMERATE, Constants.MAX_FRAMERATE);
     #end
@@ -80,7 +80,7 @@ class PreferencesMenu extends Page
     createPrefItemCheckbox('Auto Pause', 'Automatically pause the game when it loses focus', function(value:Bool):Void {
       Preferences.autoPause = value;
     }, Preferences.autoPause);
-    createPrefItemSlider('Background dim', 'How dark is the dim behind gameplay', function(value:Float):Void {
+    createPrefItemSlider('Lane Underlay', 'Set the opacity of the note underlay', function(value:Float):Void {
       Preferences.gameplayBackgroundAlpha = value;
     }, Preferences.gameplayBackgroundAlpha, 0, 1, 0.1);
   }
