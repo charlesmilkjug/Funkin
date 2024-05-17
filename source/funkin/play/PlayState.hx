@@ -4,6 +4,7 @@ import flixel.FlxCamera;
 import flixel.FlxObject;
 import flixel.FlxSubState;
 import flixel.FlxSprite;
+import flixel.FlxSprite;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.addons.transition.Transition;
 import flixel.math.FlxMath;
@@ -35,6 +36,7 @@ import funkin.play.character.CharacterData.CharacterDataParser;
 import funkin.play.components.ComboMilestone;
 import funkin.play.components.HealthIcon;
 import funkin.play.components.PopUpStuff;
+import funkin.play.components.SongPosBar;
 import funkin.play.cutscene.VanillaCutscenes;
 import funkin.play.cutscene.VideoCutscene;
 import funkin.play.cutscene.dialogue.Conversation;
@@ -509,6 +511,11 @@ class PlayState extends MusicBeatSubState
   var scoreText:FlxText;
 
   /**
+   * The bar which displays the song position.
+   */
+  var songPositionBar:SongPosBar;
+
+  /**
    * The bar which displays the player's health.
    * Dynamically updated based on the value of `healthLerp` (which is based on `health`).
    */
@@ -519,16 +526,6 @@ class PlayState extends MusicBeatSubState
    * Emma says the image is slightly skewed so I'm leaving it as an image instead of a `createGraphic`.
    */
   public var healthBarBG:FunkinSprite;
-
-  /**
-   * The bar which displays the time of the song.
-   */
-  public var timeBar:FlxBar;
-
-  /**
-   * The background image used for the time bar.
-   */
-  public var timeBarBG:FunkinSprite;
 
   /**
    * The FlxText which displays the time of the song.
@@ -642,7 +639,7 @@ class PlayState extends MusicBeatSubState
   /**
    * The length of the current song, in milliseconds.
    */
-  var currentSongLengthMs(get, never):Float;
+  public var currentSongLengthMs(get, never):Float;
 
   function get_currentSongLengthMs():Float
   {
@@ -769,42 +766,6 @@ class PlayState extends MusicBeatSubState
 
     // The song is now loaded. We can continue to initialize the play state.
     initCameras();
-
-    // Initializes the time bar.
-    timeText = new FlxText(Constants.STRUMLINE_X_OFFSET + (FlxG.width / 2) - 248, 19, 400, "", 32);
-    timeText.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-    timeText.scrollFactor.set();
-    timeText.borderSize = 2;
-    timeText.visible = true;
-    timeText.zIndex = 804;
-    timeText.alpha = 0;
-
-    timeBarBG = FunkinSprite.create(Constants.STRUMLINE_X_OFFSET + (FlxG.width / 2) - 248, timeText.y + (timeText.height / 4), 'timeBar');
-    timeBarBG.zIndex = 803;
-    timeBarBG.alpha = 0;
-
-    timeBar = new FlxBar(timeBarBG.x + 4, timeBarBG.y + 4, LEFT_TO_RIGHT, Std.int(timeBarBG.width - 8), Std.int(timeBarBG.height - 8), this, 'songPercent', 0,
-      1);
-    timeBar.createFilledBar(0xFF8C8C8C, 0xFF73FF91);
-    timeBar.scrollFactor.x = 0;
-    timeBar.scrollFactor.y = 0;
-    timeBar.numDivisions = 800;
-    timeBar.zIndex = 802;
-    timeBar.visible = true;
-    timeBar.alpha = 0;
-
-    add(timeBar);
-    add(timeBarBG);
-    add(timeText);
-
-    if (Preferences.downscroll)
-    {
-      timeText.y = FlxG.height - 44;
-      timeBarBG.y = timeText.y + (timeText.height / 4);
-      timeBar.y = timeBarBG.y + 4;
-    }
-
-    timeText.cameras = timeBarBG.cameras = timeBar.cameras = [camHUD];
 
     initHealthBar();
     if (!isMinimalMode)
@@ -965,13 +926,6 @@ class PlayState extends MusicBeatSubState
     updateHealthBar();
     updateScoreText();
 
-    // Update the song's current time.
-    if (timeBar != null)
-    {
-      songPercent = (Conductor.instance.songPosition / currentSongLengthMs);
-      timeText.text = FlxStringUtil.formatTime((currentSongLengthMs - Conductor.instance.songPosition) / 1000, false);
-    }
-
     // Handle restarting the song when needed (player death or pressing Retry)
     if (needsReset)
     {
@@ -1053,9 +1007,6 @@ class PlayState extends MusicBeatSubState
       ratingName = "?";
       Highscore.tallies.combo = 0;
       songPercent = 0;
-      timeBar.alpha = 0;
-      timeBarBG.alpha = 0;
-      timeText.alpha = 0;
       judgementCounter.text = 'NPS: 0 (Max: 0)\nKiller!!! - 0\nSick!! - 0\nGood! -  0\nBad - 0\nShit - 0';
       Countdown.performCountdown(currentStageId.startsWith('school'));
 
@@ -1730,6 +1681,13 @@ class PlayState extends MusicBeatSubState
     healthBar.zIndex = 800;
     add(healthBar);
 
+    if (Preferences.songPositionBar && !isMinimalMode)
+    {
+      songPositionBar = new SongPosBar();
+      songPositionBar.zIndex = 802;
+      add(songPositionBar);
+    }
+
     // The score text below the health bar.
     scoreText = new FlxText(0, healthBarBG.y + 41, FlxG.width, "", 20);
     scoreText.setFormat(Paths.font('vcr.ttf'), 16, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
@@ -1877,6 +1835,12 @@ class PlayState extends MusicBeatSubState
       add(iconP1);
       iconP1.cameras = [camHUD];
     }
+
+    // CREATE HEALTH BAR WITH CHARACTERS COLORS
+    if (Preferences.coloredHealthBar) healthBar.createFilledBar(iconP2.getDominantColor(), iconP1.getDominantColor());
+
+    // CREATE SONG POSITION BAR
+    if (Preferences.songPositionBar) songPositionBar.initSongPosBar();
 
     //
     // ADD CHARACTERS TO SCENE
@@ -2491,6 +2455,8 @@ class PlayState extends MusicBeatSubState
         // Grant the player health.
         health += Constants.HEALTH_HOLD_BONUS_PER_SECOND * elapsed;
         songScore += Std.int(Constants.SCORE_HOLD_BONUS_PER_SECOND * elapsed);
+        // Make sure the player keeps singing while the note is held.
+        if (currentStage != null && currentStage.getBoyfriend() != null && currentStage.getBoyfriend().isSinging()) currentStage.getBoyfriend().holdTimer = 0;
       }
 
       if (holdNote.missedNote && !holdNote.handledMiss)
@@ -2723,7 +2689,9 @@ class PlayState extends MusicBeatSubState
     if (playSound)
     {
       vocals.playerVolume = 0;
-      FunkinSound.playOnce(Paths.soundRandom('missnote', 1, 3), FlxG.random.float(0.5, 0.6));
+      FunkinSound.playOnce(Paths.soundRandom('missnote', 1, 3), FlxG.random.float(0.1, 0.2), function() {
+        vocals.playerVolume = 1;
+      });
     }
   }
 
@@ -2778,7 +2746,9 @@ class PlayState extends MusicBeatSubState
     if (event.playSound)
     {
       vocals.playerVolume = 0;
-      FunkinSound.playOnce(Paths.soundRandom('missnote', 1, 3), FlxG.random.float(0.1, 0.2));
+      FunkinSound.playOnce(Paths.soundRandom('missnote', 1, 3), FlxG.random.float(0.1, 0.2), function() {
+        vocals.playerVolume = 1;
+      });
     }
   }
 
@@ -3001,8 +2971,6 @@ class PlayState extends MusicBeatSubState
     }
     comboPopUps.displayRating(daRating);
     if (combo >= 10 || combo == 0) comboPopUps.displayCombo(combo);
-
-    vocals.playerVolume = 1;
   }
 
   /**

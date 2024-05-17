@@ -88,11 +88,13 @@ class Save
           naughtyness: true,
           downscroll: false,
           ghostTapping: false,
+          songPositionBar: false,
           // improvised v-sync
           framerate: #if web 60 #else flixel.math.FlxMath.maxInt(60, lime.app.Application.current.window.displayMode.refreshRate) #end,
           flashingLights: true,
           zoomCamera: true,
           centeredStrums: false,
+          coloredHealthBar: false,
           debugDisplay: false,
           autoPause: true,
           gameplayBackgroundAlpha: 0,
@@ -891,6 +893,12 @@ typedef SaveDataOptions =
   var centerStrums:Bool;
 
   /**
+   * Adds song position bar.
+   * @default `false`
+   */
+  var songPositionBar:Bool;
+
+  /**
    * If enabled, an FPS and memory counter will be displayed even if this is not a debug build.
    * @default `true`
    */
@@ -901,6 +909,12 @@ typedef SaveDataOptions =
    * @default `true`
    */
   var autoPause:Bool;
+
+  /**
+   * Changes default health bar colors to characters dominant color from health icon.
+   * @default `false`
+   */
+  var coloredHealthBar:Bool;
 
   /**
    * How dark the background behind the strumline and approaching arrows should be.

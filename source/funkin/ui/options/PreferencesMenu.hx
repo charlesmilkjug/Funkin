@@ -133,9 +133,15 @@ class PreferencesMenu extends Page
     createPrefItemCheckbox('Camera Zooming on Beat', 'Disable to stop the camera bouncing to the song', function(value:Bool):Void {
       Preferences.zoomCamera = value;
     }, Preferences.zoomCamera);
+    createPrefItemCheckbox('Song Position Bar', 'Adds song position ber', function(value:Bool):Void {
+      Preferences.songPositionBar = value;
+    }, Preferences.songPositionBar);
     createPrefItemCheckbox('Stats Counter', 'Enable to show a FPS and RAM counter', function(value:Bool):Void {
       Preferences.debugDisplay = value;
     }, Preferences.debugDisplay);
+    createPrefItemCheckbox('Colored Health Bar', 'Enable to make the health bar use colors based on icons', function(value:Bool):Void {
+      Preferences.coloredHealthBar = value;
+    }, Preferences.coloredHealthBar);
     createPrefItemCheckbox('Centered Strumline', 'Enable to center the strums', function(value:Bool):Void {
       Preferences.centerStrums = value;
     }, Preferences.centerStrums);
