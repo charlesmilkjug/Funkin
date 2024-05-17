@@ -108,12 +108,12 @@ class MainMenuState extends MusicBeatState
     createMenuItem('merch', 'mainmenu/merch', selectMerch, hasPopupBlocker);
     #end
 
-    createMenuItem('options', 'mainmenu/options', function() {
-      startExitState(() -> new funkin.ui.options.OptionsState());
-    });
-
     createMenuItem('credits', 'mainmenu/credits', function() {
       startExitState(() -> new funkin.ui.credits.CreditsState());
+    });
+
+    createMenuItem('options', 'mainmenu/options', function() {
+      startExitState(() -> new funkin.ui.options.OptionsState());
     });
 
     // Reset position of menu items.

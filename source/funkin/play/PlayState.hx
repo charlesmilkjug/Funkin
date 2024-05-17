@@ -797,7 +797,12 @@ class PlayState extends MusicBeatSubState
     add(timeBarBG);
     add(timeText);
 
-    if (Preferences.downscroll) timeText.y = FlxG.height - 44;
+    if (Preferences.downscroll)
+    {
+      timeText.y = FlxG.height - 44;
+      timeBarBG.y = timeText.y + (timeText.height / 4);
+      timeBar.y = timeBarBG.y + 4;
+    }
 
     timeText.cameras = timeBarBG.cameras = timeBar.cameras = [camHUD];
 
