@@ -97,7 +97,7 @@ class HealthIcon extends FunkinSprite
    * The size of a non-pixel icon when using the legacy format.
    * Remember, modern icons can be any size.
    */
-  public static final HEALTH_ICON_SIZE:Int = 150;
+  public var HEALTH_ICON_SIZE:Int = 150;
 
   /**
    * The size of a pixel icon when using the legacy format.

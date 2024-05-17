@@ -92,6 +92,7 @@ class Save
           framerate: #if web 60 #else flixel.math.FlxMath.maxInt(60, lime.app.Application.current.window.displayMode.refreshRate) #end,
           flashingLights: true,
           zoomCamera: true,
+          centeredStrums: false,
           debugDisplay: false,
           autoPause: true,
           gameplayBackgroundAlpha: 0,
@@ -883,8 +884,15 @@ typedef SaveDataOptions =
   var zoomCamera:Bool;
 
   /**
-   * If enabled, an FPS and memory counter will be displayed even if this is not a debug build.
+   * If enabled, the strumline gets centered.
+   * Otherwise, move the strumline a bit to the 2nd half of the screen, in case of that focusing thing.
    * @default `false`
+   */
+  var centerStrums:Bool;
+
+  /**
+   * If enabled, an FPS and memory counter will be displayed even if this is not a debug build.
+   * @default `true`
    */
   var debugDisplay:Bool;
 

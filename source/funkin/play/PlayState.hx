@@ -210,7 +210,7 @@ class PlayState extends MusicBeatSubState
   /**
    * The player's current accuracy.
    */
-  public var ratingPercent:Float;
+  public var ratingPercent:Float = 100;
 
   /**
    * The player's current rating.
@@ -221,6 +221,11 @@ class PlayState extends MusicBeatSubState
    * The player's current FC rating.
    */
   public var ratingFC:String = "Clear";
+
+  /**
+   * The current percentage for a song.
+   */
+  public var songPercent:Float = 0;
 
   /**
    * The amount of notes the player has hit.
@@ -526,6 +531,16 @@ class PlayState extends MusicBeatSubState
   public var timeBarBG:FunkinSprite;
 
   /**
+   * The FlxText which displays the time of the song.
+   */
+  var timeText:FlxText;
+
+  /**
+   * The FlxText which displays the judgements, NPS, etc.
+   */
+  var judgementCounter:FlxText;
+
+  /**
    * The health icon representing the player.
    */
   public var iconP1:HealthIcon;
@@ -702,20 +717,20 @@ class PlayState extends MusicBeatSubState
     if (!assertChartExists()) return;
 
     // TODO: Add something to toggle this on!
-    if (false)
-    {
-      // Displays the camera follow point as a sprite for debug purposes.
-      var cameraFollowPoint = new FunkinSprite(0, 0);
-      cameraFollowPoint.makeSolidColor(8, 8, 0xFF00FF00);
-      cameraFollowPoint.visible = false;
-      cameraFollowPoint.zIndex = 1000000;
-      this.cameraFollowPoint = cameraFollowPoint;
-    }
-    else
-    {
-      // Camera follow point is an invisible point in space.
-      cameraFollowPoint = new FlxObject(0, 0);
-    }
+    /* if (false)
+      {
+        // Displays the camera follow point as a sprite for debug purposes.
+        var cameraFollowPoint = new FunkinSprite(0, 0);
+        cameraFollowPoint.makeSolidColor(8, 8, 0xFF00FF00);
+        cameraFollowPoint.visible = false;
+        cameraFollowPoint.zIndex = 1000000;
+        this.cameraFollowPoint = cameraFollowPoint;
+      }
+      else
+      { */
+    // Camera follow point is an invisible point in space.
+    cameraFollowPoint = new FlxObject(0, 0);
+    // }
 
     // Reduce physics accuracy (who cares!!!) to improve animation quality.
     FlxG.fixedTimestep = false;
@@ -725,14 +740,20 @@ class PlayState extends MusicBeatSubState
     // This state receives draw calls even when a substate is active.
     this.persistentDraw = true;
 
-    // Stop any pre-existing music.
-    if (!overrideMusic && FlxG.sound.music != null) FlxG.sound.music.stop();
-
-    // Prepare the current song's instrumental and vocals to be played.
-    if (!overrideMusic && currentChart != null)
+    if (!overrideMusic)
     {
-      currentChart.cacheInst();
-      currentChart.cacheVocals();
+      // Stop any pre-existing music.
+      if (FlxG.sound.music != null) FlxG.sound.music.stop();
+
+      // Prepare the current song's instrumental and vocals to be played.
+      if (currentChart != null)
+      {
+        currentChart.cacheInst();
+        currentChart.cacheVocals();
+
+        currentChart.playInst(0.0, false);
+        FlxG.sound.music.stop();
+      }
     }
 
     // Prepare the Conductor.
@@ -748,6 +769,38 @@ class PlayState extends MusicBeatSubState
 
     // The song is now loaded. We can continue to initialize the play state.
     initCameras();
+
+    // Initializes the time bar.
+    timeText = new FlxText(Constants.STRUMLINE_X_OFFSET + (FlxG.width / 2) - 248, 19, 400, "", 32);
+    timeText.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+    timeText.scrollFactor.set();
+    timeText.borderSize = 2;
+    timeText.visible = true;
+    timeText.zIndex = 804;
+    timeText.alpha = 0;
+
+    timeBarBG = FunkinSprite.create(Constants.STRUMLINE_X_OFFSET + (FlxG.width / 2) - 248, timeText.y + (timeText.height / 4), 'timeBar');
+    timeBarBG.zIndex = 803;
+    timeBarBG.alpha = 0;
+
+    timeBar = new FlxBar(timeBarBG.x + 4, timeBarBG.y + 4, LEFT_TO_RIGHT, Std.int(timeBarBG.width - 8), Std.int(timeBarBG.height - 8), this, 'songPercent', 0,
+      1);
+    timeBar.createFilledBar(0xFF8C8C8C, 0xFF73FF91);
+    timeBar.scrollFactor.x = 0;
+    timeBar.scrollFactor.y = 0;
+    timeBar.numDivisions = 800;
+    timeBar.zIndex = 802;
+    timeBar.visible = true;
+    timeBar.alpha = 0;
+
+    add(timeBar);
+    add(timeBarBG);
+    add(timeText);
+
+    if (Preferences.downscroll) timeText.y = FlxG.height - 44;
+
+    timeText.cameras = timeBarBG.cameras = timeBar.cameras = [camHUD];
+
     initHealthBar();
     if (!isMinimalMode)
     {
@@ -759,6 +812,18 @@ class PlayState extends MusicBeatSubState
       initMinimalMode();
     }
     initStrumlines();
+
+    // Initialize the judgements, judgement counter, and combo meter.
+    judgementCounter = new FlxText(20, 0, 0, "", 20);
+    judgementCounter.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.WHITE, FlxTextAlign.LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+    judgementCounter.scrollFactor.set();
+    judgementCounter.screenCenter(Y);
+    judgementCounter.borderSize = 1.25;
+    add(judgementCounter);
+
+    judgementCounter.text = 'NPS: 0 (Max: 0)\nKiller - 0\nSick!! - 0\nGood! - 0\nBad - 0\nShit - 0';
+
+    judgementCounter.cameras = [camHUD];
 
     // Initialize the judgements and combo meter.
     comboPopUps = new PopUpStuff();
@@ -883,7 +948,7 @@ class PlayState extends MusicBeatSubState
     return true;
   }
 
-  public override function update(elapsed:Float):Void
+  override public function update(elapsed:Float):Void
   {
     // TOTAL: 9.42% CPU Time when profiled in VS 2019.
 
@@ -894,6 +959,13 @@ class PlayState extends MusicBeatSubState
     var list = FlxG.sound.list;
     updateHealthBar();
     updateScoreText();
+
+    // Update the song's current time.
+    if (timeBar != null)
+    {
+      songPercent = (Conductor.instance.songPosition / currentSongLengthMs);
+      timeText.text = FlxStringUtil.formatTime((currentSongLengthMs - Conductor.instance.songPosition) / 1000, false);
+    }
 
     // Handle restarting the song when needed (player death or pressing Retry)
     if (needsReset)
@@ -930,9 +1002,13 @@ class PlayState extends MusicBeatSubState
         if (vocals != null) vocals.stop();
         vocals = currentChart.buildVocals();
 
-        if (vocals.members.length == 0)
+        if (vocals.members.length == 0) trace('WARNING: No vocals found for this song.');
+        else
         {
-          trace('WARNING: No vocals found for this song.');
+          vocals.volume = 0.0;
+          vocals.play();
+          vocals.stop();
+          vocals.volume = 1.0;
         }
       }
       vocals.pause();
@@ -968,9 +1044,14 @@ class PlayState extends MusicBeatSubState
       totalNotesHit = 0;
       totalNotesPlayed = 0;
       healthDisplay = 50;
-      ratingPercent = 100;
+      ratingPercent = 0;
       ratingName = "?";
       Highscore.tallies.combo = 0;
+      songPercent = 0;
+      timeBar.alpha = 0;
+      timeBarBG.alpha = 0;
+      timeText.alpha = 0;
+      judgementCounter.text = 'NPS: 0 (Max: 0)\nKiller!!! - 0\nSick!! - 0\nGood! -  0\nBad - 0\nShit - 0';
       Countdown.performCountdown(currentStageId.startsWith('school'));
 
       needsReset = false;
@@ -1065,6 +1146,19 @@ class PlayState extends MusicBeatSubState
 
     // Don't round this for smooth health bar movement.
     healthDisplay = health / 0.02;
+
+    // Manage how NPS works.
+    var balls = npsArray.length - 1;
+    while (balls >= 0)
+    {
+      var cock:Date = npsArray[balls];
+      if (cock != null && cock.getTime() + 1000 < Date.now().getTime()) npsArray.remove(cock);
+      else
+        balls = 0;
+      balls--;
+    }
+    notesPerSecond = npsArray.length;
+    if (notesPerSecond > maxNps) maxNps = notesPerSecond;
 
     // Apply camera zoom + multipliers.
     if (subState == null && cameraZoomRate > 0.0) // && !isInCutscene)
@@ -1280,6 +1374,7 @@ class PlayState extends MusicBeatSubState
         cameraFollowTween.active = false;
         cameraTweensPausedBySubState.add(cameraFollowTween);
       }
+      FlxG.camera.followLerp = 0.0;
 
       if (cameraZoomTween != null && cameraZoomTween.active)
       {
@@ -1329,6 +1424,7 @@ class PlayState extends MusicBeatSubState
         camTween.active = true;
       }
       cameraTweensPausedBySubState.clear();
+      FlxG.camera.followLerp = Constants.DEFAULT_CAMERA_FOLLOW_RATE;
 
       if (currentConversation != null)
       {
@@ -1614,18 +1710,19 @@ class PlayState extends MusicBeatSubState
    */
   function initHealthBar():Void
   {
+    // The health bar for the opponent and player.
     var healthBarYPos:Float = Preferences.downscroll ? FlxG.height * 0.1 : FlxG.height * 0.9;
     healthBarBG = FunkinSprite.create(0, healthBarYPos, 'healthBar');
     healthBarBG.screenCenter(X);
     healthBarBG.scrollFactor.set(0, 0);
-    healthBarBG.zIndex = 800;
+    healthBarBG.zIndex = 801;
     add(healthBarBG);
 
     healthBar = new FlxBar(healthBarBG.x + 4, healthBarBG.y + 4, RIGHT_TO_LEFT, Std.int(healthBarBG.width - 8), Std.int(healthBarBG.height - 8), this,
       'healthLerp', 0, 2);
     healthBar.scrollFactor.set();
     healthBar.createFilledBar(Constants.COLOR_HEALTH_BAR_RED, Constants.COLOR_HEALTH_BAR_GREEN);
-    healthBar.zIndex = 801;
+    healthBar.zIndex = 800;
     add(healthBar);
 
     // The score text below the health bar.
@@ -1843,8 +1940,9 @@ class PlayState extends MusicBeatSubState
     add(strumlineBackground);
 
     // Position the player strumline on the right half of the screen
-    playerStrumline.x = FlxG.width / 2 + Constants.STRUMLINE_X_OFFSET; // Classic style
-    // playerStrumline.x = FlxG.width - playerStrumline.width - Constants.STRUMLINE_X_OFFSET; // Centered style
+    if (!Preferences.centerStrums) playerStrumline.x = FlxG.width - playerStrumline.width - Constants.STRUMLINE_X_OFFSET; // Centered style
+    else
+      playerStrumline.x = FlxG.width / 2 + Constants.STRUMLINE_X_OFFSET; // Classic style
     playerStrumline.y = Preferences.downscroll ? FlxG.height - playerStrumline.height - Constants.STRUMLINE_Y_OFFSET : Constants.STRUMLINE_Y_OFFSET;
     playerStrumline.zIndex = 1001;
     playerStrumline.cameras = [camHUD];
@@ -1923,9 +2021,13 @@ class PlayState extends MusicBeatSubState
       if (vocals != null) vocals.stop();
       vocals = currentChart.buildVocals();
 
-      if (vocals.members.length == 0)
+      if (vocals.members.length == 0) trace('WARNING: No vocals found for this song.');
+      else
       {
-        trace('WARNING: No vocals found for this song.');
+        vocals.volume = 0.0;
+        vocals.play();
+        vocals.stop();
+        vocals.volume = 1.0;
       }
     }
 
@@ -2127,7 +2229,7 @@ class PlayState extends MusicBeatSubState
     var accuracy:String = "?";
     if (totalNotesPlayed != 0)
     {
-      var percent:Float = Math.floor(ratingPercent * 100);
+      var percent:Float = Math.floor(ratingPercent * 100 * 2);
       accuracy = percent + '%';
     }
 
@@ -2142,7 +2244,7 @@ class PlayState extends MusicBeatSubState
    */
   function doScoreBop():Void
   {
-    if (!scoreZoom || scoreText == null) return;
+    if (/*!scoreZoom || */ scoreText == null) return;
 
     if (scoreTween != null) scoreTween.cancel();
 
@@ -2553,6 +2655,8 @@ class PlayState extends MusicBeatSubState
     applyScore(event.score, event.judgement, event.healthChange, event.isComboBreak);
     popUpScore(event.judgement);
 
+    if (!note.isHoldNote) npsArray.unshift(Date.now());
+
     totalNotesPlayed++;
     doScoreBop();
   }
@@ -2780,16 +2884,18 @@ class PlayState extends MusicBeatSubState
     totalNotesPlayed++;
     totalNotesHit += ratingMod;
 
+    var killerJudge = Highscore.tallies.killer;
+    var sickJudge = Highscore.tallies.sick;
+    var goodJudge = Highscore.tallies.good;
+    var badJudge = Highscore.tallies.bad;
+    var shitJudge = Highscore.tallies.shit;
+
     if (songMisses == 0)
     {
-      var sickJudge = Highscore.tallies.sick;
-      var goodJudge = Highscore.tallies.good;
-      var badJudge = Highscore.tallies.bad;
-      var shitJudge = Highscore.tallies.shit;
-
       if (badJudge > 0 || shitJudge > 0) ratingFC = 'FC';
       else if (goodJudge > 0) ratingFC = 'GFC';
       else if (sickJudge > 0) ratingFC = 'SFC';
+      else if (killerJudge > 0) ratingFC = 'KFC';
     }
     else
     {
@@ -2797,6 +2903,8 @@ class PlayState extends MusicBeatSubState
       else
         ratingFC = 'Clear';
     }
+
+    judgementCounter.text = 'NPS: ${notesPerSecond} (Max: ${maxNps})\nKiller!!! - ${killerJudge}\nSick!! - ${sickJudge}\nGood! - ${goodJudge}\nBad - ${badJudge}\nShit - ${shitJudge}';
 
     health += healthChange;
 
@@ -2819,11 +2927,14 @@ class PlayState extends MusicBeatSubState
    */
   function popUpScore(daRating:String, ?combo:Int):Void
   {
-    if (totalNotesPlayed != 0)
+    ratingName = '?';
+    if (totalNotesPlayed != 0) // To prevent dividing by 0.
     {
+      // Rating percent.
       ratingPercent = Math.min(1, Math.max(0, totalNotesHit / totalNotesPlayed));
 
-      ratingName = ratingStuff[ratingStuff.length - 1][0];
+      // Rating name.
+      ratingName = ratingStuff[ratingStuff.length - 1][0]; // Uses last string.
       if (ratingPercent < 1)
       {
         for (i in 0...ratingStuff.length - 1)
@@ -3224,18 +3335,20 @@ class PlayState extends MusicBeatSubState
     var targetDad:Bool = currentStage.getDad() != null && currentStage.getDad().characterId == 'gf';
     var targetBF:Bool = currentStage.getGirlfriend() == null && !targetDad;
 
+    var target:FlxObject;
     if (targetBF)
     {
-      FlxG.camera.follow(currentStage.getBoyfriend(), null, 0.05);
+      target = currentStage.getBoyfriend();
     }
     else if (targetDad)
     {
-      FlxG.camera.follow(currentStage.getDad(), null, 0.05);
+      target = currentStage.getDad();
     }
     else
     {
-      FlxG.camera.follow(currentStage.getGirlfriend(), null, 0.05);
+      target = currentStage.getGirlfriend();
     }
+    FlxG.camera.follow(target, null, 0.05);
 
     // TODO: Make target offset configurable.
     // In the meantime, we have to replace the zoom animation with a fade out.
@@ -3337,7 +3450,7 @@ class PlayState extends MusicBeatSubState
       cancelAllCameraTweens();
     }
 
-    FlxG.camera.follow(cameraFollowPoint, LOCKON, 0.04);
+    FlxG.camera.follow(cameraFollowPoint, LOCKON, Constants.DEFAULT_CAMERA_FOLLOW_RATE);
     FlxG.camera.targetOffset.set();
 
     if (resetZoom)

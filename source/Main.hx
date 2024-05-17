@@ -2,6 +2,7 @@ package;
 
 import flixel.FlxGame;
 import flixel.FlxState;
+import flixel.math.FlxMath;
 import funkin.util.logging.CrashHandler;
 import funkin.ui.debug.MemoryCounter;
 import funkin.save.Save;
@@ -107,7 +108,7 @@ class Main extends Sprite
     // George recommends binding the save before FlxGame is created.
     Save.load();
 
-    if (framerate == null) framerate = #if web 60 #else Save.instance.options.framerate #end;
+    if (framerate == null) framerate = FlxMath.maxInt(60, Save.instance.options.framerate);
     var game:FlxGame = new FlxGame(gameWidth, gameHeight, initialState, framerate, framerate, skipSplash, startFullscreen);
 
     // FlxG.game._customSoundTray wants just the class, it calls new from

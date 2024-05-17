@@ -73,13 +73,14 @@ class Preferences
 
   static function get_framerate():Int
   {
-    return Save?.instance?.options?.framerate ?? 60;
+    return Save?.instance?.options?.framerate ?? FlxG.updateFramerate;
   }
 
   static function set_framerate(value:Int):Int
   {
     #if web
     FlxG.log.warn("You can't set framerate on web targets!");
+    return FlxG.updateFramerate;
     #else
     FlxG.updateFramerate = value;
     FlxG.drawFramerate = value;
@@ -87,8 +88,8 @@ class Preferences
     var save:Save = Save.instance;
     save.options.framerate = value;
     save.flush();
-    #end
     return value;
+    #end
   }
 
   /**
@@ -111,7 +112,7 @@ class Preferences
   }
 
   /**
-   * If disabled, the camera bump synchronized to the beat.
+   * If enabled, the camera bump synchronizes to the beat.
    * @default `false`
    */
   public static var zoomCamera(get, set):Bool;
@@ -130,14 +131,34 @@ class Preferences
   }
 
   /**
-   * If enabled, an FPS and memory counter will be displayed even if this is not a debug build.
+   * If enabled, the strumline gets centered.
+   * Otherwise, move the strumline a bit to the 2nd half of the screen, in case of that focusing thing.
    * @default `false`
+   */
+  public static var centerStrums(get, set):Bool;
+
+  static function get_centerStrums():Bool
+  {
+    return Save?.instance?.options?.centerStrums ?? false;
+  }
+
+  static function set_centerStrums(value:Bool):Bool
+  {
+    var save:Save = Save.instance;
+    save.options.centerStrums = value;
+    save.flush();
+    return value;
+  }
+
+  /**
+   * If enabled, an FPS and memory counter will be displayed even if this is not a debug build.
+   * @default `true`
    */
   public static var debugDisplay(get, set):Bool;
 
   static function get_debugDisplay():Bool
   {
-    return Save?.instance?.options?.debugDisplay;
+    return Save?.instance?.options?.debugDisplay ?? true;
   }
 
   static function set_debugDisplay(value:Bool):Bool

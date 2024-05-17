@@ -244,7 +244,7 @@ class GameOverSubState extends MusicBeatSubState
     }
 
     // KEYBOARD ONLY: Return to the menu when pressing the assigned key.
-    if (controls.BACK && !mustNotExit)
+    if (controls.BACK && !mustNotExit && !isEnding)
     {
       blueballed = false;
       PlayState.instance.deathCounter = 0;
@@ -441,58 +441,59 @@ class GameOverSubState extends MusicBeatSubState
   public static function playBlueBalledSFX():Void
   {
     blueballed = true;
-    if (Assets.exists(Paths.sound('gameplay/gameover/fnf_loss_sfx' + blueBallSuffix)))
+    final sound = Paths.sound('gameplay/gameover/fnf_loss_sfx' + blueBallSuffix);
+    if (Assets.exists(sound))
     {
-      FunkinSound.playOnce(Paths.sound('gameplay/gameover/fnf_loss_sfx' + blueBallSuffix));
+      FunkinSound.playOnce(sound);
     }
     else
     {
-      FlxG.log.error('Missing blue ball sound effect: ' + Paths.sound('gameplay/gameover/fnf_loss_sfx' + blueBallSuffix));
+      FlxG.log.error('Missing blue ball sound effect: ' + sound);
     }
-  }
-
-  var playingJeffQuote:Bool = false;
-
-  /**
-   * Week 7-specific hardcoded behavior, to play a custom death quote.
-   * TODO: Make this a module somehow.
-   */
-  function playJeffQuote():Void
-  {
-    var randomCensor:Array<Int> = [];
-
-    if (!Preferences.naughtyness) randomCensor = [1, 3, 8, 13, 17, 21];
-
-    FunkinSound.playOnce(Paths.sound('jeffGameover/jeffGameover-' + FlxG.random.int(1, 25, randomCensor)), function() {
-      // Once the quote ends, fade in the game over music.
-      if (!isEnding && gameOverMusic != null)
-      {
-        gameOverMusic.fadeIn(4, 0.2, 1);
-      }
-    });
-  }
-
-  public override function destroy():Void
-  {
-    super.destroy();
-    if (gameOverMusic != null)
-    {
-      gameOverMusic.stop();
-      gameOverMusic = null;
-    }
-    blueballed = false;
-    instance = null;
-  }
-
-  public override function toString():String
-  {
-    return 'GameOverSubState';
   }
 }
 
+var playingJeffQuote:Bool = false;
+
 /**
+ * Week 7-specific hardcoded behavior, to play a custom death quote.
+ * TODO: Make this a module somehow.
+ */
+function playJeffQuote():Void
+{
+  var randomCensor:Array<Int> = [];
+
+  if (!Preferences.naughtyness) randomCensor = [1, 3, 8, 13, 17, 21];
+
+  FunkinSound.playOnce(Paths.sound('jeffGameover/jeffGameover-' + FlxG.random.int(1, 25, randomCensor)), function() {
+    // Once the quote ends, fade in the game over music.
+    if (!isEnding && gameOverMusic != null)
+    {
+      gameOverMusic.fadeIn(4, 0.2, 1);
+    }
+  });
+}
+
+public override function destroy():Void
+{
+  super.destroy();
+  if (gameOverMusic != null)
+  {
+    gameOverMusic.stop();
+    gameOverMusic = null;
+  }
+  blueballed = false;
+  instance = null;
+}
+
+public override function toString():String
+{
+  return 'GameOverSubState';
+}
+} /**
  * Parameters used to instantiate a GameOverSubState.
  */
+
 typedef GameOverParams =
 {
   var isChartingMode:Bool;

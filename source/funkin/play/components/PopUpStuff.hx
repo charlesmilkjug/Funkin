@@ -7,17 +7,20 @@ import flixel.util.FlxDirection;
 import funkin.graphics.FunkinSprite;
 import funkin.play.PlayState;
 import funkin.util.TimerUtil;
+import funkin.util.SortUtil;
+import flixel.util.FlxSort;
 
-class PopUpStuff extends FlxTypedGroup<FlxSprite>
+class PopUpStuff extends FlxTypedGroup<FunkinSprite>
 {
   public var offsets:Array<Int> = [0, 0];
 
   override public function new()
   {
     super();
+    this.ID = 0;
   }
 
-  public function displayRating(daRating:String)
+  public function displayRating(?daRating:String)
   {
     var perfStart:Float = TimerUtil.start();
 
@@ -25,9 +28,10 @@ class PopUpStuff extends FlxTypedGroup<FlxSprite>
 
     var ratingPath:String = daRating;
 
-    if (PlayState.instance.currentStageId.startsWith('school')) ratingPath = "weeb/pixelUI/" + ratingPath + "-pixel";
+    if (PlayState.instance.currentStageId.startsWith('school')) ratingPath = 'weeb/pixelUI/$ratingPath-pixel';
 
-    var rating:FunkinSprite = FunkinSprite.create(0, 0, ratingPath);
+    var rating:FunkinSprite = recycle(FunkinSprite);
+    rating.loadTexture(ratingPath);
     rating.scrollFactor.set(0.2, 0.2);
 
     rating.zIndex = 1000;
@@ -35,19 +39,20 @@ class PopUpStuff extends FlxTypedGroup<FlxSprite>
     // rating.x -= FlxG.camera.scroll.x * 0.2;
     rating.y = (FlxG.camera.height * 0.45 - 60) + offsets[1];
     rating.acceleration.y = 550;
-    rating.velocity.y -= FlxG.random.int(140, 175);
-    rating.velocity.x -= FlxG.random.int(0, 10);
+    rating.velocity.y = -FlxG.random.int(140, 175);
+    rating.velocity.x = -FlxG.random.int(0, 10);
+    rating.ID = this.ID++;
 
     add(rating);
 
     if (PlayState.instance.currentStageId.startsWith('school'))
     {
-      rating.setGraphicSize(Std.int(rating.width * Constants.PIXEL_ART_SCALE * 0.7));
+      rating.setGraphicSize(rating.width * Constants.PIXEL_ART_SCALE * 0.7);
       rating.antialiasing = false;
     }
     else
     {
-      rating.setGraphicSize(Std.int(rating.width * 0.65));
+      rating.setGraphicSize(rating.width * 0.65);
       rating.antialiasing = true;
     }
     rating.updateHitbox();
@@ -58,16 +63,18 @@ class PopUpStuff extends FlxTypedGroup<FlxSprite>
     FlxTween.tween(rating, {alpha: 0}, 0.2,
       {
         onComplete: function(tween:FlxTween) {
-          remove(rating, true);
-          rating.destroy();
+          // remove(rating, true);
+          rating.kill(); // destroy
+          rating.alpha = 1.0;
         },
         startDelay: Conductor.instance.beatLengthMs * 0.001
       });
 
-    trace('displayRating took: ${TimerUtil.seconds(perfStart)}');
+    refresh();
+    // trace('displayRating took: ${TimerUtil.seconds(perfStart)}');
   }
 
-  public function displayCombo(?combo:Int = 0):Int
+  public function displayCombo(?combo:Int):Int
   {
     var perfStart:Float = TimerUtil.start();
 
@@ -129,32 +136,37 @@ class PopUpStuff extends FlxTypedGroup<FlxSprite>
     var daLoop:Int = 1;
     for (i in seperatedScore)
     {
-      var numScore:FunkinSprite = FunkinSprite.create(0, comboSpr.y, pixelShitPart1 + 'num' + Std.int(i) + pixelShitPart2);
+      var numScore:FunkinSprite = recycle(FunkinSprite);
+      numScore.loadTexture(pixelShitPart1 + 'num' + i + pixelShitPart2);
 
       if (PlayState.instance.currentStageId.startsWith('school'))
       {
-        numScore.setGraphicSize(Std.int(numScore.width * Constants.PIXEL_ART_SCALE * 0.7));
+        numScore.setGraphicSize(numScore.width * Constants.PIXEL_ART_SCALE * 0.7);
         numScore.antialiasing = false;
       }
       else
       {
-        numScore.setGraphicSize(Std.int(numScore.width * 0.45));
+        numScore.setGraphicSize(numScore.width * 0.45);
         numScore.antialiasing = true;
       }
       numScore.updateHitbox();
 
-      numScore.x = comboSpr.x - (36 * daLoop) - 65; //- 90;
+      // comboSpr.x
+      numScore.x = numX - (36 * daLoop) - 65; //- 90;
+      numScore.y = numY; // comboSpr.y
       numScore.acceleration.y = FlxG.random.int(250, 300);
-      numScore.velocity.y -= FlxG.random.int(130, 150);
+      numScore.velocity.y = -FlxG.random.int(130, 150);
       numScore.velocity.x = FlxG.random.float(-5, 5);
+      numScore.ID = this.ID++;
 
       add(numScore);
 
       FlxTween.tween(numScore, {alpha: 0}, 0.2,
         {
           onComplete: function(tween:FlxTween) {
-            remove(numScore, true);
-            numScore.destroy();
+            // remove(numScore, true);
+            numScore.kill(); // destroy
+            numScore.alpha = 1.0;
           },
           startDelay: Conductor.instance.beatLengthMs * 0.002
         });
@@ -162,8 +174,14 @@ class PopUpStuff extends FlxTypedGroup<FlxSprite>
       daLoop++;
     }
 
-    trace('displayCombo took: ${TimerUtil.seconds(perfStart)}');
+    refresh();
+    // trace('displayCombo took: ${TimerUtil.seconds(perfStart)}');
 
     return combo;
+  }
+
+  inline public function refresh():Void
+  {
+    sort(SortUtil.byID, FlxSort.ASCENDING);
   }
 }
