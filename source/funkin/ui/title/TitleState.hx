@@ -49,6 +49,7 @@ class TitleState extends MusicBeatState
 
   var curWacky:Array<String> = [];
   var lastBeat:Int = 0;
+  var usesLeft:Int = 5;
   var swagShader:ColorSwap;
 
   var video:Video;
@@ -67,9 +68,11 @@ class TitleState extends MusicBeatState
     // DEBUG BULLSHIT
 
     // netConnection.addEventListener(MouseEvent.MOUSE_DOWN, overlay_onMouseDown);
-    new FlxTimer().start(1, function(tmr:FlxTimer) {
+    if (!initialized) new FlxTimer().start(1, function(tmr:FlxTimer) {
       startIntro();
     });
+    else
+      startIntro();
   }
 
   function client_onMetaData(metaData:Dynamic)
@@ -118,7 +121,7 @@ class TitleState extends MusicBeatState
 
   function startIntro():Void
   {
-    playMenuMusic();
+    if (!initialized || FlxG.sound.music == null) playMenuMusic();
 
     persistentUpdate = true;
 
@@ -180,11 +183,11 @@ class TitleState extends MusicBeatState
 
     ngSpr = new FlxSprite(0, FlxG.height * 0.52);
 
-    if (FlxG.random.bool(1))
+    if (FlxG.random.bool(4))
     {
       ngSpr.loadGraphic(Paths.image('newgrounds_logo_classic'));
     }
-    else if (FlxG.random.bool(30))
+    else if (FlxG.random.bool(32))
     {
       ngSpr.loadGraphic(Paths.image('newgrounds_logo_animated'), true, 600);
       ngSpr.animation.add('idle', [0, 1], 4);
@@ -231,13 +234,14 @@ class TitleState extends MusicBeatState
         overrideExisting: true,
         restartTrack: true
       });
-    // Fade from 0.0 to 0.7 over 4 seconds
+    // Fade from 0.0 to 1 over 4 seconds
     if (shouldFadeIn) FlxG.sound.music.fadeIn(4.0, 0.0, 1.0);
   }
 
   function getIntroTextShit():Array<Array<String>>
   {
     var fullText:String = Assets.getText(Paths.txt('introText'));
+    // mods please just replace this file, i beg of you!!!!!!!!!!!
 
     // Split into lines and remove empty lines
     var firstArray:Array<String> = fullText.split('\n').filter(function(s:String) return s != '');
@@ -278,14 +282,17 @@ class TitleState extends MusicBeatState
     {
       FlxTween.tween(outlineShaderShit, {funnyX: 50, funnyY: 50}, 0.6, {ease: FlxEase.quartOut});
     }
+
     if (FlxG.keys.pressed.D) outlineShaderShit.funnyX += 1;
     // outlineShaderShit.xPos.value[0] += 1;
 
-    if (FlxG.keys.justPressed.Y)
+    if (FlxG.keys.justPressed.Y || usesLeft != 0)
     {
+      usesLeft -= 1;
       FlxTween.cancelTweensOf(FlxG.stage.window, ['x', 'y']);
       FlxTween.tween(FlxG.stage.window, {x: FlxG.stage.window.x + 300}, 1.4, {ease: FlxEase.quadInOut, type: PINGPONG, startDelay: 0.35});
       FlxTween.tween(FlxG.stage.window, {y: FlxG.stage.window.y + 100}, 0.7, {ease: FlxEase.quadInOut, type: PINGPONG});
+      trace(usesLeft);
     }
 
     if (FlxG.sound.music != null) Conductor.instance.update(FlxG.sound.music.time);

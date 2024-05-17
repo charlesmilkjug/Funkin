@@ -311,7 +311,7 @@ class StoryMenuState extends MusicBeatState
 
     highScoreLerp = Std.int(MathUtil.smoothLerp(highScoreLerp, highScore, elapsed, 0.5));
 
-    scoreText.text = 'LEVEL SCORE: ${Math.round(highScoreLerp)}';
+    scoreText.text = 'WEEK SCORE: ${Math.round(highScoreLerp)}'; // ik its called "levels" now but im used to weeks, so uhhh gotta match
 
     levelTitleText.text = currentLevel.getTitle();
     levelTitleText.x = FlxG.width - (levelTitleText.width + 10); // Right align.
@@ -435,10 +435,11 @@ class StoryMenuState extends MusicBeatState
   function changeDifficulty(change:Int = 0):Void
   {
     // "For now, NO erect in story mode" -Dave
+    // "lies" -CharlesCatYT
 
-    var difficultyList:Array<String> = Constants.DEFAULT_DIFFICULTY_LIST;
+    // var difficultyList:Array<String> = Constants.DEFAULT_DIFFICULTY_LIST;
     // Use this line to displays all difficulties
-    // var difficultyList:Array<String> = currentLevel.getDifficulties();
+    var difficultyList:Array<String> = currentLevel.getDifficulties();
     var currentIndex:Int = difficultyList.indexOf(currentDifficultyId);
 
     currentIndex += change;

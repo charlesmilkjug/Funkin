@@ -9,7 +9,7 @@ import flixel.util.FlxColor;
 import flixel.util.FlxSort;
 import flixel.util.FlxTimer;
 
-// its kinda like marqeee html lol!
+// its kinda like marquee html lol!
 class BGScrollingText extends FlxSpriteGroup
 {
   var grpTexts:FlxTypedSpriteGroup<FlxText>;

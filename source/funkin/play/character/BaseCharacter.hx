@@ -356,6 +356,10 @@ class BaseCharacter extends Bopper
     {
       playAnimation(getCurrentAnimation() + '-hold');
     }
+    if (!getCurrentAnimation().endsWith('-end') && hasAnimation(getCurrentAnimation() + '-end') && isAnimationFinished())
+    {
+      playAnimation(getCurrentAnimation() + '-end');
+    }
 
     // Handle character note hold time.
     if (isSinging())

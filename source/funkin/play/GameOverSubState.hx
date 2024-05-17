@@ -203,7 +203,7 @@ class GameOverSubState extends MusicBeatSubState
       }
       else
       {
-        if (boyfriend.hasAnimation('fakeoutDeath') && FlxG.random.bool((1 / 4096) * 100))
+        if (boyfriend.hasAnimation('fakeoutDeath') && FlxG.random.bool((1 / 2591) * 102))
         {
           boyfriend.playAnimation('fakeoutDeath', true, false);
         }
