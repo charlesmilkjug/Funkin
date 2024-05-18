@@ -451,49 +451,49 @@ class GameOverSubState extends MusicBeatSubState
       FlxG.log.error('Missing blue ball sound effect: ' + sound);
     }
   }
-}
 
-var playingJeffQuote:Bool = false;
+  var playingJeffQuote:Bool = false;
+
+  /**
+   * Week 7-specific hardcoded behavior, to play a custom death quote.
+   * TODO: Make this a module somehow.
+   */
+  function playJeffQuote():Void
+  {
+    var randomCensor:Array<Int> = [];
+
+    if (!Preferences.naughtyness) randomCensor = [1, 3, 8, 13, 17, 21];
+
+    FunkinSound.playOnce(Paths.sound('jeffGameover/jeffGameover-' + FlxG.random.int(1, 25, randomCensor)), function() {
+      // Once the quote ends, fade in the game over music.
+      if (!isEnding && gameOverMusic != null)
+      {
+        gameOverMusic.fadeIn(4, 0.2, 1);
+      }
+    });
+  }
+
+  public override function destroy():Void
+  {
+    super.destroy();
+    if (gameOverMusic != null)
+    {
+      gameOverMusic.stop();
+      gameOverMusic = null;
+    }
+    blueballed = false;
+    instance = null;
+  }
+
+  public override function toString():String
+  {
+    return 'GameOverSubState';
+  }
+}
 
 /**
- * Week 7-specific hardcoded behavior, to play a custom death quote.
- * TODO: Make this a module somehow.
- */
-function playJeffQuote():Void
-{
-  var randomCensor:Array<Int> = [];
-
-  if (!Preferences.naughtyness) randomCensor = [1, 3, 8, 13, 17, 21];
-
-  FunkinSound.playOnce(Paths.sound('jeffGameover/jeffGameover-' + FlxG.random.int(1, 25, randomCensor)), function() {
-    // Once the quote ends, fade in the game over music.
-    if (!isEnding && gameOverMusic != null)
-    {
-      gameOverMusic.fadeIn(4, 0.2, 1);
-    }
-  });
-}
-
-public override function destroy():Void
-{
-  super.destroy();
-  if (gameOverMusic != null)
-  {
-    gameOverMusic.stop();
-    gameOverMusic = null;
-  }
-  blueballed = false;
-  instance = null;
-}
-
-public override function toString():String
-{
-  return 'GameOverSubState';
-}
-} /**
  * Parameters used to instantiate a GameOverSubState.
  */
-
 typedef GameOverParams =
 {
   var isChartingMode:Bool;
