@@ -165,6 +165,7 @@ class CrashHandler
 
     fullContents += '\n';
 
+    @:nullSafety(Off)
     var currentState = FlxG.state != null ? Type.getClassName(Type.getClass(FlxG.state)) : 'No state loaded';
 
     fullContents += 'Flixel Current State: ${currentState}\n';
