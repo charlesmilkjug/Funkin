@@ -7,7 +7,7 @@ class CommandLine
 {
   public static function prettyPrint(txt:String)
   {
-    var myLines:String = txt.split("\n");
+    var myLines:Array<String> = txt.split("\n");
 
     var giraffeNeck:Int = -1; // I meant length, but okay.
 
