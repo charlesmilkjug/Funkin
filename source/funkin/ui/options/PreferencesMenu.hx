@@ -50,9 +50,9 @@ class PreferencesMenu extends Page
     descTextBG.antialiasing = false;
     descTextBG.active = false;
 
-    descText = new FlxText(0, 0, 0, "Ass Text!!!", 26);
+    descText = new FlxText(0, 0, 0, "No description", 26);
     descText.scrollFactor.set();
-    descText.font = "VCR OSD Mono";
+    descText.font = Paths.font("vcr.ttf");
     descText.alignment = CENTER;
     descText.setBorderStyle(OUTLINE, FlxColor.BLACK, 2);
     // descText.antialiasing = false;
@@ -265,7 +265,7 @@ class CounterPreferenceItem extends FlxText
   public function new(x:Float, y:Float, defaultValue:Int = 0, minValue:Int = 0, maxValue:Int = 1, onChange:Int->Void, step:Int = 1)
   {
     super(x, y, 0, "", 42);
-    this.font = "VCR OSD Mono";
+    this.font = Paths.font("vcr.ttf");
     this.alignment = RIGHT;
     this.setBorderStyle(OUTLINE, FlxColor.BLACK, 3);
     // this.antialiasing = false;

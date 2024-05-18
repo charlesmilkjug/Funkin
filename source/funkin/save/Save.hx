@@ -93,7 +93,7 @@ class Save
           framerate: #if web 60 #else flixel.math.FlxMath.maxInt(60, lime.app.Application.current.window.displayMode.refreshRate) #end,
           flashingLights: true,
           zoomCamera: true,
-          centeredStrums: false,
+          centerStrums: false,
           coloredHealthBar: false,
           debugDisplay: false,
           autoPause: true,
@@ -831,6 +831,7 @@ typedef SaveScoreData =
 
 typedef SaveScoreTallyData =
 {
+  var killer:Int;
   var sick:Int;
   var good:Int;
   var bad:Int;
