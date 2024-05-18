@@ -18,9 +18,9 @@ class LegacySongData
   public var player2:String; // Opponent
 
   @:optional
-  public var ?gfVersion:String; // For Girlfriend (Psych Engine, i think)
+  public var gfVersion:String; // For Girlfriend (Psych Engine, i think)
   @:optional
-  public var ?player3:String; // Deprecated in Psych, idk
+  public var player3:String; // Deprecated in Psych, idk
 
   @:jcustomparse(funkin.data.DataParse.eitherLegacyScrollSpeeds)
   public var speed:Either<Float, LegacyScrollSpeeds>;
@@ -111,7 +111,6 @@ typedef LegacyNoteSection =
 
   public var ?lengthInSteps:Int;
   public var ?gfSection:Bool;
-  public var ?changeBPM:Bool;
   public var ?altAnim:Bool;
 
   // BPM changes
