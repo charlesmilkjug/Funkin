@@ -149,6 +149,11 @@
       "url": "https://github.com/FunkinCrew/openfl"
     },
     {
+      "name": "extension-androidtools",
+      "type": "haxelib",
+      "version": "2.0.2"
+    },
+    {
       "name": "polymod",
       "type": "git",
       "dir": null,

@@ -113,12 +113,15 @@ class PreferencesMenu extends Page
    */
   function createPrefItems():Void
   {
-    createPrefItemCheckbox('Naughtyness', 'Toggle displaying raunchy content', function(value:Bool):Void {
+    createPrefItemCheckbox('Naughtyness', 'Toggle displaying raunchy content especially in Week 7', function(value:Bool):Void {
       Preferences.naughtyness = value;
     }, Preferences.naughtyness);
     createPrefItemCheckbox('Downscroll', 'Enable to make notes move downwards', function(value:Bool):Void {
       Preferences.downscroll = value;
     }, Preferences.downscroll);
+    createPrefItemCheckbox('Show Judgerments', 'Self explanatory', function(value:Bool):Void {
+      Preferences.comboHUD = value;
+    }, Preferences.comboHUD);
     createPrefItemCheckbox('Ghost Tapping', 'Enable to let you spam notes', function(value:Bool):Void {
       Preferences.ghostTapping = value;
     }, Preferences.ghostTapping);
@@ -133,7 +136,7 @@ class PreferencesMenu extends Page
     createPrefItemCheckbox('Camera Zooming on Beat', 'Disable to stop the camera bouncing to the song', function(value:Bool):Void {
       Preferences.zoomCamera = value;
     }, Preferences.zoomCamera);
-    createPrefItemCheckbox('Song Position Bar', 'Adds song position ber', function(value:Bool):Void {
+    createPrefItemCheckbox('Song Position Bar', 'Enable to display the song position', function(value:Bool):Void {
       Preferences.songPositionBar = value;
     }, Preferences.songPositionBar);
     createPrefItemCheckbox('Stats Counter', 'Enable to show a FPS and RAM counter', function(value:Bool):Void {

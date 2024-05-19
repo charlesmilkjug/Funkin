@@ -14,7 +14,7 @@ import openfl.Lib;
 import openfl.media.Video;
 import openfl.net.NetStream;
 
-// Adds support for FeralGamemode on Linux
+// Adds support for FeralGamemode on Linux.
 #if linux
 @:cppInclude('./external/gamemode_client.h')
 @:cppFileCode('
@@ -39,6 +39,10 @@ class Main extends Sprite
 
   public static function main():Void
   {
+    #if android
+    Sys.setCwd(haxe.io.Path.addTrailingSlash(android.os.Build.VERSION.SDK_INT > 30 ? android.content.Context.getObbDir() : android.content.Context.getExternalFilesDir()));
+    #end
+
     // We need to make the crash handler LITERALLY FIRST so nothing EVER gets past it.
     CrashHandler.initialize();
     CrashHandler.queryStatus();

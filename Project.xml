@@ -42,7 +42,7 @@
 	<define name="NO_REDIRECT_ASSETS_FOLDER" if="GITHUB_BUILD" />
   <define name="TOUCH_HERE_TO_PLAY" if="TOUCH_HERE_SPLASH" />
 
-	<section if="debug" unless="NO_REDIRECT_ASSETS_FOLDER || html5 || GITHUB_BUILD">
+	<section if="debug" unless="NO_REDIRECT_ASSETS_FOLDER || html5 || mobile || GITHUB_BUILD">
 		<!--
 			Use the parent assets folder rather than the exported one
 			No more will we accidentally undo our changes!
@@ -142,9 +142,10 @@
 	<haxelib name="flixel-text-input" /> <!-- Improved text field rendering for HaxeUI -->
 	<haxelib name="polymod" /> <!-- Modding framework -->
 	<haxelib name="flxanimate" /> <!-- Texture atlas rendering -->
-	<haxelib name="hxCodec" if="desktop" unless="hl" /> <!-- Video playback, planning to switch to hxvlc soon -->
+	<haxelib name="hxCodec" if="desktop || mobile" unless="hl" /> <!-- Video playback, planning to switch to hxvlc soon -->
 	<haxelib name="discord_rpc" if="desktop" unless="hl" /> <!-- Discord RPC -->
-	<haxelib name="funkin.vis"/> <!-- Used for Nene/ABot -->
+	<haxelib name="extension-androidtools" if="android" /> <!-- Android Functions -->
+	<haxelib name="funkin.vis"/> <!-- Used for Nene/ABot, only works on web platforms for now -->
 
 	<haxelib name="json2object" /> <!-- JSON parsing -->
 	<haxelib name="thx.semver" /> <!-- Version string handling -->
@@ -268,14 +269,14 @@
 	<postbuild haxe="source/Postbuild.hx"/>
 
 	<!-- Enable this on platforms which do not support dropping files onto the window. -->
-	<haxedef name="FILE_DROP_UNSUPPORTED" if="mac" />
+	<haxedef name="FILE_DROP_UNSUPPORTED" if="mac || mobile" />
 	<section unless="FILE_DROP_UNSUPPORTED">
 		<haxedef name="FILE_DROP_SUPPORTED" />
 	</section>
 
-	<!-- Enable this on platforms which do not support the edsior views. -->
-	<haxedef name="CHART_EDITOR_UNSUPPORTED" if="web" />
-	<haxedef name="CHART_EDITOR_SUPPORTED" unless="web"/>
+	<!-- Enable this on platforms which do not support the editor views. -->
+	<haxedef name="CHART_EDITOR_UNSUPPORTED" if="web || mobile" />
+	<haxedef name="CHART_EDITOR_SUPPORTED" unless="web || mobile"/>
 
 	<!-- Options for Polymod -->
 	<section if="polymod">

@@ -42,6 +42,8 @@ class MainMenuState extends MusicBeatState
   var magenta:FlxSprite;
   var camFollow:FlxObject;
 
+  static var rememberedSelectedIndex:Int = 0;
+
   override function create():Void
   {
     #if discord_rpc
@@ -129,6 +131,8 @@ class MainMenuState extends MusicBeatState
       menuItem.scrollFactor.y = 0.4;
     }
 
+    menuItems.selectItem(rememberedSelectedIndex);
+
     resetCamStuff();
 
     subStateOpened.add(sub -> {
@@ -145,8 +149,8 @@ class MainMenuState extends MusicBeatState
     super.create();
 
     // This has to come AFTER!
-    this.leftWatermarkText.text = "FNF++ 0.1.0 | FNF " + Constants.VERSION;
-    // this.rightWatermarkText.text = "blablabla test";
+    this.leftWatermarkText.text = "FNF " + Constants.VERSION;
+    this.rightWatermarkText.text = "FNF++ PRERELEASE 1";
 
     // NG.core.calls.event.logEvent('swag').send();
   }
@@ -277,6 +281,9 @@ class MainMenuState extends MusicBeatState
   function startExitState(state:NextState):Void
   {
     menuItems.enabled = false; // disable for exit
+
+    rememberedSelectedIndex = menuItems.selectedIndex;
+
     var duration = 0.4;
     menuItems.forEach(function(item) {
       if (menuItems.selectedIndex != item.ID)

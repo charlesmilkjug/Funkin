@@ -887,6 +887,12 @@ typedef SaveDataOptions =
   var zoomCamera:Bool;
 
   /**
+   * Controls whether judgements will be rendered or not.
+   * @default `true`
+   */
+  var comboHUD:Bool;
+
+  /**
    * If enabled, the strumline gets centered.
    * Otherwise, move the strumline a bit to the 2nd half of the screen, in case of that focusing thing.
    * @default `false`
@@ -898,6 +904,25 @@ typedef SaveDataOptions =
    * @default `false`
    */
   var songPositionBar:Bool;
+
+  /**
+   * Controls where will combo render.
+   * @default `false`
+   */
+  public static var comboHUD(get, set):Bool;
+
+  static function get_comboHUD():Bool
+  {
+    return Save?.instance?.options?.comboHUD;
+  }
+
+  static function set_comboHUD(value:Bool):Bool
+  {
+    var save:Save = Save.instance;
+    save.options.comboHUD = value;
+    save.flush();
+    return value;
+  }
 
   /**
    * If enabled, an FPS and memory counter will be displayed even if this is not a debug build.
