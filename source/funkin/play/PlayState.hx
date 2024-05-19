@@ -14,6 +14,7 @@ import flixel.tweens.FlxTween;
 import flixel.ui.FlxBar;
 import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
+import flixel.util.FlxStringUtil;
 import funkin.Highscore.Tallies;
 import funkin.api.newgrounds.NGio;
 import funkin.audio.FunkinSound;

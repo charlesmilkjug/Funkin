@@ -23,7 +23,7 @@ class StorageUtil
    */
   public static function copyNecessaryFiles(extensionToFolder:Map<String, String>):Void
   {
-    for (key => value in extensionToFolderMap)
+    for (key => value in extensionToFolder)
     {
       for (file in Assets.list().filter(folder -> folder.startsWith(value)))
       {
@@ -91,7 +91,7 @@ class StorageUtil
   {
     try
     {
-      if (!FileUtil.doesFileExist.exists(savePath) && Assets.exists(copyPath))
+      if (!FileUtil.doesFileExist(savePath) && Assets.exists(copyPath))
       {
         if (!FileUtil.doesFileExist(Path.directory(savePath)))
         {

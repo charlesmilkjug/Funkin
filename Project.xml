@@ -256,6 +256,8 @@
 		<!-- <haxedef name="NG_FORCE_EXPIRED_SESSION" if="debug" /> -->
 	</section>
 
+	<architecture exclude="armv7" if="android" />
+
 	<section>
 		<!--
 			This flag enables the popup/crashlog error handler.
