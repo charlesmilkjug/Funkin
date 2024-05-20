@@ -114,6 +114,8 @@ class Stage extends FlxSpriteGroup implements IPlayStateScriptedClass implements
       getBoyfriend().setScale(finalScale);
       getBoyfriend().cameraFocusPoint.x += stageCharData.cameraOffsets[0];
       getBoyfriend().cameraFocusPoint.y += stageCharData.cameraOffsets[1];
+      getBoyfriend().zoomFactor = stageCharData.zoomFactor;
+      getBoyfriend().initialZoom = stageCharData.initialZoom;
     }
     else
     {
@@ -124,20 +126,24 @@ class Stage extends FlxSpriteGroup implements IPlayStateScriptedClass implements
       getGirlfriend().resetCharacter(true);
       // Reapply the camera offsets.
       var stageCharData:StageDataCharacter = _data.characters.gf;
-      var finalScale:Float = getBoyfriend().getBaseScale() * stageCharData.scale;
+      var finalScale:Float = getGirlfriend().getBaseScale() * stageCharData.scale;
       getGirlfriend().setScale(finalScale);
       getGirlfriend().cameraFocusPoint.x += stageCharData.cameraOffsets[0];
       getGirlfriend().cameraFocusPoint.y += stageCharData.cameraOffsets[1];
+      getGirlfriend().zoomFactor = stageCharData.zoomFactor;
+      getGirlfriend().initialZoom = stageCharData.initialZoom;
     }
     if (getDad() != null)
     {
       getDad().resetCharacter(true);
       // Reapply the camera offsets.
       var stageCharData:StageDataCharacter = _data.characters.dad;
-      var finalScale:Float = getBoyfriend().getBaseScale() * stageCharData.scale;
+      var finalScale:Float = getDad().getBaseScale() * stageCharData.scale;
       getDad().setScale(finalScale);
       getDad().cameraFocusPoint.x += stageCharData.cameraOffsets[0];
       getDad().cameraFocusPoint.y += stageCharData.cameraOffsets[1];
+      getDad().zoomFactor = stageCharData.zoomFactor;
+      getDad().initialZoom = stageCharData.initialZoom;
     }
 
     // Reset positions of named props.
@@ -152,6 +158,8 @@ class Stage extends FlxSpriteGroup implements IPlayStateScriptedClass implements
         prop.x = dataProp.position[0];
         prop.y = dataProp.position[1];
         prop.zIndex = dataProp.zIndex;
+        prop.zoomFactor = dataProp.zoomFactor;
+        prop.initialZoom = dataProp.initialZoom;
       }
     }
 
@@ -175,15 +183,7 @@ class Stage extends FlxSpriteGroup implements IPlayStateScriptedClass implements
       var isSolidColor = dataProp.assetPath.startsWith('#');
       var isAnimated = dataProp.animations.length > 0;
 
-      var propSprite:StageProp;
-      if (dataProp.danceEvery != 0)
-      {
-        propSprite = new Bopper(dataProp.danceEvery);
-      }
-      else
-      {
-        propSprite = new StageProp();
-      }
+      var propSprite:StageProp = (dataProp.danceEvery != 0) ? new Bopper(dataProp.danceEvery) : new StageProp();
 
       if (isAnimated)
       {
@@ -251,6 +251,9 @@ class Stage extends FlxSpriteGroup implements IPlayStateScriptedClass implements
 
       propSprite.scrollFactor.x = dataProp.scroll[0];
       propSprite.scrollFactor.y = dataProp.scroll[1];
+
+      propSprite.zoomFactor = dataProp.zoomFactor;
+      propSprite.initialZoom = dataProp.initialZoom;
 
       propSprite.zIndex = dataProp.zIndex;
 
@@ -446,6 +449,8 @@ class Stage extends FlxSpriteGroup implements IPlayStateScriptedClass implements
       character.setScale(finalScale); // Don't use scale.set for characters!
       character.cameraFocusPoint.x += stageCharData.cameraOffsets[0];
       character.cameraFocusPoint.y += stageCharData.cameraOffsets[1];
+      character.zoomFactor = stageCharData.zoomFactor;
+      character.initialZoom = stageCharData.initialZoom;
 
       #if debug
       // Draw the debug icon at the character's feet.
@@ -476,7 +481,7 @@ class Stage extends FlxSpriteGroup implements IPlayStateScriptedClass implements
    */
   public inline function getGirlfriendPosition():FlxPoint
   {
-    return new FlxPoint(_data.characters.gf.position[0], _data.characters.gf.position[1]);
+    return FlxPoint.get(_data.characters.gf.position[0], _data.characters.gf.position[1]);
   }
 
   /**
@@ -485,7 +490,7 @@ class Stage extends FlxSpriteGroup implements IPlayStateScriptedClass implements
    */
   public inline function getBoyfriendPosition():FlxPoint
   {
-    return new FlxPoint(_data.characters.bf.position[0], _data.characters.bf.position[1]);
+    return FlxPoint.get(_data.characters.bf.position[0], _data.characters.bf.position[1]);
   }
 
   /**
@@ -494,7 +499,7 @@ class Stage extends FlxSpriteGroup implements IPlayStateScriptedClass implements
    */
   public inline function getDadPosition():FlxPoint
   {
-    return new FlxPoint(_data.characters.dad.position[0], _data.characters.dad.position[1]);
+    return FlxPoint.get(_data.characters.dad.position[0], _data.characters.dad.position[1]);
   }
 
   /**
@@ -609,9 +614,7 @@ class Stage extends FlxSpriteGroup implements IPlayStateScriptedClass implements
    */
   public function pause():Void
   {
-    forEachAlive(function(prop:FlxSprite) {
-      if (prop.animation != null) prop.animation.pause();
-    });
+    forEachAlive((prop:FlxSprite) -> if (prop.animation != null) prop.animation.pause());
   }
 
   /**
@@ -619,9 +622,7 @@ class Stage extends FlxSpriteGroup implements IPlayStateScriptedClass implements
    */
   public function resume():Void
   {
-    forEachAlive(function(prop:FlxSprite) {
-      if (prop.animation != null) prop.animation.resume();
-    });
+    forEachAlive((prop:FlxSprite) -> if (prop.animation != null) prop.animation.resume());
   }
 
   /**

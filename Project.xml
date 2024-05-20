@@ -181,21 +181,11 @@
 	<!-- HScript relies heavily on Reflection, which means we can't use DCE. -->
 	<haxeflag name="-dce no" />
 
-	<!-- Ensure all Funkin' classes are available at runtime. -->
-	<haxeflag name="--macro" value="include('funkin')" />
-	<!-- Ensure all UI components are available at runtime. -->
-	<haxeflag name="--macro" value="include('haxe.ui.backend.flixel.components')" />
-	<haxeflag name="--macro" value="include('haxe.ui.containers.dialogs')" />
-	<haxeflag name="--macro" value="include('haxe.ui.containers.menus')" />
-	<haxeflag name="--macro" value="include('haxe.ui.containers.properties')" />
-	<haxeflag name="--macro" value="include('haxe.ui.core')" />
-	<haxeflag name="--macro" value="include('haxe.ui.components')" />
-	<haxeflag name="--macro" value="include('haxe.ui.containers')" />
 	<!--
 		Ensure additional class packages are available at runtime (some only really used by scripts).
 		Ignore packages we can't include.
 	-->
-	<haxeflag name="--macro" value="include('flixel', true, [ 'flixel.addons.editors.spine.*', 'flixel.addons.nape.*', 'flixel.system.macros.*' ])" />
+	<haxeflag name="--macro" value="funkin.util.macro.AdditionalsClassesMacro.addAdditionalClasses()" />
 
 	<!-- Necessary to provide stack traces for HScript. -->
 	<haxedef name="hscriptPos" />
@@ -281,6 +271,9 @@
 	<!-- Enable this on platforms which do not support the editor views. -->
 	<haxedef name="CHART_EDITOR_UNSUPPORTED" if="web || mobile" />
 	<haxedef name="CHART_EDITOR_SUPPORTED" unless="web || mobile"/>
+
+	<!-- Fix compiling issues -->
+	<setenv name="HAXEPATH" value="./"/>
 
 	<!-- Options for Polymod -->
 	<section if="polymod">

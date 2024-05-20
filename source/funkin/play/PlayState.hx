@@ -888,33 +888,26 @@ class PlayState extends MusicBeatSubState
       var message:String = 'There was a critical error. Click OK to return to the main menu.';
       if (currentSong == null)
       {
-        message = 'The was a critical error loading this song\'s chart. Click OK to return to the main menu.';
+        message = 'There was a critical error loading this song\'s chart. Click OK to return to the main menu.';
       }
       else if (currentDifficulty == null)
       {
-        message = 'The was a critical error selecting a difficulty for this song. Click OK to return to the main menu.';
+        message = 'There was a critical error selecting a difficulty for this song. Click OK to return to the main menu.';
       }
       else if (currentChart == null)
       {
-        message = 'The was a critical error retrieving data for this song on "$currentDifficulty" difficulty with variation "$currentVariation". Click OK to return to the main menu.';
+        message = 'There was a critical error retrieving data for this song on "$currentDifficulty" difficulty with variation "$currentVariation". Click OK to return to the main menu.';
       }
       else if (currentChart.notes == null)
       {
-        message = 'The was a critical error retrieving note data for this song on "$currentDifficulty" difficulty with variation "$currentVariation". Click OK to return to the main menu.';
+        message = 'There was a critical error retrieving note data for this song on "$currentDifficulty" difficulty with variation "$currentVariation". Click OK to return to the main menu.';
       }
 
       // Display a popup. This blocks the application until the user clicks OK.
       lime.app.Application.current.window.alert(message, 'Error loading PlayState');
 
       // Force the user back to the main menu.
-      if (isSubState)
-      {
-        this.close();
-      }
-      else
-      {
-        FlxG.switchState(() -> new MainMenuState());
-      }
+      isSubState ? this.close() : FlxG.switchState(() -> new MainMenuState());
       return false;
     }
 
@@ -1032,15 +1025,7 @@ class PlayState extends MusicBeatSubState
     }
     else
     {
-      if (Constants.EXT_SOUND == 'mp3')
-      {
-        Conductor.instance.formatOffset = Constants.MP3_DELAY_MS;
-      }
-      else
-      {
-        Conductor.instance.formatOffset = 0.0;
-      }
-
+      Conductor.instance.formatOffset = (Constants.EXT_SOUND == 'mp3') ? Constants.MP3_DELAY_MS : 0.0;
       Conductor.instance.update(Conductor.instance.songPosition
         - (Conductor.instance.instrumentalOffset + Conductor.instance.formatOffset + Conductor.instance.audioVisualOffset)
         + elapsed * 1000 * playbackRate); // Normal conductor update.

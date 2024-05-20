@@ -151,6 +151,14 @@ typedef StageDataProp =
   @:default([0, 0])
   var scroll:Array<Float>;
 
+  @:optional
+  @:default(1)
+  var zoomFactor:Float;
+
+  @:optional
+  @:default(1)
+  var initialZoom:Float;
+
   /**
    * An optional array of animations which the prop can play.
    * @default Prop has no animations.
@@ -200,6 +208,14 @@ typedef StageDataCharacter =
   @:optional
   @:default(1)
   var scale:Float;
+
+  @:optional
+  @:default(1)
+  var zoomFactor:Float;
+
+  @:optional
+  @:default(1)
+  var initialZoom:Float;
 
   /**
    * The camera offsets to apply when focusing on the character on this stage.

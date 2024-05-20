@@ -194,6 +194,11 @@ class PauseSubState extends MusicBeatSubState
   {
     super.create();
 
+    ////////
+    camera = FlxG.cameras.list[FlxG.cameras.list.length - 1];
+    FlxG.cameras.list[FlxG.cameras.list.length - 1].visible = true;
+    ////////
+
     startPauseMusic();
 
     buildBackground();

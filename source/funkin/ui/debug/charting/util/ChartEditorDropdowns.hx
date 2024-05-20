@@ -112,11 +112,12 @@ class ChartEditorDropdowns
     // Base
     "" => "Default",
     "~CUSTOM~" => "Custom",
+    "noAnimation" => "No Animation",
     // Weeks 1-7
     "mom" => "Mom Sings (Week 5)",
     "ugh" => "Ugh (Week 7)",
     "hehPrettyGood" => "Heh, Pretty Good (Week 7)",
-    // Weekend 1
+    // Weekend 1 / Blazin'
     "weekend-1-punchhigh" => "Punch High (Blazin')",
     "weekend-1-punchhighdodged" => "Punch High (Dodge) (Blazin')",
     "weekend-1-punchhighblocked" => "Punch High (Block) (Blazin')",

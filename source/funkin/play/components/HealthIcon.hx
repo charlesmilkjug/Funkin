@@ -205,14 +205,13 @@ class HealthIcon extends FunkinSprite
       if (this.width > this.height)
       {
         // Apply linear interpolation while accounting for frame rate.
-        var targetSize:Int = Std.int(MathUtil.coolLerp(this.width, HEALTH_ICON_SIZE * this.size.x, 0.15));
-
+        var targetSize:Float = FlxMath.lerp(HEALTH_ICON_SIZE * this.size.x, this.width, Math.exp(-elapsed * 9));
         setGraphicSize(targetSize, 0);
       }
       else
       {
-        var targetSize:Int = Std.int(MathUtil.coolLerp(this.height, HEALTH_ICON_SIZE * this.size.y, 0.15));
-
+        // var targetSize:Int = Std.int(MathUtil.coolLerp(this.height, HEALTH_ICON_SIZE * this.size.y, 0.15));
+        var targetSize:Float = FlxMath.lerp(HEALTH_ICON_SIZE * this.size.y, this.height, Math.exp(-elapsed * 9));
         setGraphicSize(0, targetSize);
       }
 

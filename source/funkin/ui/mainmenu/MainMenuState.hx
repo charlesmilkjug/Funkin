@@ -44,12 +44,16 @@ class MainMenuState extends MusicBeatState
 
   static var rememberedSelectedIndex:Int = 0;
 
+  public static var engineVersion:String = "PRELEASE 1";
+
   override function create():Void
   {
     #if discord_rpc
     // Updating Discord Rich Presence
     DiscordClient.changePresence("In the Main Menu", null);
     #end
+
+    FlxG.cameras.reset(new FunkinCamera('mainMenu'));
 
     transIn = FlxTransitionableState.defaultTransIn;
     transOut = FlxTransitionableState.defaultTransOut;
@@ -154,7 +158,7 @@ class MainMenuState extends MusicBeatState
 
     // This has to come AFTER!
     this.leftWatermarkText.text = "FNF " + Constants.VERSION;
-    this.rightWatermarkText.text = "FNF++ PRERELEASE 1";
+    this.rightWatermarkText.text = 'FNF++ ${engineVersion}';
 
     // NG.core.calls.event.logEvent('swag').send();
   }
@@ -325,8 +329,10 @@ class MainMenuState extends MusicBeatState
     if (controls.DEBUG_MENU)
     {
       persistentUpdate = false;
-      subStateClosed.addOnce(_ -> resetCamStuff());
       FlxG.state.openSubState(new DebugMenuSubState());
+
+      // Reset the camera when the DebugMenuSubState is closed.
+      subStateClosed.addOnce(_ -> resetCamStuff());
     }
     #end
 
