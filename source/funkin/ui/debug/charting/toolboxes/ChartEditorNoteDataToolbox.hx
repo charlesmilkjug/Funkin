@@ -7,6 +7,8 @@ import funkin.ui.debug.charting.util.ChartEditorDropdowns;
 
 /**
  * The toolbox which allows modifying information like Note Kind.
+ *
+ * By the way, note kinds are basically just notetypes if you're wondering...
  */
 @:access(funkin.ui.debug.charting.ChartEditorState)
 @:build(haxe.ui.ComponentBuilder.build("assets/exclude/data/ui/chart-editor/toolboxes/note-data.xml"))
