@@ -221,15 +221,8 @@ class FunkinSound extends FlxSound implements ICloneable<FunkinSound>
     // Flixel can sometimes toss spurious `onFocus` events, e.g. if the Flixel debugger is toggled
     // on and off. We only want to resume the sound if we actually lost focus, and if we weren't
     // already paused before we lost focus.
-    if (_lostFocus && !_alreadyPaused)
-    {
-      trace('Resuming audio (${this._label}) on focus!');
-      resume();
-    }
-    else
-    {
-      trace('Not resuming audio (${this._label}) on focus!');
-    }
+    if (_lostFocus && !_alreadyPaused) resume();
+
     _lostFocus = false;
   }
 
@@ -238,7 +231,7 @@ class FunkinSound extends FlxSound implements ICloneable<FunkinSound>
    */
   override function onFocusLost():Void
   {
-    trace('Focus lost, pausing audio!');
+    // trace('Focus lost, pausing audio!');
     _lostFocus = true;
     _alreadyPaused = _paused;
     pause();
@@ -333,14 +326,7 @@ class FunkinSound extends FlxSound implements ICloneable<FunkinSound>
     {
       var songMusicData:Null<SongMusicData> = SongRegistry.instance.parseMusicData(key);
       // Will fall back and return null if the metadata doesn't exist or can't be parsed.
-      if (songMusicData != null)
-      {
-        Conductor.instance.mapTimeChanges(songMusicData.timeChanges);
-      }
-      else
-      {
-        FlxG.log.warn('Tried and failed to find music metadata for $key');
-      }
+      songMusicData != null ? Conductor.instance.mapTimeChanges(songMusicData.timeChanges) : FlxG.log.warn('Tried and failed to find music metadata for $key');
     }
 
     var music = FunkinSound.load(Paths.music('$key/$key'), params?.startingVolume ?? 1.0, params.loop ?? true, false, true);
@@ -389,14 +375,7 @@ class FunkinSound extends FlxSound implements ICloneable<FunkinSound>
     // Sets `exists = true` as a side effect.
     sound.loadEmbedded(embeddedSound, looped, autoDestroy, onComplete);
 
-    if (embeddedSound is String)
-    {
-      sound._label = embeddedSound;
-    }
-    else
-    {
-      sound._label = 'unknown';
-    }
+    sound._label = (embeddedSound is String) ? embeddedSound : 'unknown';
 
     if (autoPlay) sound.play();
     sound.volume = volume;

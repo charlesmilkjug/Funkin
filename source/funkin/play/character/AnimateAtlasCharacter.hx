@@ -430,16 +430,7 @@ class AnimateAtlasCharacter extends BaseCharacter
     sprite.scrollFactor.copyFrom(scrollFactor);
 
   inline function clipRectTransform(sprite:FlxSprite, clipRect:FlxRect):Void
-  {
-    if (clipRect == null)
-    {
-      sprite.clipRect = null;
-    }
-    else
-    {
-      sprite.clipRect = FlxRect.get(clipRect.x - sprite.x + x, clipRect.y - sprite.y + y, clipRect.width, clipRect.height);
-    }
-  }
+    sprite.clipRect = (clipRect == null) ? null : FlxRect.get(clipRect.x - sprite.x + x, clipRect.y - sprite.y + y, clipRect.width, clipRect.height);
 
   inline function offsetCallback(offset:FlxPoint):Void
     transformChildren(offsetTransform, offset);

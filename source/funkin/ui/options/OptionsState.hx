@@ -191,11 +191,9 @@ class OptionsMenu extends Page
     super();
 
     add(items = new TextMenuList());
-    createItem("PREFERENCES", function() switchPage(Preferences));
-    createItem("CONTROLS", function() switchPage(Controls));
-    createItem("INPUT OFFSETS", function() {
-      FlxG.state.openSubState(new LatencyState());
-    });
+    createItem("PREFERENCES", () -> switchPage(Preferences));
+    createItem("CONTROLS", () -> switchPage(Controls));
+    createItem("INPUT OFFSETS", () -> FlxG.state.openSubState(new LatencyState()));
 
     #if newgrounds
     if (NGio.isLoggedIn) createItem("LOGOUT", selectLogout);

@@ -584,7 +584,7 @@ class Strumline extends FlxSpriteGroup
     {
       note.holdNoteSprite.hitNote = true;
       note.holdNoteSprite.missedNote = false;
-      note.holdNoteSprite.alpha = 1.0;
+      // note.holdNoteSprite.alpha = 1.0;
 
       note.holdNoteSprite.sustainLength = (note.holdNoteSprite.strumTime + note.holdNoteSprite.fullSustainLength) - conductorInUse.songPosition;
     }
@@ -714,7 +714,7 @@ class Strumline extends FlxSpriteGroup
       holdNoteSprite.missedNote = false;
       holdNoteSprite.hitNote = false;
       holdNoteSprite.visible = true;
-      holdNoteSprite.alpha = 1.0;
+      holdNoteSprite.alpha = 0.7;
 
       holdNoteSprite.x = this.x;
       holdNoteSprite.x += getXPos(DIRECTIONS[note.getDirection() % KEY_COUNT]);
