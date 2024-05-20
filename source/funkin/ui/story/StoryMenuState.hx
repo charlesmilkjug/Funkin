@@ -221,8 +221,10 @@ class StoryMenuState extends MusicBeatState
 
     #if discord_rpc
     // Updating Discord Rich Presence
-    DiscordClient.changePresence('In the Menus', null);
+    DiscordClient.changePresence('Choosing on Story Mode', null);
     #end
+
+    addVirtualPad(LEFT_FULL, A_B);
   }
 
   function rememberSelection():Void

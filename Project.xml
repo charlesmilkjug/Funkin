@@ -121,10 +121,12 @@
 		<assets path='example_mods' rename='mods' embed='false' type='template' />
 	</section>
 
-	<assets path="art/readme.txt" rename="do NOT readme.txt" library="art"/>
-	<assets path="CHANGELOG.md" rename="changelog.txt" library="art"/>
+	<assets path="art/readme.txt" rename="do NOT readme.txt" library="art" unless="mobile"/>
+	<assets path="CHANGELOG.md" rename="changelog.txt" library="art" unless="mobile"/>
 
 	<assets path="assets/fonts" />
+
+	<assets path="assets/vpad" if="mobile" />
 
 	<!-- _______________________________ Libraries ______________________________ -->
 
@@ -142,7 +144,7 @@
 	<haxelib name="flixel-text-input" /> <!-- Improved text field rendering for HaxeUI -->
 	<haxelib name="polymod" /> <!-- Modding framework -->
 	<haxelib name="flxanimate" /> <!-- Texture atlas rendering -->
-	<haxelib name="hxCodec" if="desktop || mobile" unless="hl" /> <!-- Video playback, planning to switch to hxvlc soon -->
+	<haxelib name="hxvlc" if="desktop || mobile" unless="hl" /> <!-- Video playback, planning to switch to hxvlc soon -->
 	<haxelib name="discord_rpc" if="desktop" unless="hl" /> <!-- Discord RPC -->
 	<haxelib name="extension-androidtools" if="android" /> <!-- Android Functions -->
 	<haxelib name="funkin.vis"/> <!-- Used for Nene/ABot, only works on web platforms for now -->

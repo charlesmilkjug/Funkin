@@ -39,6 +39,7 @@ import funkin.ui.transition.LoadingState;
 import funkin.ui.transition.StickerSubState;
 import funkin.util.MathUtil;
 import lime.utils.Assets;
+import funkin.util.TouchUtil;
 #if discord_rpc
 import funkin.api.discord.Discord.DiscordClient;
 #end
@@ -137,6 +138,9 @@ class FreeplayState extends MusicBeatSubState
   var stickerSubState:StickerSubState;
   var funnyCam:FunkinCamera;
 
+  var diffSelLeft:DifficultySelector;
+  var diffSelRight:DifficultySelector;
+
   public static var rememberedDifficulty:Null<String> = Constants.DEFAULT_DIFFICULTY;
   public static var rememberedSongId:Null<String> = 'tutorial';
 
@@ -171,7 +175,7 @@ class FreeplayState extends MusicBeatSubState
 
     #if discord_rpc
     // Updating Discord Rich Presence
-    DiscordClient.changePresence('In the Menus', null);
+    DiscordClient.changePresence('Choosing on Freeplay', null);
     #end
 
     var isDebug:Bool = false;
@@ -503,8 +507,8 @@ class FreeplayState extends MusicBeatSubState
         speed: 0.3
       });
 
-    var diffSelLeft:DifficultySelector = new DifficultySelector(20, grpDifficulties.y - 10, false, controls);
-    var diffSelRight:DifficultySelector = new DifficultySelector(325, grpDifficulties.y - 10, true, controls);
+    diffSelLeft = new DifficultySelector(20, grpDifficulties.y - 10, false, controls);
+    diffSelRight = new DifficultySelector(325, grpDifficulties.y - 10, true, controls);
     diffSelLeft.visible = false;
     diffSelRight.visible = false;
     add(diffSelLeft);
@@ -567,6 +571,21 @@ class FreeplayState extends MusicBeatSubState
     funnyCam = new FunkinCamera('freeplayFunny', 0, 0, FlxG.width, FlxG.height);
     funnyCam.bgColor = FlxColor.TRANSPARENT;
     FlxG.cameras.add(funnyCam, false);
+
+    addVirtualPad(UP_DOWN, A_B_C);
+    virtualPad.forEachAlive((button) -> {
+      switch (button.role)
+      {
+        case DIRECTION_BUTTON:
+          var baseX:Float = button.x;
+          button.x -= button.width;
+          FlxTween.tween(button, {x: baseX}, FlxG.random.float(0.5, 0.95), {ease: FlxEase.backOut});
+        case ACTION_BUTTON:
+          var baseY:Float = button.y;
+          button.y += button.height;
+          FlxTween.tween(button, {y: baseY}, FlxG.random.float(0.5, 0.95), {ease: FlxEase.backOut});
+      }
+    });
 
     forEach(function(bs) {
       bs.cameras = [funnyCam];
@@ -734,7 +753,7 @@ class FreeplayState extends MusicBeatSubState
   {
     super.update(elapsed);
 
-    if (FlxG.keys.justPressed.F)
+    if (FlxG.keys.justPressed.F #if mobile || virtualPad.buttonC.justPressed #end)
     {
       var targetSong = grpCapsules.members[curSelected]?.songData;
       if (targetSong != null)
@@ -827,6 +846,7 @@ class FreeplayState extends MusicBeatSubState
         }
       }
 
+      // HELP WHY DOSEN'T THIS USE FLXWIPE!?!?!?!
       if (FlxG.touches.getFirst() != null)
       {
         if (touchTimer >= 1.5) accepted = true;
@@ -849,18 +869,18 @@ class FreeplayState extends MusicBeatSubState
           dxTouch = 0;
         }
 
-        if (Math.abs(dxTouch) >= 100)
-        {
-          touchX = touch.screenX;
-          if (dxTouch != 0) dxTouch < 0 ? changeDiff(1) : changeDiff(-1);
-        }
+        /*if (Math.abs(dxTouch) >= 100)
+          {
+            touchX = touch.screenX;
+            if (dxTouch != 0) dxTouch < 0 ? changeDiff(1) : changeDiff(-1);
+          }
 
-        if (Math.abs(dyTouch) >= 100)
-        {
-          touchY = touch.screenY;
+          if (Math.abs(dyTouch) >= 100)
+          {
+            touchY = touch.screenY;
 
-          if (dyTouch != 0) dyTouch < 0 ? changeSelection(1) : changeSelection(-1);
-        }
+            if (dyTouch != 0) dyTouch < 0 ? changeSelection(1) : changeSelection(-1);
+        }*/
       }
       else
       {
@@ -869,13 +889,7 @@ class FreeplayState extends MusicBeatSubState
     }
 
     #if mobile
-    for (touch in FlxG.touches.list)
-    {
-      if (touch.justPressed)
-      {
-        // accepted = true;
-      }
-    }
+    // if (TouchUtil.justPressed && TouchUtil.overlaps(grpCapsules.members[curSelected], funnyCam)) accepted = true;
     #end
 
     if (!FlxG.keys.pressed.CONTROL && (controls.UI_UP || controls.UI_DOWN))
@@ -953,6 +967,29 @@ class FreeplayState extends MusicBeatSubState
       generateSongList(currentFilter, true);
     }
 
+    #if mobile
+    // FORGIVE ME FOR NOT PLACING THESE IN DifficultySelector BUT IT JUST DIDN'T WORK RIGHT
+    if (TouchUtil.overlapsComplex(diffSelLeft) && TouchUtil.justPressed)
+    {
+      diffSelLeft.setPress(true);
+      dj.resetAFKTimer();
+      changeDiff(-1);
+      generateSongList(currentFilter, true);
+    }
+    if (TouchUtil.overlapsComplex(diffSelRight) && TouchUtil.justPressed)
+    {
+      diffSelRight.setPress(true);
+      dj.resetAFKTimer();
+      changeDiff(-1);
+      generateSongList(currentFilter, true);
+    }
+    if (TouchUtil.justReleased)
+    {
+      diffSelRight.setPress(false);
+      diffSelLeft.setPress(false);
+    }
+    #end
+
     if (controls.BACK)
     {
       busy = true;
@@ -961,6 +998,16 @@ class FreeplayState extends MusicBeatSubState
       dj.onIntroDone.removeAll();
 
       FunkinSound.playOnce(Paths.sound('cancelMenu'));
+
+      virtualPad.forEachAlive((button) -> {
+        switch (button.role)
+        {
+          case DIRECTION_BUTTON:
+            FlxTween.tween(button, {x: button.x - button.width}, FlxG.random.float(0.5, 0.95), {ease: FlxEase.quartInOut});
+          case ACTION_BUTTON:
+            FlxTween.tween(button, {y: button.y + button.height}, FlxG.random.float(0.3, 0.55), {ease: FlxEase.quartInOut});
+        }
+      });
 
       var longestTimer:Float = 0;
 
@@ -1204,11 +1251,7 @@ class FreeplayState extends MusicBeatSubState
           practiceMode: false,
           minimalMode: false,
 
-          #if (debug || FORCE_DEBUG_VERSION)
           botPlayMode: FlxG.keys.pressed.SHIFT,
-          #else
-          botPlayMode: false,
-          #end
           // TODO: Make these an option! It's currently only accessible via chart editor.
           // startTimestamp: 0.0,
           // playbackRate: 0.5,
@@ -1356,8 +1399,11 @@ class DifficultySelector extends FlxSprite
 
   override function update(elapsed:Float):Void
   {
-    if (flipX && controls.UI_RIGHT_P && !FlxG.keys.pressed.CONTROL) moveShitDown();
-    if (!flipX && controls.UI_LEFT_P && !FlxG.keys.pressed.CONTROL) moveShitDown();
+    if (!MusicBeatSubState.isTouch)
+    {
+      if (flipX && controls.UI_RIGHT_P && !FlxG.keys.pressed.CONTROL) moveShitDown();
+      if (!flipX && controls.UI_LEFT_P && !FlxG.keys.pressed.CONTROL) moveShitDown();
+    }
 
     super.update(elapsed);
   }
@@ -1375,6 +1421,23 @@ class DifficultySelector extends FlxSprite
       whiteShader.colorSet = false;
       updateHitbox();
     });
+  }
+
+  // for mobile
+  public function setPress(press:Bool):Void
+  {
+    if (!press)
+    {
+      scale.x = scale.y = 1;
+      whiteShader.colorSet = false;
+      updateHitbox();
+    }
+    else
+    {
+      offset.y -= 5;
+      whiteShader.colorSet = true;
+      scale.x = scale.y = 0.5;
+    }
   }
 }
 

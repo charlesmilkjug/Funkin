@@ -13,6 +13,14 @@ import funkin.modding.PolymodHandler;
 import funkin.util.SortUtil;
 import flixel.util.FlxSort;
 import funkin.input.Controls;
+import funkin.util.TouchUtil;
+#if mobile
+import flixel.input.actions.FlxActionInput;
+import flixel.util.FlxDestroyUtil;
+import flixel.FlxCamera;
+import funkin.mobile.FunkinHitbox;
+import funkin.mobile.FunkinVirtualPad;
+#end
 
 /**
  * MusicBeatSubState reincorporates the functionality of MusicBeatState into an FlxSubState.
@@ -23,6 +31,8 @@ class MusicBeatSubState extends FlxSubState implements IEventHandler
   public var rightWatermarkText:FlxText = null;
 
   public var conductorInUse(get, set):Conductor;
+
+  public static var isTouch:Bool = FlxG.onMobile ? true : false;
 
   var _conductorInUse:Null<Conductor>;
 
@@ -48,19 +58,128 @@ class MusicBeatSubState extends FlxSubState implements IEventHandler
   inline function get_controls():Controls
     return PlayerSettings.player1.controls;
 
+  #if mobile
+  var hitbox:FunkinHitbox;
+  var virtualPad:FunkinVirtualPad;
+
+  var trackedInputsHitbox:Array<FlxActionInput> = [];
+  var trackedInputsVirtualPad:Array<FlxActionInput> = [];
+
+  public function addVirtualPad(dPad:FunkinDPadMode, action:FunkinActionMode, ?visible:Bool = true):Void
+  {
+    if (virtualPad != null)
+    {
+      removeVirtualPad();
+    }
+
+    virtualPad = new FunkinVirtualPad(dPad, action);
+
+    ControlsHandler.setupVirtualPad(controls, virtualPad, dPad, action, trackedInputsVirtualPad);
+
+    virtualPad.visible = visible;
+    add(virtualPad);
+  }
+
+  public function addVirtualPadCamera(defaultDrawTarget:Bool = true):Void
+  {
+    if (virtualPad != null)
+    {
+      var camControls:FlxCamera = new FlxCamera();
+      FlxG.cameras.add(camControls, defaultDrawTarget);
+      camControls.bgColor.alpha = 0;
+      virtualPad.cameras = [camControls];
+    }
+  }
+
+  public function removeVirtualPad():Void
+  {
+    if (trackedInputsVirtualPad != null && trackedInputsVirtualPad.length > 0)
+    {
+      ControlsHandler.removeCachedInput(controls, trackedInputsVirtualPad);
+    }
+
+    if (virtualPad != null)
+    {
+      remove(virtualPad);
+    }
+  }
+
+  public function addHitbox(?visible:Bool = true):Void
+  {
+    if (hitbox != null)
+    {
+      removeHitbox();
+    }
+
+    hitbox = new FunkinHitbox(4, Std.int(FlxG.width / 4), FlxG.height, [0xC34B9A, 0x00FFFF, 0x12FB06, 0xF9393F]);
+
+    ControlsHandler.setupHitbox(controls, hitbox, trackedInputsHitbox);
+
+    hitbox.visible = visible;
+    add(hitbox);
+  }
+
+  public function addHitboxCamera(DefaultDrawTarget:Bool = true):Void
+  {
+    if (hitbox != null)
+    {
+      var camControls:FlxCamera = new FlxCamera();
+      FlxG.cameras.add(camControls, DefaultDrawTarget);
+      camControls.bgColor.alpha = 0;
+      hitbox.cameras = [camControls];
+    }
+  }
+
+  public function removeHitbox():Void
+  {
+    if (trackedInputsHitbox != null && trackedInputsHitbox.length > 0)
+    {
+      ControlsHandler.removeCachedInput(controls, trackedInputsHitbox);
+    }
+
+    if (hitbox != null)
+    {
+      remove(hitbox);
+    }
+  }
+  #end
+
   override function create():Void
   {
     super.create();
-
     createWatermarkText();
-
     Conductor.beatHit.add(this.beatHit);
     Conductor.stepHit.add(this.stepHit);
   }
 
   public override function destroy():Void
   {
+    #if mobile
+    if (trackedInputsHitbox != null && trackedInputsHitbox.length > 0)
+    {
+      ControlsHandler.removeCachedInput(controls, trackedInputsHitbox);
+    }
+
+    if (trackedInputsVirtualPad != null && trackedInputsVirtualPad.length > 0)
+    {
+      ControlsHandler.removeCachedInput(controls, trackedInputsVirtualPad);
+    }
+    #end
+
     super.destroy();
+
+    #if mobile
+    if (virtualPad != null)
+    {
+      virtualPad = FlxDestroyUtil.destroy(virtualPad);
+    }
+
+    if (hitbox != null)
+    {
+      hitbox = FlxDestroyUtil.destroy(hitbox);
+    }
+    #end
+
     Conductor.beatHit.remove(this.beatHit);
     Conductor.stepHit.remove(this.stepHit);
   }
@@ -78,6 +197,9 @@ class MusicBeatSubState extends FlxSubState implements IEventHandler
     // Display Conductor info in the watch window.
     FlxG.watch.addQuick("musicTime", FlxG.sound.music?.time ?? 0.0);
     Conductor.watchQuick(conductorInUse);
+
+    if (FlxG.keys.justPressed.ANY && isTouch) isTouch = false;
+    if (TouchUtil.justPressed && !isTouch) isTouch = true;
 
     dispatchEvent(new UpdateScriptEvent(elapsed));
   }

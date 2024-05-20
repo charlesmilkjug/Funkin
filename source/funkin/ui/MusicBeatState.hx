@@ -14,6 +14,15 @@ import funkin.modding.events.ScriptEvent;
 import funkin.modding.module.ModuleHandler;
 import funkin.util.SortUtil;
 import funkin.input.Controls;
+#if mobile
+import flixel.input.actions.FlxActionInput;
+import flixel.util.FlxDestroyUtil;
+import flixel.FlxCamera;
+import funkin.mobile.ControlsHandler;
+import funkin.mobile.FunkinHitbox;
+import funkin.mobile.FunkinVirtualPad;
+import funkin.util.TouchUtil;
+#end
 
 /**
  * MusicBeatState actually represents the core utility FlxState of the game.
@@ -30,6 +39,8 @@ class MusicBeatState extends FlxTransitionableState implements IEventHandler
   public var rightWatermarkText:FlxText = null;
 
   public var conductorInUse(get, set):Conductor;
+
+  public static var isTouch:Bool = FlxG.onMobile ? true : false;
 
   var _conductorInUse:Null<Conductor>;
 
@@ -57,19 +68,128 @@ class MusicBeatState extends FlxTransitionableState implements IEventHandler
     subStateClosed.add(onCloseSubStateComplete);
   }
 
+  #if mobile
+  var hitbox:FunkinHitbox;
+  var virtualPad:FunkinVirtualPad;
+
+  var trackedInputsHitbox:Array<FlxActionInput> = [];
+  var trackedInputsVirtualPad:Array<FlxActionInput> = [];
+
+  public function addVirtualPad(dPad:FunkinDPadMode, action:FunkinActionMode, ?visible:Bool = true):Void
+  {
+    if (virtualPad != null)
+    {
+      removeVirtualPad();
+    }
+
+    virtualPad = new FunkinVirtualPad(dPad, action);
+
+    ControlsHandler.setupVirtualPad(controls, virtualPad, dPad, action, trackedInputsVirtualPad);
+
+    virtualPad.visible = visible;
+    add(virtualPad);
+  }
+
+  public function addVirtualPadCamera(defaultDrawTarget:Bool = true):Void
+  {
+    if (virtualPad != null)
+    {
+      var camControls:FlxCamera = new FlxCamera();
+      FlxG.cameras.add(camControls, defaultDrawTarget);
+      camControls.bgColor.alpha = 0;
+      virtualPad.cameras = [camControls];
+    }
+  }
+
+  public function removeVirtualPad():Void
+  {
+    if (trackedInputsVirtualPad != null && trackedInputsVirtualPad.length > 0)
+    {
+      ControlsHandler.removeCachedInput(controls, trackedInputsVirtualPad);
+    }
+
+    if (virtualPad != null)
+    {
+      remove(virtualPad);
+    }
+  }
+
+  public function addHitbox(?visible:Bool = true):Void
+  {
+    if (hitbox != null)
+    {
+      removeHitbox();
+    }
+
+    hitbox = new FunkinHitbox(4, Std.int(FlxG.width / 4), FlxG.height, [0xC34B9A, 0x00FFFF, 0x12FB06, 0xF9393F]);
+
+    ControlsHandler.setupHitbox(controls, hitbox, trackedInputsHitbox);
+
+    hitbox.visible = visible;
+    add(hitbox);
+  }
+
+  public function addHitboxCamera(DefaultDrawTarget:Bool = true):Void
+  {
+    if (hitbox != null)
+    {
+      var camControls:FlxCamera = new FlxCamera();
+      FlxG.cameras.add(camControls, DefaultDrawTarget);
+      camControls.bgColor.alpha = 0;
+      hitbox.cameras = [camControls];
+    }
+  }
+
+  public function removeHitbox():Void
+  {
+    if (trackedInputsHitbox != null && trackedInputsHitbox.length > 0)
+    {
+      ControlsHandler.removeCachedInput(controls, trackedInputsHitbox);
+    }
+
+    if (hitbox != null)
+    {
+      remove(hitbox);
+    }
+  }
+  #end
+
   override function create()
   {
     super.create();
-
     createWatermarkText();
-
     Conductor.beatHit.add(this.beatHit);
     Conductor.stepHit.add(this.stepHit);
   }
 
   public override function destroy():Void
   {
+    #if mobile
+    if (trackedInputsHitbox != null && trackedInputsHitbox.length > 0)
+    {
+      ControlsHandler.removeCachedInput(controls, trackedInputsHitbox);
+    }
+
+    if (trackedInputsVirtualPad != null && trackedInputsVirtualPad.length > 0)
+    {
+      ControlsHandler.removeCachedInput(controls, trackedInputsVirtualPad);
+    }
+    #end
+
     super.destroy();
+
+    #if mobile
+    if (virtualPad != null)
+    {
+      virtualPad = FlxDestroyUtil.destroy(virtualPad);
+    }
+
+    if (hitbox != null)
+    {
+      hitbox = FlxDestroyUtil.destroy(hitbox);
+    }
+    #end
+
     Conductor.beatHit.remove(this.beatHit);
     Conductor.stepHit.remove(this.stepHit);
   }
@@ -88,6 +208,9 @@ class MusicBeatState extends FlxTransitionableState implements IEventHandler
     super.update(elapsed);
 
     dispatchEvent(new UpdateScriptEvent(elapsed));
+
+    if (FlxG.keys.justPressed.ANY && isTouch) isTouch = false;
+    if (TouchUtil.justPressed && !isTouch) isTouch = true;
   }
 
   function createWatermarkText()

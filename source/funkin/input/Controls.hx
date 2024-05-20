@@ -19,6 +19,11 @@ import flixel.math.FlxAngle;
 import flixel.math.FlxPoint;
 import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
+/* #if mobile
+  import funkin.mobile.FunkinButton;
+  import funkin.mobile.FunkinHitbox;
+  import funkin.mobile.FunkinVirtualPad;
+  #end */
 import lime.ui.Haptic;
 
 /**
@@ -321,6 +326,78 @@ class Controls extends FlxActionSet
     setKeyboardScheme(scheme, false);
   }
 
+  /* #if mobile
+    public var trackedInputs:Array<FlxActionInput> = [];
+
+    public function addButton(action:FlxActionDigital, button:FunkinButton, state:FlxInputState):Void
+    {
+      final input:FlxActionInputDigitalIFlxInput = new FlxActionInputDigitalIFlxInput(button, state);
+      trackedInputs.push(input);
+      action.add(input);
+    }
+
+    public function setHitbox(hitbox:FunkinHitbox):Void
+    {
+      inline forEachBound(Control.NOTE_LEFT, (action, state) -> addButton(action, hitbox.hints[0], state));
+      inline forEachBound(Control.NOTE_DOWN, (action, state) -> addButton(action, hitbox.hints[1], state));
+      inline forEachBound(Control.NOTE_UP, (action, state) -> addButton(action, hitbox.hints[2], state));
+      inline forEachBound(Control.NOTE_RIGHT, (action, state) -> addButton(action, hitbox.hints[3], state));
+    }
+
+    public function setVPad(vPad:FunkinVirtualPad, dPad:FunkinDPadMode, action:FunkinActionMode):Void
+    {
+      switch (dPad)
+      {
+        case UP_DOWN:
+          inline forEachBound(Control.UI_UP, (action, state) -> addButton(action, vPad.buttonUp, state));
+          inline forEachBound(Control.UI_DOWN, (action, state) -> addButton(action, vPad.buttonDown, state));
+        case LEFT_RIGHT:
+          inline forEachBound(Control.UI_LEFT, (action, state) -> addButton(action, vPad.buttonLeft, state));
+          inline forEachBound(Control.UI_RIGHT, (action, state) -> addButton(action, vPad.buttonRight, state));
+        case UP_LEFT_RIGHT:
+          inline forEachBound(Control.UI_UP, (action, state) -> addButton(action, vPad.buttonUp, state));
+          inline forEachBound(Control.UI_LEFT, (action, state) -> addButton(action, vPad.buttonLeft, state));
+          inline forEachBound(Control.UI_RIGHT, (action, state) -> addButton(action, vPad.buttonRight, state));
+        case LEFT_FULL | RIGHT_FULL:
+          inline forEachBound(Control.UI_UP, (action, state) -> addButton(action, vPad.buttonUp, state));
+          inline forEachBound(Control.UI_DOWN, (action, state) -> addButton(action, vPad.buttonDown, state));
+          inline forEachBound(Control.UI_LEFT, (action, state) -> addButton(action, vPad.buttonLeft, state));
+          inline forEachBound(Control.UI_RIGHT, (action, state) -> addButton(action, vPad.buttonRight, state));
+        case NONE: // do nothing
+      }
+
+      switch (action)
+      {
+        case A:
+          inline forEachBound(Control.ACCEPT, (action, state) -> addButton(action, vPad.buttonA, state));
+        case B:
+          inline forEachBound(Control.BACK, (action, state) -> addButton(action, vPad.buttonB, state));
+        case A_B | A_B_C | A_B_X_Y | A_B_C_X_Y_Z:
+          inline forEachBound(Control.ACCEPT, (action, state) -> addButton(action, vPad.buttonA, state));
+          inline forEachBound(Control.BACK, (action, state) -> addButton(action, vPad.buttonB, state));
+        case NONE: // do nothing
+      }
+    }
+
+    public function removeVControlsInput(tInputs:Array<FlxActionInput>):Void
+    {
+      for (action in digitalActions)
+      {
+        var i:Int = action.inputs.length;
+
+        while (i-- > 0)
+        {
+          var j:Int = tInputs.length;
+
+          while (j-- > 0)
+          {
+            if (tInputs[j] == action.inputs[i]) action.remove(action.inputs[i]);
+          }
+        }
+      }
+    }
+    #end
+   */
   override function update()
   {
     super.update();
@@ -635,11 +712,10 @@ class Controls extends FlxActionSet
     forEachBound(control, function(action, state) addKeys(action, keys, state));
   }
 
-  public function bindSwipe(control:Control, swipeDir:Int = FlxDirectionFlags.UP, ?swpLength:Float = 90)
-  {
-    forEachBound(control, function(action, press) action.add(new FlxActionInputDigitalMobileSwipeGameplay(swipeDir, press, swpLength)));
-  }
-
+  /* public function bindSwipe(control:Control, swipeDir:Int = FlxDirectionFlags.UP, ?swpLength:Float = 90)
+    {
+      forEachBound(control, function(action, press) action.add(new FlxActionInputDigitalMobileSwipeGameplay(swipeDir, press, swpLength)));
+  }*/
   /**
    * Sets all actions that pertain to the binder to trigger when the supplied keys are used.
    * If binder is a literal you can inline this
@@ -696,7 +772,7 @@ class Controls extends FlxActionSet
     bindKeys(Control.VOLUME_MUTE, getDefaultKeybinds(scheme, Control.VOLUME_MUTE));
     bindKeys(Control.FULLSCREEN, getDefaultKeybinds(scheme, Control.FULLSCREEN));
 
-    bindMobileLol();
+    // bindMobileLol();
   }
 
   function getDefaultKeybinds(scheme:KeyboardScheme, control:Control):Array<FlxKey>
@@ -785,30 +861,29 @@ class Controls extends FlxActionSet
     return [];
   }
 
-  function bindMobileLol()
-  {
-    #if FLX_TOUCH
-    // MAKE BETTER TOUCH BIND CODE
+  /* function bindMobileLol()
+    {
+      #if FLX_TOUCH
+        // MAKE BETTER TOUCH BIND CODE
 
-    bindSwipe(Control.NOTE_UP, FlxDirectionFlags.UP, 40);
-    bindSwipe(Control.NOTE_DOWN, FlxDirectionFlags.DOWN, 40);
-    bindSwipe(Control.NOTE_LEFT, FlxDirectionFlags.LEFT, 40);
-    bindSwipe(Control.NOTE_RIGHT, FlxDirectionFlags.RIGHT, 40);
+        bindSwipe(Control.NOTE_UP, FlxDirectionFlags.UP, 40);
+        bindSwipe(Control.NOTE_DOWN, FlxDirectionFlags.DOWN, 40);
+        bindSwipe(Control.NOTE_LEFT, FlxDirectionFlags.LEFT, 40);
+        bindSwipe(Control.NOTE_RIGHT, FlxDirectionFlags.RIGHT, 40);
 
-    // feels more like drag when up/down are inversed
-    bindSwipe(Control.UI_UP, FlxDirectionFlags.DOWN);
-    bindSwipe(Control.UI_DOWN, FlxDirectionFlags.UP);
-    bindSwipe(Control.UI_LEFT, FlxDirectionFlags.LEFT);
-    bindSwipe(Control.UI_RIGHT, FlxDirectionFlags.RIGHT);
-    #end
+        // feels more like drag when up/down are inversed
+        bindSwipe(Control.UI_UP, FlxDirectionFlags.DOWN);
+        bindSwipe(Control.UI_DOWN, FlxDirectionFlags.UP);
+        bindSwipe(Control.UI_LEFT, FlxDirectionFlags.LEFT);
+        bindSwipe(Control.UI_RIGHT, FlxDirectionFlags.RIGHT);
+        #end
 
-    #if android
-    forEachBound(Control.BACK, function(action, pres) {
-      action.add(new FlxActionInputDigitalAndroid(FlxAndroidKey.BACK, JUST_PRESSED));
-    });
-    #end
-  }
-
+      #if android
+      forEachBound(Control.PAUSE, function(action, pres) {
+        action.add(new FlxActionInputDigitalAndroid(FlxAndroidKey.BACK, JUST_RELEASED));
+      });
+      #end
+  }*/
   function removeKeyboard()
   {
     for (action in this.digitalActions)
@@ -948,13 +1023,12 @@ class Controls extends FlxActionSet
     forEachBound(control, function(action, state) addButtons(action, buttons, state, id));
   }
 
-  public function touchShit(control:Control, id)
-  {
-    forEachBound(control, function(action, state) {
-      // action
-    });
-  }
-
+  /* public function touchShit(control:Control, id)
+    {
+      forEachBound(control, function(action, state) {
+        // action
+      });
+  }*/
   /**
    * Sets all actions that pertain to the binder to trigger when the supplied keys are used.
    * If binder is a literal you can inline this
@@ -1316,8 +1390,8 @@ class FunkinAction extends FlxActionDigital
   }
 }
 
-class FlxActionInputDigitalMobileSwipeGameplay extends FlxActionInputDigital
-{
+/*class FlxActionInputDigitalMobileSwipeGameplay extends FlxActionInputDigital
+  {
   var touchMap:Map<Int, Swipes> = new Map();
 
   var vibrationSteps:Int = 5;
@@ -1387,13 +1461,13 @@ class FlxActionInputDigitalMobileSwipeGameplay extends FlxActionInputDigital
         touchMap.remove(touch.touchPointID);
       }
 
-      /* switch (inputID)
+      switch (inputID)
         {
           case FlxDirectionFlags.UP:
             return
           case FlxDirectionFlags.DOWN:
         }
-       */
+
     }
     #end
   }
@@ -1435,8 +1509,7 @@ class FlxActionInputDigitalMobileSwipeGameplay extends FlxActionInputDigital
     swipe.initTouchPos.set(swipe.curTouchPos.x, swipe.curTouchPos.y);
     return true;
   }
-}
-
+}*/
 // Maybe this can be committed to main HaxeFlixel repo?
 #if android
 class FlxActionInputDigitalAndroid extends FlxActionInputDigital

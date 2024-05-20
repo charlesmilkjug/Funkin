@@ -8,7 +8,7 @@ import flixel.addons.transition.FlxTransitionableState;
 import flixel.effects.FlxFlicker;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.group.FlxGroup.FlxTypedGroup;
-import flixel.input.touch.FlxTouch;
+// import flixel.input.touch.FlxTouch;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
@@ -48,7 +48,7 @@ class MainMenuState extends MusicBeatState
   {
     #if discord_rpc
     // Updating Discord Rich Presence
-    DiscordClient.changePresence("In the Menus", null);
+    DiscordClient.changePresence("In the Main Menu", null);
     #end
 
     transIn = FlxTransitionableState.defaultTransIn;
@@ -98,7 +98,7 @@ class MainMenuState extends MusicBeatState
       // Freeplay has its own custom transition
       FlxTransitionableState.skipNextTransIn = true;
       FlxTransitionableState.skipNextTransOut = true;
-
+      FlxTween.tween(virtualPad, {alpha: 0}, 0.2, {ease: FlxEase.circOut});
       openSubState(new FreeplayState());
     });
 
@@ -143,6 +143,10 @@ class MainMenuState extends MusicBeatState
         });
       }
     });
+
+    #if mobile
+    addVirtualPad(UP_DOWN, A_B);
+    #end
 
     // FlxG.camera.setScrollBounds(bg.x, bg.x + bg.width, bg.y, bg.y + bg.height * 1.2);
 
@@ -189,7 +193,7 @@ class MainMenuState extends MusicBeatState
   override function closeSubState():Void
   {
     magenta.visible = false;
-
+    if (virtualPad.alpha == 0) FlxTween.tween(virtualPad, {alpha: 0.4}, 0.3, {ease: FlxEase.expoOut});
     super.closeSubState();
   }
 
@@ -198,11 +202,6 @@ class MainMenuState extends MusicBeatState
     super.finishTransIn();
 
     // menuItems.enabled = true;
-
-    // #if newgrounds
-    // if (NGio.savedSessionFailed)
-    // 	showSavedSessionFailed();
-    // #end
   }
 
   function onMenuItemChange(selected:MenuListItem)
@@ -303,23 +302,23 @@ class MainMenuState extends MusicBeatState
   {
     super.update(elapsed);
 
-    if (FlxG.onMobile)
-    {
-      var touch:FlxTouch = FlxG.touches.getFirst();
-
-      if (touch != null)
+    /* if (FlxG.onMobile)
       {
-        for (item in menuItems)
+        var touch:FlxTouch = FlxG.touches.getFirst();
+
+        if (touch != null)
         {
-          if (touch.overlaps(item))
+          for (item in menuItems)
           {
-            if (menuItems.selectedIndex == item.ID && touch.justPressed) menuItems.accept();
-            else
-              menuItems.selectItem(item.ID);
+            if (touch.overlaps(item))
+            {
+              if (menuItems.selectedIndex == item.ID && touch.justPressed) menuItems.accept();
+              else
+                menuItems.selectItem(item.ID);
+            }
           }
         }
-      }
-    }
+    }*/
 
     // Open the debug menu, defaults to ` / ~
     #if CHART_EDITOR_SUPPORTED

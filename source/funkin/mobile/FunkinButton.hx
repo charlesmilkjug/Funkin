@@ -1,5 +1,6 @@
 package funkin.mobile;
 
+import funkin.graphics.FunkinSprite;
 import flixel.input.touch.FlxTouch;
 import flixel.input.FlxInput;
 import flixel.input.FlxPointer;
@@ -9,6 +10,25 @@ import flixel.util.FlxDestroyUtil;
 import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.util.FlxSignal;
+
+/**
+ * Enum representing the status of the button.
+ */
+enum abstract FunkinButtonStatus(Int) from Int to Int
+{
+  var NORMAL = 0;
+  var PRESSED = 1;
+}
+
+/**
+ * Enum representing the role of the button.
+ */
+enum FunkinButtonRole
+{
+  DIRECTION_BUTTON;
+  ACTION_BUTTON;
+}
 
 /**
  * A simple button class that calls a function when touched.
@@ -16,135 +36,92 @@ import flixel.FlxSprite;
 #if !display
 @:generic
 #end
-class FunkinButton extends FlxSprite implements IFlxInput
+class FunkinButton extends FunkinSprite implements IFlxInput
 {
   /**
-   * Used with public variable status, means not highlighted or pressed.
+   * The current state of the button, either `FunkinButtonStatus.NORMAL` or `FunkinButtonStatus.PRESSED`.
    */
-  public static inline var NORMAL:Int = 0;
+  public var status:FunkinButtonStatus;
 
   /**
-   * Used with public variable status, means highlighted (usually from touch over).
+   * The role of the button, defining its purpose.
    */
-  public static inline var HIGHLIGHT:Int = 1;
+  public var role:FunkinButtonRole;
 
   /**
-   * Used with public variable status, means pressed (usually from touch click).
+   * The callback function to call when the button is released.
    */
-  public static inline var PRESSED:Int = 2;
+  public var onUp(default, null):FlxSignal = new FlxSignal();
 
   /**
-   * What animation should be played for each status.
-   * Default is ['normal', 'highlight', 'pressed'].
+   * The callback function to call when the button is pressed down.
    */
-  public var statusAnimations:Array<String> = ['normal', 'highlight', 'pressed'];
+  public var onDown(default, null):FlxSignal = new FlxSignal();
 
   /**
-   * Whether you can press the button simply by releasing the touch button over it (default).
-   * If false, the input has to be pressed while hovering over the button.
+   * The callback function to call when the button is no longer hovered over.
    */
-  public var allowSwiping:Bool = true;
+  public var onOut(default, null):FlxSignal = new FlxSignal();
 
   /**
-   * Whether the button can use multiple fingers on it.
+   * Whether the button was just released.
    */
-  public var multiTouch:Bool = false;
-
-  /**
-   * Maximum distance a pointer can move to still trigger event handlers.
-   * If it moves beyond this limit, onOut is triggered.
-   * Defaults to `Math.POSITIVE_INFINITY` (i.e. no limit).
-   */
-  public var maxInputMovement:Float = Math.POSITIVE_INFINITY;
-
-  /**
-   * Shows the current state of the button, either `FunkinButton.NORMAL`,
-   * `FunkinButton.HIGHLIGHT` or `FunkinButton.PRESSED`.
-   */
-  public var status(default, set):Int;
-
-  /**
-   * The properties of this button's `onUp` callback.
-   */
-  public var onUp(default, null):Void->Void;
-
-  /**
-   * The properties of this button's `onDown` callback.
-   */
-  public var onDown(default, null):Void->Void;
-
-  /**
-   * The properties of this button's `onOver` callback.
-   */
-  public var onOver(default, null):Void->Void;
-
-  /**
-   * The properties of this button's `onOut` callback.
-   */
-  public var onOut(default, null):Void->Void;
-
   public var justReleased(get, never):Bool;
+
+  /**
+   * Whether the button is currently released.
+   */
   public var released(get, never):Bool;
+
+  /**
+   * Whether the button is currently pressed.
+   */
   public var pressed(get, never):Bool;
+
+  /**
+   * Whether the button was just pressed.
+   */
   public var justPressed(get, never):Bool;
 
   /**
-   * We don't need an ID here, so let's just use `Int` as the type.
+   * The input associated with the button, using `Int` as the type.
    */
   var input:FlxInput<Int>;
 
   /**
-   * The input currently pressing this button, if none, it's `null`. Needed to check for its release.
+   * The input currently pressing this button, if none, it's `null`.
+   * Needed to check for its release.
    */
   var currentInput:IFlxInput;
-
-  var lastStatus:Int = -1;
 
   /**
    * Creates a new `FunkinButton` object with a gray background.
    *
    * @param X The x position of the button.
    * @param Y The y position of the button.
+   * @param role The role of the button.
    */
-  public function new(X:Float = 0, Y:Float = 0):Void
+  public function new(X:Float = 0, Y:Float = 0, ?role:FunkinButtonRole):Void
   {
     super(X, Y);
-    loadDefaultGraphic();
-    status = multiTouch ? FunkinButton.NORMAL : FunkinButton.HIGHLIGHT;
+
+    status = FunkinButtonStatus.NORMAL;
+    solid = false;
+    immovable = true;
+    #if FLX_DEBUG
+    ignoreDrawDebug = true;
+    #end
     scrollFactor.set();
-    statusAnimations[FunkinButton.HIGHLIGHT] = 'normal';
     input = new FlxInput(0);
-  }
 
-  public override function graphicLoaded():Void
-  {
-    super.graphicLoaded();
-    setupAnimation('normal', FunkinButton.NORMAL);
-    setupAnimation('highlight', FunkinButton.HIGHLIGHT);
-    setupAnimation('pressed', FunkinButton.PRESSED);
-  }
-
-  private function loadDefaultGraphic():Void
-  {
-    loadGraphic('flixel/images/ui/button.png', true, 80, 20);
-  }
-
-  private function setupAnimation(animationName:String, frameIndex:Int):Void
-  {
-    // make sure the animation doesn't contain an invalid frame
-    frameIndex = Std.int(Math.min(frameIndex, #if (flixel < "5.3.0") animation.frames #else animation.numFrames #end - 1));
-    animation.add(animationName, [frameIndex]);
+    this.role = role;
   }
 
   /**
-   * Called by the game state when state is changed (if this object belongs to the state)
+   * Called by the game state when the state is changed (if this object belongs to the state).
    */
   public override function destroy():Void
   {
-    onUp = null;
-    onDown = null;
-    onOver = null;
-    onOut = null;
     currentInput = null;
     input = null;
 
@@ -157,36 +134,20 @@ class FunkinButton extends FlxSprite implements IFlxInput
   public override function update(elapsed:Float):Void
   {
     super.update(elapsed);
+
+    #if FLX_POINTER_INPUT
+    // Update the button, but only if touches are enabled
     if (visible)
     {
-      // Update the button, but only if at least either touches are enabled
-      #if FLX_POINTER_INPUT
-      updateButton();
-      #end
-      // Trigger the animation only if the button's input status changes.
-      if (lastStatus != status)
-      {
-        updateStatusAnimation();
-        lastStatus = status;
-      }
+      final overlapFound:Bool = checkTouchOverlap();
+
+      if (currentInput != null && currentInput.justReleased && overlapFound) onUpHandler();
+
+      if (status != FunkinButtonStatus.NORMAL && (!overlapFound || (currentInput != null && currentInput.justReleased))) onOutHandler();
     }
+    #end
+
     input.update();
-  }
-
-  private function updateStatusAnimation():Void
-  {
-    animation.play(statusAnimations[status]);
-  }
-
-  /**
-   * Basic button update logic - searches for overlaps with touches and
-   * the touch and calls `updateStatus()`.
-   */
-  private function updateButton():Void
-  {
-    final overlapFound:Bool = checkTouchOverlap();
-    if (currentInput != null && currentInput.justReleased && overlapFound) onUpHandler();
-    if (status != FunkinButton.NORMAL && (!overlapFound || (currentInput != null && currentInput.justReleased))) onOutHandler();
   }
 
   private function checkTouchOverlap():Bool
@@ -198,82 +159,66 @@ class FunkinButton extends FlxSprite implements IFlxInput
         if (checkInput(touch, touch, touch.justPressedPosition, camera)) return true;
       }
     }
+
     return false;
   }
 
   private function checkInput(pointer:FlxPointer, input:IFlxInput, justPressedPosition:FlxPoint, camera:FlxCamera):Bool
   {
-    if (maxInputMovement != Math.POSITIVE_INFINITY
-      && justPressedPosition.distanceTo(pointer.getScreenPosition(FlxPoint.weak())) > maxInputMovement
-      && input == currentInput)
-    {
-      currentInput = null;
-    }
-    else if (overlapsPoint(pointer.getWorldPosition(camera, _point), true, camera))
+    if (overlapsPoint(pointer.getWorldPosition(camera, _point), true, camera))
     {
       updateStatus(input);
+
       return true;
     }
+
     return false;
   }
 
-  /**
-   * Updates the button status by calling the respective event handler function.
-   */
   private function updateStatus(input:IFlxInput):Void
   {
     if (input.justPressed)
     {
       currentInput = input;
+
       onDownHandler();
     }
-    else if (status == FunkinButton.NORMAL)
+    else if (status == FunkinButtonStatus.NORMAL)
     {
-      // Allow 'swiping' to press a button (dragging it over the button while pressed)
-      if (allowSwiping && input.pressed) onDownHandler();
-      else
-        onOverHandler();
+      if (input.pressed)
+      {
+        onDownHandler();
+      }
     }
   }
 
-  /**
-   * Internal function that handles the onUp event.
-   */
   private function onUpHandler():Void
   {
-    status = FunkinButton.NORMAL;
+    status = FunkinButtonStatus.NORMAL;
+
     input.release();
+
     currentInput = null;
-    if (onUp != null) onUp();
+
+    onUp.dispatch();
   }
 
-  /**
-   * Internal function that handles the onDown event.
-   */
   private function onDownHandler():Void
   {
-    status = FunkinButton.PRESSED;
+    status = FunkinButtonStatus.PRESSED;
+
     input.press();
-    if (onDown != null) onDown();
+
+    onDown.dispatch();
   }
 
-  /**
-   * Internal function that handles the onOver event.
-   */
-  private function onOverHandler():Void
-  {
-    status = FunkinButton.HIGHLIGHT;
-    if (onOver != null) onOver();
-  }
-
-  /**
-   * Internal function that handles the onOut event.
-   */
   private function onOutHandler():Void
   {
-    status = FunkinButton.NORMAL;
+    status = FunkinButtonStatus.NORMAL;
+
     input.release();
-    if (onOut != null) onOut();
+
+    onOut.dispatch();
   }
 
   private inline function get_justReleased():Bool
