@@ -775,46 +775,92 @@ class Controls extends FlxActionSet
     // bindMobileLol();
   }
 
-  function getDefaultKeybinds(scheme:KeyboardScheme, control:Control):Array<FlxKey> {
-    var defaultKeybinds = switch (control) {
-      case Control.UI_UP: [W, FlxKey.UP];
-      case Control.UI_DOWN: [S, FlxKey.DOWN];
-      case Control.UI_LEFT: [A, FlxKey.LEFT];
-      case Control.UI_RIGHT: [D, FlxKey.RIGHT];
-      case Control.NOTE_UP: [W, FlxKey.UP];
-      case Control.NOTE_DOWN: [S, FlxKey.DOWN];
-      case Control.NOTE_LEFT: [A, FlxKey.LEFT];
-      case Control.NOTE_RIGHT: [D, FlxKey.RIGHT];
-      case Control.ACCEPT: [Z, SPACE, ENTER];
-      case Control.BACK: [X, BACKSPACE, ESCAPE];
-      case Control.PAUSE: [P, ENTER, ESCAPE];
-      case Control.RESET: [R];
-      case Control.SCREENSHOT: [F3];
-      case Control.CUTSCENE_ADVANCE: [Z, ENTER];
-      case Control.DEBUG_MENU: [FIVE, GRAVEACCENT];
-      case Control.DEBUG_CHART: [SEVEN];
-      case Control.DEBUG_STAGE: [SIX];
-      case Control.VOLUME_UP: [PLUS, NUMPADPLUS];
-      case Control.VOLUME_DOWN: [MINUS, NUMPADMINUS];
-      case Control.VOLUME_MUTE: [ZERO, NUMPADZERO];
-      case Control.FULLSCREEN: [F12];
-
-    };
-
-    switch (scheme) {
+  function getDefaultKeybinds(scheme:KeyboardScheme, control:Control):Array<FlxKey>
+  {
+    switch (scheme)
+    {
       case Solo:
-        return defaultKeybinds;
+        switch (control)
+        {
+          case Control.UI_UP: return [W, FlxKey.UP];
+          case Control.UI_DOWN: return [S, FlxKey.DOWN];
+          case Control.UI_LEFT: return [A, FlxKey.LEFT];
+          case Control.UI_RIGHT: return [D, FlxKey.RIGHT];
+          case Control.NOTE_UP: return [W, FlxKey.UP];
+          case Control.NOTE_DOWN: return [S, FlxKey.DOWN];
+          case Control.NOTE_LEFT: return [A, FlxKey.LEFT];
+          case Control.NOTE_RIGHT: return [D, FlxKey.RIGHT];
+          case Control.ACCEPT: return [Z, SPACE, ENTER];
+          case Control.BACK: return [X, BACKSPACE, ESCAPE];
+          case Control.PAUSE: return [P, ENTER, ESCAPE];
+          case Control.RESET: return [R];
+          case Control.SCREENSHOT: return [F3]; // TODO: Change this back to PrintScreen
+          case Control.CUTSCENE_ADVANCE: return [Z, ENTER];
+          case Control.DEBUG_MENU: return [GRAVEACCENT];
+          case Control.DEBUG_CHART: return [];
+          case Control.DEBUG_STAGE: return [];
+          case Control.VOLUME_UP: return [PLUS, NUMPADPLUS];
+          case Control.VOLUME_DOWN: return [MINUS, NUMPADMINUS];
+          case Control.VOLUME_MUTE: return [ZERO, NUMPADZERO];
+          case Control.FULLSCREEN: return [F12];
+        }
       case Duo(true):
-        return defaultKeybinds[0] ? [defaultKeybinds[0]] : [];
+        switch (control)
+        {
+          case Control.UI_UP: return [W];
+          case Control.UI_DOWN: return [S];
+          case Control.UI_LEFT: return [A];
+          case Control.UI_RIGHT: return [D];
+          case Control.NOTE_UP: return [W];
+          case Control.NOTE_DOWN: return [S];
+          case Control.NOTE_LEFT: return [A];
+          case Control.NOTE_RIGHT: return [D];
+          case Control.ACCEPT: return [G, Z];
+          case Control.BACK: return [H, X];
+          case Control.PAUSE: return [ONE];
+          case Control.RESET: return [R];
+          case Control.SCREENSHOT: return [PRINTSCREEN];
+          case Control.CUTSCENE_ADVANCE: return [G, Z];
+          case Control.DEBUG_MENU: return [GRAVEACCENT];
+          case Control.DEBUG_CHART: return [];
+          case Control.DEBUG_STAGE: return [];
+          case Control.VOLUME_UP: return [PLUS];
+          case Control.VOLUME_DOWN: return [MINUS];
+          case Control.VOLUME_MUTE: return [ZERO];
+          case Control.FULLSCREEN: return [F12];
+        }
       case Duo(false):
-        return defaultKeybinds[1] ? [defaultKeybinds[1]] : [];
+        switch (control)
+        {
+          case Control.UI_UP: return [FlxKey.UP];
+          case Control.UI_DOWN: return [FlxKey.DOWN];
+          case Control.UI_LEFT: return [FlxKey.LEFT];
+          case Control.UI_RIGHT: return [FlxKey.RIGHT];
+          case Control.NOTE_UP: return [FlxKey.UP];
+          case Control.NOTE_DOWN: return [FlxKey.DOWN];
+          case Control.NOTE_LEFT: return [FlxKey.LEFT];
+          case Control.NOTE_RIGHT: return [FlxKey.RIGHT];
+          case Control.ACCEPT: return [ENTER];
+          case Control.BACK: return [ESCAPE];
+          case Control.PAUSE: return [ONE];
+          case Control.RESET: return [R];
+          case Control.SCREENSHOT: return [PRINTSCREEN];
+          case Control.CUTSCENE_ADVANCE: return [ENTER];
+          case Control.DEBUG_MENU: return [GRAVEACCENT];
+          case Control.DEBUG_CHART: return [];
+          case Control.DEBUG_STAGE: return [];
+          case Control.VOLUME_UP: return [NUMPADPLUS];
+          case Control.VOLUME_DOWN: return [NUMPADMINUS];
+          case Control.VOLUME_MUTE: return [NUMPADZERO];
+          case Control.FULLSCREEN: return [];
+        }
       default:
         // Fallthrough.
     }
 
     return [];
   }
-
+    
   /* function bindMobileLol()
     {
       #if FLX_TOUCH
