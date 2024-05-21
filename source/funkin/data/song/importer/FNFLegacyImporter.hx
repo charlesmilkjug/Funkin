@@ -74,7 +74,10 @@ class FNFLegacyImporter
   {
     trace('Migrating song chart data from FNF Legacy.');
 
-    var songChartData:SongChartData = new SongChartData([difficulty => 1.0], [], [difficulty => []]);
+    /**
+     * Todo: Be able to migrate charts from Psych Engine with Extra Keys
+     */
+    var songChartData:SongChartData = new SongChartData([difficulty => 1.0], [], [difficulty => []], [difficulty => 3]);
 
     if (songData?.song?.notes != null)
     {
