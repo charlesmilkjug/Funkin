@@ -548,4 +548,21 @@ class Constants
 
   public static final MIN_FRAMERATE:Int = 60;
   public static final MAX_FRAMERATE:Int = 540;
+
+    /**
+   * The maximum keys the engine currently supports.
+   */
+  public static final MAX_NOTE_DIRECTIONS:Int = 17;
+
+  /**
+   * The default ammount of keys.
+   */
+  public static final DEFAULT_KEYS:Int = 3;
+
+  /**
+   * The default key ammounts for non extra key supported charts.
+   * This is so no errors of uninitialized 'keys' are thrown.
+   */
+  public static final DEFAULT_KEYS_MAP:Map<String, Int> = ['default' => 3];
+}
 }
