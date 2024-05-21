@@ -565,4 +565,3 @@ class Constants
    */
   public static final DEFAULT_KEYS_MAP:Map<String, Int> = ['default' => 3];
 }
-}
