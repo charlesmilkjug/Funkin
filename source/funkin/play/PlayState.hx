@@ -178,6 +178,12 @@ class PlayState extends MusicBeatSubState
   public var currentStage:Stage = null;
 
   /**
+   * The ammount of keys the player is currently using.
+   * (From 0 to Constants.MAX_NOTE_DIRECTIONS)
+   */
+  public var currentMania:Int = 3;
+
+  /**
    * Gets set to true when the PlayState needs to reset (player opted to restart or died).
    * Gets disabled once resetting happens.
    */
