@@ -95,6 +95,7 @@ class Save
           zoomCamera: true,
           centerStrums: false,
           coloredHealthBar: false,
+          comboHUD: true,
           debugDisplay: false,
           autoPause: true,
           gameplayBackgroundAlpha: 0,
@@ -122,6 +123,7 @@ class Save
         {
           // No mods enabled.
           enabledMods: [],
+          // disabledMods: [], (once i add a mod menu, hopefully)
           modOptions: [],
         },
 
@@ -131,7 +133,7 @@ class Save
           previousFiles: [],
           noteQuant: 3,
           chartEditorLiveInputStyle: ChartEditorLiveInputStyle.None,
-          theme: ChartEditorTheme.Light,
+          theme: ChartEditorTheme.Dark,
           playtestStartTime: false,
           downscroll: false,
           metronomeVolume: 1.0,
