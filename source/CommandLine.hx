@@ -5,6 +5,13 @@ package source; // Yeah, I know...
  */
 class CommandLine
 {
+  // Wrapper shits!
+  inline public static function print(txt:String)
+  {
+      Sys.println(txt);
+}
+  //
+  
   public static function prettyPrint(txt:String)
   {
     var myLines:Array<String> = txt.split("\n");
@@ -26,7 +33,7 @@ class CommandLine
 
     Sys.println('╚$immaHeadOut╝');
   }
-
+  
   public static function centerTxt(txt:String, width:Int):String
   {
     var theOffset = (width - txt.length) / 2;
