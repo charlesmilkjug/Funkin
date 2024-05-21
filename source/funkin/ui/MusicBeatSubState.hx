@@ -195,10 +195,10 @@ class MusicBeatSubState extends FlxSubState implements IEventHandler
   {
     super.update(elapsed);
 
-    // Emergency exit button.
+    // Emergency exit button, just in case.
     if (FlxG.keys.justPressed.F4) FlxG.switchState(() -> new MainMenuState());
 
-    // This can now be used in EVERY STATE YAY!
+    // This can now be used in EVERY STATE, YAY! :D
     if (FlxG.keys.justPressed.F5) debug_refreshModules();
 
     // Display Conductor info in the watch window.
@@ -206,7 +206,7 @@ class MusicBeatSubState extends FlxSubState implements IEventHandler
     Conductor.watchQuick(conductorInUse);
 
     if (FlxG.keys.justPressed.ANY && isTouch) isTouch = false;
-    if (TouchUtil.justPressed && !isTouch) isTouch = true;
+    if (funkin.util.TouchUtil.justPressed && !isTouch) isTouch = true;
 
     dispatchEvent(new UpdateScriptEvent(elapsed));
   }
