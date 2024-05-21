@@ -389,7 +389,7 @@ class Strumline extends FlxSpriteGroup
           playStatic(holdNote.noteDirection);
         }
 
-        if (holdNote.cover != null && isPlayer)
+        if (holdNote.cover != null && isPlayer && holdNote.stumPlayConfirm)
         {
           holdNote.cover.playEnd();
         }
@@ -431,7 +431,7 @@ class Strumline extends FlxSpriteGroup
       else if (conductorInUse.songPosition > holdNote.strumTime && holdNote.hitNote)
       {
         // Hold note is currently being hit, clip it off.
-        holdConfirm(holdNote.noteDirection);
+        if (holdNote.stumPlayConfirm) holdConfirm(holdNote.noteDirection);
         holdNote.visible = true;
 
         holdNote.sustainLength = (holdNote.strumTime + holdNote.fullSustainLength) - conductorInUse.songPosition;
@@ -567,7 +567,7 @@ class Strumline extends FlxSpriteGroup
    */
   public function hitNote(note:NoteSprite, removeNote:Bool = true):Void
   {
-    playConfirm(note.direction, note.length > 0);
+    if (note.stumPlayConfirm) playConfirm(note.direction, note.length > 0);
     note.hasBeenHit = true;
 
     if (removeNote)
@@ -576,7 +576,7 @@ class Strumline extends FlxSpriteGroup
     }
     else
     {
-      note.alpha = 0.5;
+      note.alpha *= 0.5;
       note.desaturate();
     }
 
@@ -658,9 +658,7 @@ class Strumline extends FlxSpriteGroup
 
   public function playNoteHoldCover(holdNote:SustainTrail):Void
   {
-    // TODO: Add a setting to disable note splashes.
-    // if (Settings.noSplash) return;
-    if (!noteStyle.isHoldNoteCoverEnabled()) return;
+    if (!noteStyle.isHoldNoteCoverEnabled() || !holdNote.stumPlayConfirm) return;
 
     var cover:NoteHoldCover = this.constructNoteHoldCover();
 

@@ -1,13 +1,12 @@
 package;
 
+// import flixel.FlxG;
 import flixel.FlxGame;
 import flixel.FlxState;
 import flixel.math.FlxMath;
 import funkin.util.logging.CrashHandler;
-import funkin.ui.debug.MemoryCounter;
 import funkin.save.Save;
 import haxe.ui.Toolkit;
-import openfl.display.FPS;
 import openfl.display.Sprite;
 import openfl.events.Event;
 import openfl.Lib;
@@ -40,11 +39,11 @@ class Main extends Sprite
   public static function main():Void
   {
     #if android
-    // Set the current working directory for Android devices
-    // Determine the appropriate directory based on Android version
-    Sys.setCwd(haxe.io.Path.addTrailingSlash(android.os.Build.VERSION.SDK_INT > 30 ? android.content.Context.getObbDir() : // Use Obb directory for Android SDK version > 30
-      android.content.Context.getExternalFilesDir() // Use External Files directory for Android SDK version <= 30
-    ));
+    // Set the current working directory for Android and iOS devices
+    // For Android we determine the appropriate directory based on Android version
+    Sys.setCwd(haxe.io.Path.addTrailingSlash(android.os.Build.VERSION.SDK_INT > 30 ? android.content.Context.getObbDir() : /* Use Obb directory for Android SDK version > 30 */ android.content.Context.getExternalFilesDir() /* Use External Files directory for Android SDK version < 30 */));
+    #elseif ios
+    Sys.setCwd(haxe.io.Path.addTrailingSlash(lime.system.System.documentsDirectory)); // For iOS we use documents directory and this is only way we can do.
     #end
 
     // We need to make the crash handler LITERALLY FIRST so nothing EVER gets past it.
@@ -61,6 +60,10 @@ class Main extends Sprite
     // Initialize custom logging.
     haxe.Log.trace = funkin.util.logging.AnsiTrace.trace;
     funkin.util.logging.AnsiTrace.traceBF();
+
+    #if mobile
+    funkin.util.StorageUtil.copyNecessaryFiles(['mp4' => 'assets/videos']);
+    #end
 
     // Load mods to override assets.
     // TODO: Replace with loadEnabledMods() once the user can configure the mod list.
@@ -91,34 +94,27 @@ class Main extends Sprite
   var overlay:Sprite;
 
   /**
-   * A frame counter displayed at the top left.
+   * Displayed at the top left corner. Shows the FPS and the usage of RAM.
    */
-  public static var fpsCounter:FPS;
-
-  /**
-   * A RAM counter displayed at the top left.
-   */
-  public static var memoryCounter:MemoryCounter;
+  public static var statisticMonitor:funkin.ui.debug.StatisticMonitor;
 
   function setupGame():Void
   {
     initHaxeUI();
 
-    // addChild gets called by the user settings code.
-    fpsCounter = new FPS(10, 3, 0xFFFFFF);
-
-    #if !html5
-    // addChild gets called by the user settings code.
-    // TODO: disabled on HTML5 (todo: find another method that works?)
-    memoryCounter = new MemoryCounter(10, 13, 0xFFFFFF);
-    #end
+    statisticMonitor = new funkin.ui.debug.StatisticMonitor(10, 3, 0xFFFFFF);
 
     // George recommends binding the save before FlxGame is created.
     Save.load();
 
+    #if mobile
+    FlxG.signals.gameResized.add(resizeGame);
+    #end
+
     if (framerate == null) framerate = FlxMath.maxInt(60, Save.instance.options.framerate);
     var game:FlxGame = new FlxGame(gameWidth, gameHeight, initialState, framerate, framerate, skipSplash, startFullscreen);
 
+    hxvlc.util.Handle.init();
     // FlxG.game._customSoundTray wants just the class, it calls new from
     // create() in there, which gets called when it's added to stage
     // which is why it needs to be added before addChild(game) here
@@ -131,7 +127,11 @@ class Main extends Sprite
     game.debugger.interaction.addTool(new funkin.util.TrackerToolButtonUtil());
     #end
 
-    addChild(fpsCounter);
+    #if mobile
+    flixel.FlxG.game.addChild(statisticMonitor);
+    #else
+    addChild(statisticMonitor);
+    #end
 
     #if hxcpp_debug_server
     trace('hxcpp_debug_server is enabled, so you can now connect to the game with a debugger.');
@@ -153,5 +153,13 @@ class Main extends Sprite
     haxe.ui.focus.FocusManager.instance.autoFocus = false;
     funkin.input.Cursor.registerHaxeUICursors();
     haxe.ui.tooltips.ToolTipManager.defaultDelay = 200;
+  }
+
+  function resizeGame(width:Int, height:Int):Void
+  {
+    // Calling this so it gets scaled based on the resolution of the game and device's resolution.
+    final scale:Float = Math.min(flixel.FlxG.stage.stageWidth / flixel.FlxG.width, flixel.FlxG.stage.stageHeight / flixel.FlxG.height);
+
+    if (statisticMonitor != null) statisticMonitor.scaleX = statisticMonitor.scaleY = (scale > 1 ? scale : 1);
   }
 }

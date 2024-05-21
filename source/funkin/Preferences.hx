@@ -246,22 +246,17 @@ class Preferences
 
   static function toggleDebugDisplay(show:Bool):Void
   {
-    if (show)
-    {
-      // Enable the debug display.
-      FlxG.stage.addChild(Main.fpsCounter);
-      #if !html5
-      FlxG.stage.addChild(Main.memoryCounter);
-      #end
-    }
+    if (show) #if mobile
+      FlxG.game.addChild(Main.statisticMonitor);
+    #else
+      FlxG.stage.addChild(Main.statisticMonitor);
+    #end
     else
-    {
-      // Disable the debug display.
-      FlxG.stage.removeChild(Main.fpsCounter);
-      #if !html5
-      FlxG.stage.removeChild(Main.memoryCounter);
+      #if mobile
+      FlxG.game.addChild(Main.statisticMonitor);
+      #else
+      FlxG.stageremoveChild(Main.statisticMonitor);
       #end
-    }
   }
 
   /**

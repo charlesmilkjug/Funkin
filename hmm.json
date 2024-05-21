@@ -48,8 +48,8 @@
       "name": "funkin.vis",
       "type": "git",
       "dir": null,
-      "ref": "2aa654b974507ab51ab1724d2d97e75726fd7d78",
-      "url": "https://github.com/FunkinCrew/funkVis"
+      "ref": "dcbd701196aff39959bc2e18a6d7c51c37f78098",
+      "url": "https://github.com/FunkinDroidTeam/funkVis"
     },
     {
       "name": "hamcrest",
@@ -108,8 +108,8 @@
       "name": "lime",
       "type": "git",
       "dir": null,
-      "ref": "872ff6db2f2d27c0243d4ff76802121ded550dd7",
-      "url": "https://github.com/FunkinCrew/lime"
+      "ref": "6aa831e20e49cfc37f9c6b93544bd58872da77e1",
+      "url": "https://github.com/FunkinDroidTeam/lime"
     },
     {
       "name": "mconsole",

@@ -144,10 +144,10 @@
 	<haxelib name="flixel-text-input" /> <!-- Improved text field rendering for HaxeUI -->
 	<haxelib name="polymod" /> <!-- Modding framework -->
 	<haxelib name="flxanimate" /> <!-- Texture atlas rendering -->
-	<haxelib name="hxvlc" if="desktop || mobile" unless="hl" /> <!-- Video playback, planning to switch to hxvlc soon -->
 	<haxelib name="discord_rpc" if="desktop" unless="hl" /> <!-- Discord RPC -->
 	<haxelib name="extension-androidtools" if="android" /> <!-- Android Functions -->
 	<haxelib name="funkin.vis"/> <!-- Used for Nene/ABot, only works on web platforms for now -->
+  <haxelib name="hxvlc" if="desktop || mobile" unless="hl" /> <!-- Video playback -->
 
 	<haxelib name="json2object" /> <!-- JSON parsing -->
 	<haxelib name="thx.semver" /> <!-- Version string handling -->
@@ -248,7 +248,8 @@
 		<!-- <haxedef name="NG_FORCE_EXPIRED_SESSION" if="debug" /> -->
 	</section>
 
-	<architecture exclude="armv7" if="android" />
+	<architecture exclude="armv7" if="android NO_ARMV7" />
+	<architecture exclude="arm64" if="android NO_ARM64" />
 
 	<section>
 		<!--

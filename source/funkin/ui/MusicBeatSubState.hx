@@ -20,6 +20,7 @@ import flixel.util.FlxDestroyUtil;
 import flixel.FlxCamera;
 import funkin.mobile.FunkinHitbox;
 import funkin.mobile.FunkinVirtualPad;
+import funkin.mobile.PreciseInputHandler;
 #end
 
 /**
@@ -59,36 +60,35 @@ class MusicBeatSubState extends FlxSubState implements IEventHandler
     return PlayerSettings.player1.controls;
 
   #if mobile
-  var hitbox:FunkinHitbox;
-  var virtualPad:FunkinVirtualPad;
+  public var hitbox:FunkinHitbox;
+  public var virtualPad:FunkinVirtualPad;
+
+  public var vpadCam:FlxCamera;
+  public var hitboxCam:FlxCamera;
 
   var trackedInputsHitbox:Array<FlxActionInput> = [];
   var trackedInputsVirtualPad:Array<FlxActionInput> = [];
 
-  public function addVirtualPad(dPad:FunkinDPadMode, action:FunkinActionMode, ?visible:Bool = true):Void
+  public function addVirtualPad(direction:FunkinDirectionalMode, action:FunkinActionMode, ?visible:Bool = true):Void
   {
     if (virtualPad != null)
     {
       removeVirtualPad();
     }
-
-    virtualPad = new FunkinVirtualPad(dPad, action);
-
-    ControlsHandler.setupVirtualPad(controls, virtualPad, dPad, action, trackedInputsVirtualPad);
-
+    virtualPad = new FunkinVirtualPad(direction, action);
+    ControlsHandler.setupVirtualPad(controls, virtualPad, direction, action, trackedInputsVirtualPad);
     virtualPad.visible = visible;
     add(virtualPad);
   }
 
-  public function addVirtualPadCamera(defaultDrawTarget:Bool = true):Void
+  public function addVirtualPadCamera(defaultDrawTarget:Bool = false):Void
   {
-    if (virtualPad != null)
-    {
-      var camControls:FlxCamera = new FlxCamera();
-      FlxG.cameras.add(camControls, defaultDrawTarget);
-      camControls.bgColor.alpha = 0;
-      virtualPad.cameras = [camControls];
-    }
+    if (virtualPad == null || vpadCam != null) return;
+
+    vpadCam = new FlxCamera();
+    FlxG.cameras.add(vpadCam, defaultDrawTarget);
+    vpadCam.bgColor.alpha = 0;
+    virtualPad.cameras = [vpadCam];
   }
 
   public function removeVirtualPad():Void
@@ -97,37 +97,39 @@ class MusicBeatSubState extends FlxSubState implements IEventHandler
     {
       ControlsHandler.removeCachedInput(controls, trackedInputsVirtualPad);
     }
-
     if (virtualPad != null)
     {
       remove(virtualPad);
     }
+
+    if (vpadCam != null)
+    {
+      FlxG.cameras.remove(vpadCam, false);
+      vpadCam = FlxDestroyUtil.destroy(vpadCam);
+    }
   }
 
-  public function addHitbox(?visible:Bool = true):Void
+  public function addHitbox(?visible:Bool = true, ?initInput:Bool = true):Void
   {
     if (hitbox != null)
     {
       removeHitbox();
     }
-
     hitbox = new FunkinHitbox(4, Std.int(FlxG.width / 4), FlxG.height, [0xC34B9A, 0x00FFFF, 0x12FB06, 0xF9393F]);
-
     ControlsHandler.setupHitbox(controls, hitbox, trackedInputsHitbox);
-
     hitbox.visible = visible;
     add(hitbox);
+
+    if (initInput) PreciseInputHandler.initializeHitbox(hitbox);
   }
 
-  public function addHitboxCamera(DefaultDrawTarget:Bool = true):Void
+  public function addHitboxCamera(DefaultDrawTarget:Bool = false):Void
   {
-    if (hitbox != null)
-    {
-      var camControls:FlxCamera = new FlxCamera();
-      FlxG.cameras.add(camControls, DefaultDrawTarget);
-      camControls.bgColor.alpha = 0;
-      hitbox.cameras = [camControls];
-    }
+    if (hitbox == null || hitboxCam != null) return;
+    hitboxCam = new FlxCamera();
+    FlxG.cameras.add(hitboxCam, DefaultDrawTarget);
+    hitboxCam.bgColor.alpha = 0;
+    hitbox.cameras = [hitboxCam];
   }
 
   public function removeHitbox():Void
@@ -136,10 +138,15 @@ class MusicBeatSubState extends FlxSubState implements IEventHandler
     {
       ControlsHandler.removeCachedInput(controls, trackedInputsHitbox);
     }
-
     if (hitbox != null)
     {
       remove(hitbox);
+    }
+
+    if (hitboxCam != null)
+    {
+      FlxG.cameras.remove(hitboxCam, false);
+      hitboxCam = FlxDestroyUtil.destroy(hitboxCam);
     }
   }
   #end

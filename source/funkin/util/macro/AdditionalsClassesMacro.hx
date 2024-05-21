@@ -26,7 +26,8 @@ class AdditionalsClassesMacro
 
       "openfl",
       "sys", // ugh
-      // #if ENABLE_VIDEOS "hxvlc.flixel", "hxvlc.openfl", #end
+      "hxvlc.flixel",
+      "hxvlc.openfl",
       "DateTools",
       "EReg",
       "Lambda",

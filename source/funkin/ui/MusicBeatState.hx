@@ -22,6 +22,7 @@ import funkin.mobile.ControlsHandler;
 import funkin.mobile.FunkinHitbox;
 import funkin.mobile.FunkinVirtualPad;
 import funkin.util.TouchUtil;
+import funkin.mobile.PreciseInputHandler;
 #end
 
 /**
@@ -75,16 +76,16 @@ class MusicBeatState extends FlxTransitionableState implements IEventHandler
   var trackedInputsHitbox:Array<FlxActionInput> = [];
   var trackedInputsVirtualPad:Array<FlxActionInput> = [];
 
-  public function addVirtualPad(dPad:FunkinDPadMode, action:FunkinActionMode, ?visible:Bool = true):Void
+  public function addVirtualPad(direction:FunkinDirectionalMode, action:FunkinActionMode, ?visible:Bool = true):Void
   {
     if (virtualPad != null)
     {
       removeVirtualPad();
     }
 
-    virtualPad = new FunkinVirtualPad(dPad, action);
+    virtualPad = new FunkinVirtualPad(direction, action);
 
-    ControlsHandler.setupVirtualPad(controls, virtualPad, dPad, action, trackedInputsVirtualPad);
+    ControlsHandler.setupVirtualPad(controls, virtualPad, direction, action, trackedInputsVirtualPad);
 
     virtualPad.visible = visible;
     add(virtualPad);

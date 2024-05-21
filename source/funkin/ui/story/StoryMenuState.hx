@@ -224,7 +224,9 @@ class StoryMenuState extends MusicBeatState
     DiscordClient.changePresence('Choosing on Story Mode', null);
     #end
 
+    #if mobile
     addVirtualPad(LEFT_FULL, A_B);
+    #end
   }
 
   function rememberSelection():Void
