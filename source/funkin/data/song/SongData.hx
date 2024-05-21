@@ -6,6 +6,7 @@ import funkin.data.event.SongEventSchema;
 import funkin.data.song.SongRegistry;
 import thx.semver.Version;
 import funkin.util.tools.ICloneable;
+import funkin.util.Constants;
 
 /**
  * Data containing information about a song.
@@ -542,6 +543,11 @@ class SongChartData implements ICloneable<SongChartData>
   public var version:Version;
 
   public var scrollSpeed:Map<String, Float>;
+
+  @:optional
+  @:default(['default' => 3])
+  public var keys:Map<String, Int> = ['default' => 3];
+  
   public var events:Array<SongEventData>;
   public var notes:Map<String, Array<SongNoteData>>;
 
@@ -554,13 +560,14 @@ class SongChartData implements ICloneable<SongChartData>
   @:jignored
   public var variation:String;
 
-  public function new(scrollSpeed:Map<String, Float>, events:Array<SongEventData>, notes:Map<String, Array<SongNoteData>>)
+  public function new(scrollSpeed:Map<String, Float>, events:Array<SongEventData>, notes:Map<String, Array<SongNoteData>>, keys:Map<String, Int>)
   {
     this.version = SongRegistry.SONG_CHART_DATA_VERSION;
 
     this.events = events;
     this.notes = notes;
     this.scrollSpeed = scrollSpeed;
+    this.keys = keys;
 
     this.generatedBy = SongRegistry.DEFAULT_GENERATEDBY;
   }
@@ -580,6 +587,16 @@ class SongChartData implements ICloneable<SongChartData>
     return value;
   }
 
+  public function getKeys(diff:String = 'default'):Int
+  {
+    if (this.keys == null) this.keys = ['default' => 3];
+    var result:Int = this.keys.get(diff);
+
+    if (result == 0 && diff != 'default') return getKeys('default');
+
+    return (result == 0) ? 3 : result;
+  }
+  
   public function getNotes(diff:String):Array<SongNoteData>
   {
     var result:Array<SongNoteData> = this.notes.get(diff);
@@ -615,7 +632,7 @@ class SongChartData implements ICloneable<SongChartData>
     }
     var eventDataClone:Array<SongEventData> = this.events.deepClone();
 
-    var result:SongChartData = new SongChartData(this.scrollSpeed.clone(), eventDataClone, noteDataClone);
+    var result:SongChartData = new SongChartData(this.scrollSpeed.clone(), eventDataClone, noteDataClone, this.keys.clone());
     result.version = this.version;
     result.generatedBy = this.generatedBy;
     result.variation = this.variation;
