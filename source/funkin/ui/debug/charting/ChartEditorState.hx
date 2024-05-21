@@ -1293,7 +1293,8 @@ class ChartEditorState extends UIState // UIState derives from MusicBeatState
     var result:Null<SongChartData> = songChartData.get(selectedVariation);
     if (result == null)
     {
-      result = new SongChartData([Constants.DEFAULT_DIFFICULTY => 1.0], [], [Constants.DEFAULT_DIFFICULTY => []]);
+      result = new SongChartData([Constants.DEFAULT_DIFFICULTY => 1.0], [], [Constants.DEFAULT_DIFFICULTY => []],
+        [Constants.DEFAULT_DIFFICULTY => Constants.DEFAULT_KEYS]);
       songChartData.set(selectedVariation, result);
     }
     return result;
@@ -1408,6 +1409,29 @@ class ChartEditorState extends UIState // UIState derives from MusicBeatState
       currentSongMetadata.playData.noteStyle = Constants.DEFAULT_NOTE_STYLE;
     }
     return currentSongMetadata.playData.noteStyle;
+  }
+
+  /**
+   * Property which manages the mania for the current difficulty.
+   */
+  var currentSongChartMania(get, set):Int;
+
+  function get_currentSongChartMania():Int
+  {
+    var result:Null<Int> = currentSongChartData.keys.get(selectedDifficulty);
+    if (result == null)
+    {
+      // Initialize to the default value if not set.
+      currentSongChartData.keys.set(selectedDifficulty, 3);
+      return 3;
+    }
+    return result;
+  }
+
+  function set_currentSongChartMania(value:Int):Int
+  {
+    currentSongChartData.keys.set(selectedDifficulty, value);
+    return value;
   }
 
   function set_currentSongNoteStyle(value:String):String
@@ -5947,7 +5971,7 @@ class ChartEditorState extends UIState // UIState derives from MusicBeatState
     var resultChartData = songChartData.get(variation);
     if (resultChartData == null)
     {
-      resultChartData = new SongChartData([difficulty => scrollSpeed], [], [difficulty => []]);
+      resultChartData = new SongChartData([difficulty => scrollSpeed], [], [difficulty => []], [difficulty => Constants.DEFAULT_KEYS]);
       songChartData.set(variation, resultChartData);
     }
     else
