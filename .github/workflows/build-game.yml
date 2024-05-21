@@ -24,7 +24,7 @@ jobs:
         uses: krdlab/setup-haxe@master
         with:
           haxe-version: 4.3.4
-      # Took caching functions from Codename Engine
+      # Took the caching functions from Codename Engine
       - name: Restore existing build cache for faster compilation
         id: cache-restore
         uses: actions/cache/restore@v4
@@ -51,8 +51,8 @@ jobs:
       - name: Make release
         uses: softprops/action-gh-release@v1
         with:
-          name: Latest dev build from action with id ${{github.run_number}}
-          tag_name: Actions_Build_${{github.run_number}}
+          name: FNF Plus Plus PRERELEASE 1 (${{github.run_number}})
+          tag_name: firstPreRelease_${{github.run_number}}
           prerelease: true
           target_commitish: "develop"
           files: |
