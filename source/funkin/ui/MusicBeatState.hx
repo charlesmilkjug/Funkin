@@ -211,13 +211,13 @@ class MusicBeatState extends FlxTransitionableState implements IEventHandler
     dispatchEvent(new UpdateScriptEvent(elapsed));
 
     if (FlxG.keys.justPressed.ANY && isTouch) isTouch = false;
-    if (TouchUtil.justPressed && !isTouch) isTouch = true;
+    if (funkin.util.TouchUtil.justPressed && !isTouch) isTouch = true;
   }
 
   function createWatermarkText()
   {
     // Both have an xPos of 0, but a width equal to the full screen.
-    // The rightWatermarkText is right aligned, which puts the text in the correct spot.
+    // The rightWatermarkText is right-aligned, which puts the text in the correct spot.
     leftWatermarkText = new FlxText(0, FlxG.height - 18, FlxG.width, '', 12);
     rightWatermarkText = new FlxText(0, FlxG.height - 18, FlxG.width, '', 12);
 
