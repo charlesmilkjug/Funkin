@@ -214,7 +214,7 @@ class ChartEditorState extends UIState // UIState derives from MusicBeatState
   /**
    * The X position of the note preview area.
    */
-  public static final NOTE_PREVIEW_X_POS:Int = 320;
+  public static var NOTE_PREVIEW_X_POS:Int = 320;
 
   /**
    * The Y position of the note preview area.
@@ -251,7 +251,7 @@ class ChartEditorState extends UIState // UIState derives from MusicBeatState
   /**
    * Number of notes in each player's strumline.
    */
-  public static final STRUMLINE_SIZE:Int = 4;
+  public static var STRUMLINE_SIZE:Int = 4;
 
   /**
    * How many pixels far the user needs to move the mouse before the cursor is considered to be dragged rather than clicked.
@@ -2453,11 +2453,15 @@ class ChartEditorState extends UIState // UIState derives from MusicBeatState
   {
     if (gridBitmap == null) throw 'ERROR: Tried to build grid, but gridBitmap is null! Check ChartEditorThemeHandler.updateTheme().';
 
+    if (gridTiledSprite != null) remove(gridTiledSprite);
+
     gridTiledSprite = new FlxTiledSprite(gridBitmap, gridBitmap.width, 1000, false, true);
     gridTiledSprite.x = GRID_X_POS; // Center the grid.
     gridTiledSprite.y = GRID_INITIAL_Y_POS; // Push down to account for the menu bar.
     add(gridTiledSprite);
     gridTiledSprite.zIndex = 10;
+
+    if (gridGhostNote != null) remove(gridGhostNote);
 
     gridGhostNote = new ChartEditorNoteSprite(this);
     gridGhostNote.alpha = 0.6;
@@ -2466,12 +2470,16 @@ class ChartEditorState extends UIState // UIState derives from MusicBeatState
     add(gridGhostNote);
     gridGhostNote.zIndex = 11;
 
+    if (gridGhostHoldNote != null) remove(gridGhostHoldNote);
+
     gridGhostHoldNote = new ChartEditorHoldNoteSprite(this);
     gridGhostHoldNote.alpha = 0.6;
     gridGhostHoldNote.noteData = null;
     gridGhostHoldNote.visible = false;
     add(gridGhostHoldNote);
     gridGhostHoldNote.zIndex = 11;
+
+    if (gridGhostEvent != null) remove(gridGhostEvent);
 
     gridGhostEvent = new ChartEditorEventSprite(this, true);
     gridGhostEvent.alpha = 0.6;
@@ -2482,10 +2490,15 @@ class ChartEditorState extends UIState // UIState derives from MusicBeatState
 
     buildNoteGroup();
 
+    if (gridPlayhead != null)
+    {
+      remove(gridPlayhead);
+      gridPlayhead = new FlxSpriteGroup();
+    }
+
     // The playhead that show the current position in the song.
     add(gridPlayhead);
     gridPlayhead.zIndex = 30;
-
     var playheadWidth:Int = GRID_SIZE * (STRUMLINE_SIZE * 2 + 1) + (PLAYHEAD_SCROLL_AREA_WIDTH * 2);
     var playheadBaseYPos:Float = GRID_INITIAL_Y_POS;
     gridPlayhead.setPosition(GRID_X_POS, playheadBaseYPos);
@@ -2493,11 +2506,12 @@ class ChartEditorState extends UIState // UIState derives from MusicBeatState
     playheadSprite.x = -PLAYHEAD_SCROLL_AREA_WIDTH;
     playheadSprite.y = 0;
     gridPlayhead.add(playheadSprite);
-
     var playheadBlock:FlxSprite = ChartEditorThemeHandler.buildPlayheadBlock();
     playheadBlock.x = -PLAYHEAD_SCROLL_AREA_WIDTH;
     playheadBlock.y = -PLAYHEAD_HEIGHT / 2;
     gridPlayhead.add(playheadBlock);
+
+    if (healthIconDad != null) remove(healthIconDad);
 
     // Character icons.
     healthIconDad = new HealthIcon(currentSongMetadata.playData.characters.opponent);
@@ -2506,12 +2520,20 @@ class ChartEditorState extends UIState // UIState derives from MusicBeatState
     add(healthIconDad);
     healthIconDad.zIndex = 30;
 
+    if (healthIconBF != null) remove(healthIconBF);
+
     healthIconBF = new HealthIcon(currentSongMetadata.playData.characters.player);
     healthIconBF.autoUpdate = false;
     healthIconBF.size.set(0.5, 0.5);
     healthIconBF.flipX = true;
     add(healthIconBF);
     healthIconBF.zIndex = 30;
+
+    if (audioWaveforms != null)
+    {
+      remove(audioWaveforms);
+      audioWaveforms = new FlxTypedSpriteGroup<WaveformSprite>();
+    }
 
     add(audioWaveforms);
   }
@@ -2525,6 +2547,18 @@ class ChartEditorState extends UIState // UIState derives from MusicBeatState
     measureTicks.zIndex = 20;
 
     add(measureTicks);
+  }
+
+  /**
+   * Extra Keys function
+   * Updates the X position of the ui elements, when mania changed
+   * Called by `ChartEditorMetadataToolbox.hx`
+   */
+  function updateGridElements():Void
+  {
+    var measureTicksWidth = (GRID_SIZE);
+    notePreview.x = NOTE_PREVIEW_X_POS;
+    measureTicks.x = gridTiledSprite.x - measureTicksWidth;
   }
 
   function buildNotePreview():Void

@@ -24,6 +24,7 @@ import haxe.ui.events.UIEvent;
  */
 // @:nullSafety // TODO: Fix null safety when used with HaxeUI build macros.
 @:access(funkin.ui.debug.charting.ChartEditorState)
+@:access(funkin.ui.debug.charting.handlers.ChartEditorThemeHandler)
 @:build(haxe.ui.ComponentBuilder.build("assets/exclude/data/ui/chart-editor/toolboxes/metadata.xml"))
 class ChartEditorMetadataToolbox extends ChartEditorBaseToolbox
 {
@@ -159,6 +160,12 @@ class ChartEditorMetadataToolbox extends ChartEditorBaseToolbox
 
     inputManiaNumber.onChange = function(event:UIEvent) {
       chartEditorState.currentSongChartMania = event.target.value;
+      ChartEditorState.STRUMLINE_SIZE = chartEditorState.currentSongChartMania + 1;
+      ChartEditorThemeHandler.TOTAL_COLUMN_COUNT = ChartEditorState.STRUMLINE_SIZE * 2 + 1;
+      ChartEditorState.NOTE_PREVIEW_X_POS = -((event.target.value + 1) * ChartEditorState.GRID_SIZE) + 480;
+      ChartEditorThemeHandler.updateTheme(chartEditorState);
+      chartEditorState.buildGrid();
+      chartEditorState.updateGridElements();
     };
 
     buttonCharacterOpponent.onClick = function(_) {

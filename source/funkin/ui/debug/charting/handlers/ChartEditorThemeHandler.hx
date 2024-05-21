@@ -71,7 +71,7 @@ class ChartEditorThemeHandler
   static final NOTE_PREVIEW_VIEWPORT_FILL_COLOR_LIGHT = 0x80F8A657;
   static final NOTE_PREVIEW_VIEWPORT_FILL_COLOR_DARK = 0x80F8A657;
 
-  static final TOTAL_COLUMN_COUNT:Int = ChartEditorState.STRUMLINE_SIZE * 2 + 1;
+  static var TOTAL_COLUMN_COUNT:Int = ChartEditorState.STRUMLINE_SIZE * 2 + 1;
 
   /**
    * When the theme is changed, this function updates all of the UI elements to match the new theme.
