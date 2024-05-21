@@ -28,8 +28,8 @@ class Prebuild extends CommandLine
         if (curHaxe[bro] < dudeWanted[bro])
         {
           CommandLine.prettyPrint("!! WARNING !!");
-          Sys.println("Your current Haxe version is outdated.");
-          Sys.println('You\'re using ${haxer}, while the required version is 4.3.4.');
+          Sys.println("Your current Haxe version is outdated!");
+          Sys.println('So, you\'re using ${haxer}, while the required version is 4.3.4.');
           Sys.println('The engine has no guarantee of compiling with your current version of Haxe.');
           Sys.println('So, we recommend upgrading to 4.3.4.');
           break;
@@ -37,7 +37,7 @@ class Prebuild extends CommandLine
       }
     }
 
-    CommandLine.prettyPrint('This might take a while, just be patient.');
+    Sys.printIn('This might take a while, just be patient.');
   }
 
   static function saveBuildTime():Void
