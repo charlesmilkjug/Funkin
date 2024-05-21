@@ -119,7 +119,7 @@ class PreferencesMenu extends Page
     createPrefItemCheckbox('Downscroll', 'Enable to make notes move downwards', function(value:Bool):Void {
       Preferences.downscroll = value;
     }, Preferences.downscroll);
-    createPrefItemCheckbox('Show Judgerments', 'Self explanatory', function(value:Bool):Void {
+    createPrefItemCheckbox('Show Judgements', 'Self explanatory', function(value:Bool):Void {
       Preferences.comboHUD = value;
     }, Preferences.comboHUD);
     createPrefItemCheckbox('Ghost Tapping', 'Enable to let you spam notes', function(value:Bool):Void {

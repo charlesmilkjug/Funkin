@@ -14,7 +14,7 @@ class Prebuild extends CommandLine
   {
     saveBuildTime();
 
-    prettyPrint('Building Funkin\'++.') // Check if your Haxe version is outdated.
+    prettyPrint('Building Funkin\'++.'); // Check if your Haxe version is outdated.
 
     var theProcess:Process = new Process('haxe --version');
     theProcess.exitCode(true);
