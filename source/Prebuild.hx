@@ -37,7 +37,7 @@ class Prebuild extends CommandLine
       }
     }
 
-    Sys.printIn('This might take a while, just be patient.');
+    Sys.println('This might take a while, just be patient.');
   }
 
   static function saveBuildTime():Void
