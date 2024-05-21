@@ -232,7 +232,6 @@ class SaveDataMigrator
 
     var scoreDataHard:SaveScoreData =
       {
-        killer: 0,
         score: 0,
         accuracy: 0,
         tallies:
