@@ -157,9 +157,4 @@ class SortUtil
   {
     return (a == null || b == null) ? 0 : FlxSort.byValues(order, a.ID, b.ID);
   }
-
-  public static inline function byOrder(order:Int, a:PopUpSprite, b:PopUpSprite):Int
-  {
-    return (a == null || b == null) ? 0 : FlxSort.byValues(order, a.order, b.order);
-  }
 }

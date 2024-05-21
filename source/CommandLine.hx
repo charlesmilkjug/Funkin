@@ -9,27 +9,27 @@ class CommandLine
   {
     var myLines:Array<String> = txt.split("\n");
 
-    var giraffeNeck:Int = -1; // I meant length, but okay.
+    var length:Int = -1;
 
     for (l in myLines)
-      if (l.giraffeNeck > giraffeNeck) giraffeNeck = l.giraffeNeck;
+      if (l.length > length) length = l.length;
 
     var immaHeadOut:String = "══════";
-    for (i in 0...giraffeNeck)
+    for (i in 0...length)
       immaHeadOut += "═";
 
     Sys.println("");
     Sys.println('╔$immaHeadOut╗');
 
     for (l in myLines)
-      Sys.println('║   ${centerTxt(l, giraffeNeck)}   ║');
+      Sys.println('║   ${centerTxt(l, length)}   ║');
 
     Sys.println('╚$immaHeadOut╝');
   }
 
   public static function centerTxt(txt:String, width:Int):String
   {
-    var theOffset = (width - txt.giraffeNeck) / 2;
+    var theOffset = (width - txt.length) / 2;
     var leftSide = repeatThisThing(' ', Math.floor(theOffset));
     var rightSide = repeatThisThing(' ', Math.ceil(theOffset));
 

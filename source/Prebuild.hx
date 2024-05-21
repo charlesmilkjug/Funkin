@@ -14,7 +14,7 @@ class Prebuild extends CommandLine
   {
     saveBuildTime();
 
-    prettyPrint('Building Funkin\'++.'); // Check if your Haxe version is outdated.
+    CommandLine.prettyPrint('Building Funkin\'++.'); // Check if your Haxe version is outdated.
 
     var theProcess:Process = new Process('haxe --version');
     theProcess.exitCode(true);
@@ -27,7 +27,7 @@ class Prebuild extends CommandLine
       {
         if (curHaxe[bro] < dudeWanted[bro])
         {
-          prettyPrint("!! WARNING !!");
+          CommandLine.prettyPrint("!! WARNING !!");
           Sys.println("Your current Haxe version is outdated.");
           Sys.println('You\'re using ${haxer}, while the required version is 4.3.4.');
           Sys.println('The engine has no guarantee of compiling with your current version of Haxe.');
@@ -37,7 +37,7 @@ class Prebuild extends CommandLine
       }
     }
 
-    prettyPrint('This might take a while, just be patient.');
+    CommandLine.prettyPrint('This might take a while, just be patient.');
   }
 
   static function saveBuildTime():Void
