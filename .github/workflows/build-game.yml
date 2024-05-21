@@ -5,19 +5,23 @@ on:
   push:
     branches:
       - develop
+  workflow_dispatch:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
 # TODO: Make an Android CI job
   buildWindows:
     # The type of runner that the job will run on
     runs-on: windows-latest
+    # The name of the job
+    name: Windows x64 Build
     permissions:
        contents: write
        actions: write
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@main
+      - name: Pulling the new commit
+        uses: actions/checkout@main
         with:
           submodules: true # PLEASE LEAVE SUBMODULES ENABLED!!!!!!!!!!
       - name: Setting up Haxe
@@ -33,22 +37,26 @@ jobs:
           path: |
             export/release/windows/haxe/
             export/release/windows/obj/
-            export/debug/windows/haxe/
-            export/debug/windows/obj/
+            
       # Runs a set of commands using the runners shell
-      - name: Setup libraries via HMM
-        run: |
-          haxelib setup C:/haxelib
+      - name: Install libraries and build
+        run: | 
+          haxellib setup C:/haxelib
           haxelib install hxcpp > /dev/null --quiet
           haxelib install hmm --quiet
           haxelib run hmm setup
           haxelib run hmm install --quiet
           haxelib run lime build windows
         shell: cmd
+      - name: Uploading artifact (entire build)
+        uses: actions/upload-artifact@v2
+        with:
+          name: FunkinPlusPlus
+          path: export/release/windows/bin
       - name: Make a ZIP archive of files
         run: |
-          7z a -tzip "PlusPlus.zip" "./export/release/windows/bin/*"
-      - name: Make release
+          7z a -tzip "FunkinPlusPlus.zip" "./export/release/windows/bin/*"
+      - name: Release build to GH
         uses: softprops/action-gh-release@v1
         with:
           name: FNF Plus Plus PRERELEASE 1 (${{github.run_number}})
