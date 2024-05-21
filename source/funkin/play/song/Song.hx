@@ -350,6 +350,7 @@ class Song implements IPlayStateScriptedClass implements IRegistryEntry<SongMeta
       // Add the chart data to the difficulty.
       difficulty.notes = chartNotes.get(diffId) ?? [];
       difficulty.scrollSpeed = chartData.getScrollSpeed(diffId) ?? 1.0;
+      difficulty.keys = chartData.getKeys(diffId) ?? Constants.DEFAULT_KEYS;
 
       difficulty.events = chartData.events;
     }
@@ -578,7 +579,8 @@ class SongDifficulty
   public var characters:SongCharacterData = null;
 
   public var scrollSpeed:Float = Constants.DEFAULT_SCROLLSPEED;
-
+  public var keys:Int = Constants.MAX_NOTE_DIRECTIONS;
+  
   public var difficultyRating:Int = 0;
   public var album:Null<String> = null;
 
