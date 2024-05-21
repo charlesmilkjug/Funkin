@@ -234,6 +234,9 @@ class PolymodHandler
 
     // Add blacklisting for prohibited classes and packages.
 
+    // UPDATE: You can use FunkinWrapper to use functions from these packages that I checked to make sure they're safe (Type.getClass() is one of them)
+    // Functions from them that are deemed unsafe aren't included in the wrapper.
+
     // `Sys`
     // Sys.command() can run malicious processes
     Polymod.blacklistImport('Sys');
@@ -290,8 +293,9 @@ class PolymodHandler
       assetLibraryPaths: [
         'default' => 'preload', 'shared' => 'shared', 'songs' => 'songs', 'videos' => 'videos', 'tutorial' => 'tutorial', 'week1' => 'week1',
         'week2' => 'week2', 'week3' => 'week3', 'week4' => 'week4', 'week5' => 'week5', 'week6' => 'week6', 'week7' => 'week7', 'weekend1' => 'weekend1',
-      ]/*,
-      coreAssetRedirect: CORE_FOLDER,*/
+      ]
+      /*,
+        coreAssetRedirect: CORE_FOLDER, */
     }
   }
 

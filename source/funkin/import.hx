@@ -3,6 +3,7 @@ package;
 #if !macro
 // Only import these when we aren't in a macro.
 import funkin.util.Constants;
+import funkin.FunkinWrapper; // Use for useful functions from blacklisted pacakges, wrapped in a singular class.
 import funkin.Paths;
 import funkin.Preferences;
 import flixel.FlxG; // This one in particular causes a compile error if you're using macros.

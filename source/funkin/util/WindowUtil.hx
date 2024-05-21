@@ -86,6 +86,7 @@ class WindowUtil
       windowExit.dispatch(exitCode);
     });
 
+    #if !mobile
     openfl.Lib.current.stage.addEventListener(openfl.events.KeyboardEvent.KEY_DOWN, (e:openfl.events.KeyboardEvent) -> {
       for (key in PlayerSettings.player1.controls.getKeysForAction(FULLSCREEN))
       {
@@ -95,6 +96,7 @@ class WindowUtil
         }
       }
     });
+    #end
   }
 
   /**

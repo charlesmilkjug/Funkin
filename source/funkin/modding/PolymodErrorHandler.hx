@@ -36,12 +36,12 @@ class PolymodErrorHandler
         // A syntax error when parsing a script.
         logError(error.message);
         // Notify the user via popup.
-        showAlert('Polymod Script Parsing Error', error.message);
+        showAlert('Polymod - Parsing Error', error.message);
       case SCRIPT_RUNTIME_EXCEPTION:
         // A runtime error when running a script.
         logError(error.message);
         // Notify the user via popup.
-        showAlert('Polymod Script Exception', error.message);
+        showAlert('Polymod - Exception', error.message);
       case SCRIPT_CLASS_MODULE_NOT_FOUND:
         // A scripted class tried to reference an unknown class or module.
         logError(error.message);
@@ -53,12 +53,13 @@ class PolymodErrorHandler
         msg += '\nCheck to ensure the class exists and is spelled correctly.';
 
         // Notify the user via popup.
-        showAlert('Polymod Script Import Error', msg);
+        showAlert('Polymod - Import Error', msg);
       case SCRIPT_CLASS_MODULE_BLACKLISTED:
         // A scripted class tried to reference a blacklisted class or module.
         logError(error.message);
         // Notify the user via popup.
-        showAlert('Polymod Script Blacklist Violation', error.message);
+        showAlert('Polymod - Blacklist Violation',
+          "Dude, this function is blacklisted.\n(Reflect, Sys, and Type functions are blacklisted by the way!)\n\n" + error.message);
 
       default:
         // Log the message based on its severity.

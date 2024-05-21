@@ -1526,10 +1526,11 @@ class PlayState extends MusicBeatSubState
 
     if (!startingSong
       && FlxG.sound.music != null
-      && (Math.abs(FlxG.sound.music.time - (Conductor.instance.songPosition + Conductor.instance.instrumentalOffset)) > 200 * playbackRate
-        || Math.abs(vocals.checkSyncError(Conductor.instance.songPosition + Conductor.instance.instrumentalOffset)) > 200 * playbackRate))
+      && (Math.abs(FlxG.sound.music.time
+        - (Conductor.instance.songPosition + Conductor.instance.instrumentalOffset)) > #if ios 75 #else 200 #end * playbackRate
+        || Math.abs(vocals.checkSyncError(Conductor.instance.songPosition + Conductor.instance.instrumentalOffset)) > #if ios 75 #else 200 #end * playbackRate))
     {
-      trace("VOCALS NEED RESYNC");
+      trace("attempting to resync voices, oops");
       if (vocals != null) trace(vocals.checkSyncError(Conductor.instance.songPosition + Conductor.instance.instrumentalOffset));
       trace(FlxG.sound.music.time - (Conductor.instance.songPosition + Conductor.instance.instrumentalOffset));
       resyncVocals();
@@ -1698,7 +1699,7 @@ class PlayState extends MusicBeatSubState
     scoreText = new FlxText(0, healthBarBG.y + 41, FlxG.width, "", 20);
     scoreText.setFormat(Paths.font('vcr.ttf'), 16, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
     scoreText.scrollFactor.set();
-    scoreText.zIndex = 802;
+    scoreText.zIndex = 851;
     add(scoreText);
 
     // Move the health bar to the HUD camera.
@@ -1894,12 +1895,7 @@ class PlayState extends MusicBeatSubState
    */
   function initStrumlines():Void
   {
-    var noteStyleId:String = switch (currentStageId)
-    {
-      case 'school': 'pixel';
-      case 'schoolEvil': 'pixel';
-      default: Constants.DEFAULT_NOTE_STYLE;
-    }
+    var noteStyleId:String = currentChart.noteStyle;
     var noteStyle:NoteStyle = NoteStyleRegistry.instance.fetchEntry(noteStyleId);
     if (noteStyle == null) noteStyle = NoteStyleRegistry.instance.fetchDefault();
 
