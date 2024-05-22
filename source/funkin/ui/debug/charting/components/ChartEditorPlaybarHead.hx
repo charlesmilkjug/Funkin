@@ -13,5 +13,6 @@ class ChartEditorPlaybarHead extends Box
   // Auto-populated
   // public var playbarHead:HorizontalSlider;
   // Auto-populated.
-  // public function new() { }
+  // public function new() {
+  // }
 }
