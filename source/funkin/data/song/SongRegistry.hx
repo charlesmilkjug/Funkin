@@ -15,6 +15,8 @@ using funkin.data.song.migrator.SongDataMigrator;
 @:nullSafety
 class SongRegistry extends BaseRegistry<Song, SongMetadata>
 {
+  @:jcustomparse(funkin.data.DataParse.dynamicValue)
+  @:jcustomwrite(funkin.data.DataWrite.dynamicValue)
   /**
    * The current version string for the stage data format.
    * Handle breaking changes by incrementing this value

@@ -9,6 +9,9 @@ import funkin.play.event.ScriptedSongEvent;
 @:forward(name, title, type, keys, min, max, step, units, defaultValue, iterator)
 abstract SongEventSchema(SongEventSchemaRaw)
 {
+  @:jcustomparse(funkin.data.DataParse.dynamicValue)
+  @:jcustomwrite(funkin.data.DataWrite.dynamicValue)
+
   /**
    * These units look better when placed immediately next to the value, rather than after a space.
    */

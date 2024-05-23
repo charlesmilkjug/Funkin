@@ -547,7 +547,7 @@ class SongChartData implements ICloneable<SongChartData>
   @:optional
   @:default(['default' => 3])
   public var keys:Map<String, Int> = ['default' => 3];
-  
+
   public var events:Array<SongEventData>;
   public var notes:Map<String, Array<SongNoteData>>;
 
@@ -596,7 +596,7 @@ class SongChartData implements ICloneable<SongChartData>
 
     return (result == 0) ? 3 : result;
   }
-  
+
   public function getNotes(diff:String):Array<SongNoteData>
   {
     var result:Array<SongNoteData> = this.notes.get(diff);
@@ -718,6 +718,8 @@ class SongEventDataRaw implements ICloneable<SongEventDataRaw>
 @:forward(time, eventKind, value, activated, getStepTime, clone)
 abstract SongEventData(SongEventDataRaw) from SongEventDataRaw to SongEventDataRaw
 {
+  @:jcustomparse(funkin.data.DataParse.dynamicValue)
+  @:jcustomwrite(funkin.data.DataWrite.dynamicValue)
   public function new(time:Float, eventKind:String, value:Dynamic = null)
   {
     this = new SongEventDataRaw(time, eventKind, value);

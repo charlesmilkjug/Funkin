@@ -54,6 +54,8 @@ class VersionUtil
     }
   }
 
+  @:jcustomparse(funkin.data.DataParse.dynamicValue)
+  @:jcustomwrite(funkin.data.DataWrite.dynamicValue)
   /**
    * Get and parse the semantic version from a JSON string.
    * @param input The JSON string to parse.

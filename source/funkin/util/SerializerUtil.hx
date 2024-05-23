@@ -17,6 +17,8 @@ typedef ScoreInput =
  */
 class SerializerUtil
 {
+  @:jcustomparse(funkin.data.DataParse.dynamicValue)
+  @:jcustomwrite(funkin.data.DataWrite.dynamicValue)
   static final INDENT_CHAR = "\t";
 
   /**
