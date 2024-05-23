@@ -53,8 +53,15 @@
       "name": "funkin.vis",
       "type": "git",
       "dir": null,
-      "ref": "dcbd701196aff39959bc2e18a6d7c51c37f78098",
-      "url": "https://github.com/FunkinDroidTeam/funkVis"
+      "ref": "9b4ca76f0b5a79b88a303a73dc2e59cb5027455b",
+      "url": "https://github.com/FunkinCrew/funkVis"
+    },
+    {
+      "name": "grig.audio",
+      "type": "git",
+      "dir": null,
+      "ref": "7326afb05ebfc9a064a93a76304188a76fad2c95",
+      "url": "https://github.com/FunkinDroidTeam/grig.audio"
     },
     {
       "name": "hamcrest",

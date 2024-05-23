@@ -1528,7 +1528,8 @@ class PlayState extends MusicBeatSubState
       && FlxG.sound.music != null
       && (Math.abs(FlxG.sound.music.time
         - (Conductor.instance.songPosition + Conductor.instance.instrumentalOffset)) > #if ios 75 #else 200 #end * playbackRate
-        || Math.abs(vocals.checkSyncError(Conductor.instance.songPosition + Conductor.instance.instrumentalOffset)) > #if ios 75 #else 200 #end * playbackRate))
+        || Math.abs(vocals.checkSyncError(Conductor.instance.songPosition +
+          Conductor.instance.instrumentalOffset)) > /*#if ios*/ 75 /* #else 200 #end */ * playbackRate))
     {
       trace("attempting to resync voices, oops");
       if (vocals != null) trace(vocals.checkSyncError(Conductor.instance.songPosition + Conductor.instance.instrumentalOffset));

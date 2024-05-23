@@ -130,6 +130,12 @@ class WaveformSprite extends MeshRender
    */
   public var amplitude:Float = 1.0;
 
+  /**
+   * A value which controls the character this waveform belongs to.
+   * Extra Keys variable
+   */
+  public var character:String = '';
+
   public function new(?waveformData:WaveformData, ?orientation:WaveformOrientation, ?color:FlxColor, ?duration:Float)
   {
     super(DEFAULT_X, DEFAULT_Y, DEFAULT_COLOR);

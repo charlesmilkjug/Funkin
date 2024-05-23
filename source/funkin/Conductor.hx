@@ -405,6 +405,7 @@ class Conductor
     // Take into account instrumental and file format song offsets.
     songPos += applyOffsets ? (instrumentalOffset + formatOffset + audioVisualOffset) : 0;
 
+    var oldSongPos = this.songPosition;
     var oldMeasure:Float = this.currentMeasure;
     var oldBeat:Float = this.currentBeat;
     var oldStep:Float = this.currentStep;

@@ -2219,7 +2219,7 @@ class ChartEditorState extends UIState // UIState derives from MusicBeatState
 
     this.updateTheme();
 
-    buildGrid();
+    buildGrid(true);
     buildMeasureTicks();
     buildNotePreview();
 
@@ -2279,9 +2279,7 @@ class ChartEditorState extends UIState // UIState derives from MusicBeatState
 
   function setupWelcomeMusic()
   {
-    this.welcomeMusic.loadEmbedded(Paths.music('chartEditorLoop/chartEditorLoop'));
-    FlxG.sound.list.add(this.welcomeMusic);
-    this.welcomeMusic.looped = true;
+    this.welcomeMusic = FunkinSound.load(Paths.music('chartEditorLoop/chartEditorLoop'), 1.0, true);
   }
 
   public function loadPreferences():Void
@@ -2449,53 +2447,62 @@ class ChartEditorState extends UIState // UIState derives from MusicBeatState
   /**
    * Builds and displays the chart editor grid, including the playhead and cursor.
    */
-  function buildGrid():Void
+  function buildGrid(?firstTime:Bool = false):Void
   {
     if (gridBitmap == null) throw 'ERROR: Tried to build grid, but gridBitmap is null! Check ChartEditorThemeHandler.updateTheme().';
 
-    if (gridTiledSprite != null) remove(gridTiledSprite);
+    if (firstTime)
+    {
+      gridTiledSprite = new FlxTiledSprite(gridBitmap, gridBitmap.width, 1000, false, true);
+      gridTiledSprite.x = GRID_X_POS; // Center the grid.
+      gridTiledSprite.y = GRID_INITIAL_Y_POS; // Push down to account for the menu bar.
+      add(gridTiledSprite);
+      gridTiledSprite.zIndex = 10;
 
-    gridTiledSprite = new FlxTiledSprite(gridBitmap, gridBitmap.width, 1000, false, true);
-    gridTiledSprite.x = GRID_X_POS; // Center the grid.
-    gridTiledSprite.y = GRID_INITIAL_Y_POS; // Push down to account for the menu bar.
-    add(gridTiledSprite);
-    gridTiledSprite.zIndex = 10;
+      gridGhostNote = new ChartEditorNoteSprite(this);
+      gridGhostNote.alpha = 0.6;
+      gridGhostNote.noteData = new SongNoteData(0, 0, 0, "");
+      gridGhostNote.visible = false;
+      add(gridGhostNote);
+      gridGhostNote.zIndex = 11;
 
-    if (gridGhostNote != null) remove(gridGhostNote);
+      gridGhostHoldNote = new ChartEditorHoldNoteSprite(this);
+      gridGhostHoldNote.alpha = 0.6;
+      gridGhostHoldNote.noteData = null;
+      gridGhostHoldNote.visible = false;
+      add(gridGhostHoldNote);
+      gridGhostHoldNote.zIndex = 11;
 
-    gridGhostNote = new ChartEditorNoteSprite(this);
-    gridGhostNote.alpha = 0.6;
-    gridGhostNote.noteData = new SongNoteData(0, 0, 0, "");
-    gridGhostNote.visible = false;
-    add(gridGhostNote);
-    gridGhostNote.zIndex = 11;
+      gridGhostEvent = new ChartEditorEventSprite(this, true);
+      gridGhostEvent.alpha = 0.6;
+      gridGhostEvent.eventData = new SongEventData(-1, '', {});
+      gridGhostEvent.visible = false;
+      add(gridGhostEvent);
+      gridGhostEvent.zIndex = 12;
+    }
+    else
+    {
+      // if (gridTiledSprite != null) remove(gridTiledSprite);
 
-    if (gridGhostHoldNote != null) remove(gridGhostHoldNote);
+      // gridTiledSprite = new FlxTiledSprite(gridBitmap, gridBitmap.width, 1000, false, true);
+      gridTiledSprite.width = gridBitmap.width;
+      gridTiledSprite.x = GRID_X_POS; // Center the grid (again).
+      // gridTiledSprite.y =
+      // add(gridTiledSprite);
+      // gridTiledSprite.zIndex = 10;
 
-    gridGhostHoldNote = new ChartEditorHoldNoteSprite(this);
-    gridGhostHoldNote.alpha = 0.6;
-    gridGhostHoldNote.noteData = null;
-    gridGhostHoldNote.visible = false;
-    add(gridGhostHoldNote);
-    gridGhostHoldNote.zIndex = 11;
-
-    if (gridGhostEvent != null) remove(gridGhostEvent);
-
-    gridGhostEvent = new ChartEditorEventSprite(this, true);
-    gridGhostEvent.alpha = 0.6;
-    gridGhostEvent.eventData = new SongEventData(-1, '', {});
-    gridGhostEvent.visible = false;
-    add(gridGhostEvent);
-    gridGhostEvent.zIndex = 12;
+      // this.scrollPositionInPixels = this.scrollPositionInPixels;
+    }
 
     buildNoteGroup();
+
+    // Break from firstTime call
 
     if (gridPlayhead != null)
     {
       remove(gridPlayhead);
       gridPlayhead = new FlxSpriteGroup();
     }
-
     // The playhead that show the current position in the song.
     add(gridPlayhead);
     gridPlayhead.zIndex = 30;
@@ -2511,31 +2518,27 @@ class ChartEditorState extends UIState // UIState derives from MusicBeatState
     playheadBlock.y = -PLAYHEAD_HEIGHT / 2;
     gridPlayhead.add(playheadBlock);
 
-    if (healthIconDad != null) remove(healthIconDad);
-
-    // Character icons.
-    healthIconDad = new HealthIcon(currentSongMetadata.playData.characters.opponent);
-    healthIconDad.autoUpdate = false;
-    healthIconDad.size.set(0.5, 0.5);
-    add(healthIconDad);
-    healthIconDad.zIndex = 30;
-
-    if (healthIconBF != null) remove(healthIconBF);
-
-    healthIconBF = new HealthIcon(currentSongMetadata.playData.characters.player);
-    healthIconBF.autoUpdate = false;
-    healthIconBF.size.set(0.5, 0.5);
-    healthIconBF.flipX = true;
-    add(healthIconBF);
-    healthIconBF.zIndex = 30;
-
-    if (audioWaveforms != null)
+    // Return to firstTime call
+    if (firstTime)
     {
-      remove(audioWaveforms);
-      audioWaveforms = new FlxTypedSpriteGroup<WaveformSprite>();
-    }
+      // Character icons.
 
-    add(audioWaveforms);
+      healthIconDad = new HealthIcon(currentSongMetadata.playData.characters.opponent);
+      healthIconDad.autoUpdate = false;
+      healthIconDad.size.set(0.5, 0.5);
+      add(healthIconDad);
+      healthIconDad.zIndex = 30;
+
+      healthIconBF = new HealthIcon(currentSongMetadata.playData.characters.player);
+      healthIconBF.autoUpdate = false;
+      healthIconBF.size.set(0.5, 0.5);
+      healthIconBF.flipX = true;
+      add(healthIconBF);
+      healthIconBF.zIndex = 30;
+
+      // audioWaveforms = new FlxTypedSpriteGroup<WaveformSprite>();
+      add(audioWaveforms);
+    }
   }
 
   function buildMeasureTicks():Void
@@ -2545,7 +2548,6 @@ class ChartEditorState extends UIState // UIState derives from MusicBeatState
     measureTicks.x = gridTiledSprite.x - measureTicksWidth;
     measureTicks.y = MENU_BAR_HEIGHT + GRID_TOP_PAD;
     measureTicks.zIndex = 20;
-
     add(measureTicks);
   }
 
@@ -2559,6 +2561,24 @@ class ChartEditorState extends UIState // UIState derives from MusicBeatState
     var measureTicksWidth = (GRID_SIZE);
     notePreview.x = NOTE_PREVIEW_X_POS;
     measureTicks.x = gridTiledSprite.x - measureTicksWidth;
+
+    if (audioWaveforms != null)
+    {
+      var totalOffset = 160;
+      var totalKeys = (currentSongChartMania + 1);
+
+      for (waveform in audioWaveforms.members)
+      {
+        if (waveform.character == 'Player')
+        {
+          waveform.x = 840 + (totalKeys * GRID_SIZE) - totalOffset;
+        }
+        else if (waveform.character == 'Opponent')
+        {
+          waveform.x = 360 - (totalKeys * GRID_SIZE) + totalOffset;
+        }
+      }
+    }
   }
 
   function buildNotePreview():Void
@@ -2694,6 +2714,11 @@ class ChartEditorState extends UIState // UIState derives from MusicBeatState
   function buildNoteGroup():Void
   {
     if (gridTiledSprite == null) throw 'ERROR: Tried to build note groups, but gridTiledSprite is null! Check ChartEditorState.buildGrid().';
+
+    if (renderedHoldNotes != null) remove(renderedHoldNotes);
+    if (renderedNotes != null) remove(renderedHoldNotes);
+    if (renderedEvents != null) remove(renderedHoldNotes);
+    if (renderedSelectionSquares != null) remove(renderedHoldNotes);
 
     renderedHoldNotes.setPosition(gridTiledSprite.x, gridTiledSprite.y);
     add(renderedHoldNotes);
@@ -3446,16 +3471,21 @@ class ChartEditorState extends UIState // UIState derives from MusicBeatState
       {
         // If middle mouse panning during song playback, we move ONLY the playhead, without scrolling. Neat!
 
-        var oldStepTime:Float = Conductor.instance.currentStepTime;
-        var oldSongPosition:Float = Conductor.instance.songPosition + Conductor.instance.instrumentalOffset;
-        Conductor.instance.update(audioInstTrack.time);
-        handleHitsounds(oldSongPosition, Conductor.instance.songPosition + Conductor.instance.instrumentalOffset);
         // Resync vocals.
         if (Math.abs(audioInstTrack.time - audioVocalTrackGroup.time) > 100)
         {
           audioVocalTrackGroup.time = audioInstTrack.time;
         }
+
+        var oldStepTime:Float = Conductor.instance.currentStepTime;
+        var oldSongPosition:Float = Conductor.instance.songPosition;
+        trace(audioInstTrack);
+        Conductor.instance.update(audioInstTrack.time);
+
         var diffStepTime:Float = Conductor.instance.currentStepTime - oldStepTime;
+
+        var newSongPosition:Float = Conductor.instance.songPosition;
+        handleHitsounds(oldSongPosition, newSongPosition);
 
         // Move the playhead.
         playheadPositionInPixels += diffStepTime * GRID_SIZE;
@@ -3465,18 +3495,23 @@ class ChartEditorState extends UIState // UIState derives from MusicBeatState
       else
       {
         // Else, move the entire view.
-        var oldSongPosition:Float = Conductor.instance.songPosition + Conductor.instance.instrumentalOffset;
-        Conductor.instance.update(audioInstTrack.time);
-        handleHitsounds(oldSongPosition, Conductor.instance.songPosition + Conductor.instance.instrumentalOffset);
+        // Else, move the entire view.
+
         // Resync vocals.
         if (Math.abs(audioInstTrack.time - audioVocalTrackGroup.time) > 100)
         {
           audioVocalTrackGroup.time = audioInstTrack.time;
         }
 
+        var oldSongPosition:Float = Conductor.instance.songPosition;
+        Conductor.instance.update(audioInstTrack.time);
+
         // We need time in fractional steps here to allow the song to actually play.
         // Also account for a potentially offset playhead.
         scrollPositionInPixels = (Conductor.instance.currentStepTime + Conductor.instance.instrumentalOffsetSteps) * GRID_SIZE - playheadPositionInPixels;
+
+        var newSongPosition:Float = Conductor.instance.songPosition;
+        handleHitsounds(oldSongPosition, newSongPosition);
 
         // DO NOT move song to scroll position here specifically.
 
@@ -3678,10 +3713,7 @@ class ChartEditorState extends UIState // UIState derives from MusicBeatState
       for (eventData in currentSongChartEventData)
       {
         // Remember if we are already displaying this event.
-        if (displayedEventData.indexOf(eventData) != -1)
-        {
-          continue;
-        }
+        if (displayedEventData.indexOf(eventData) != -1) continue;
 
         if (!ChartEditorEventSprite.wouldEventBeVisible(viewAreaBottomPixels, viewAreaTopPixels, eventData, renderedNotes)) continue;
 
@@ -3692,7 +3724,7 @@ class ChartEditorState extends UIState // UIState derives from MusicBeatState
         // If a new event is needed, call buildEventSprite.
         var eventSprite:ChartEditorEventSprite = renderedEvents.recycle(() -> new ChartEditorEventSprite(this), false, true);
         eventSprite.parentState = this;
-        trace('Creating new Event... (${renderedEvents.members.length})');
+        // trace('Creating new Event... (${renderedEvents.members.length})');
 
         // The event sprite handles animation playback and positioning.
         eventSprite.eventData = eventData;
@@ -4792,6 +4824,8 @@ class ChartEditorState extends UIState // UIState derives from MusicBeatState
                   performCommand(new AddNotesCommand([newNoteData], FlxG.keys.pressed.CONTROL));
 
                   currentPlaceNoteData = newNoteData;
+
+                  trace('Placed note... ' + cursorColumn + ' at ' + cursorSnappedMs);
                 }
               }
             }
@@ -5458,7 +5492,7 @@ class ChartEditorState extends UIState // UIState derives from MusicBeatState
     {
       // Base X position to the right of the grid.
       var xOffset = 45 - (healthIconBF.width / 2);
-      healthIconBF.x = (gridTiledSprite == null) ? (0) : (GRID_X_POS + gridTiledSprite.width + xOffset);
+      healthIconBF.x = (gridTiledSprite == null && gridBitmap == null) ? (0) : (GRID_X_POS + gridBitmap.width + xOffset);
       var yOffset = 30 - (healthIconBF.height / 2);
       healthIconBF.y = (gridTiledSprite == null) ? (0) : (GRID_INITIAL_Y_POS - NOTE_SELECT_BUTTON_HEIGHT) + yOffset;
     }
@@ -6340,37 +6374,51 @@ class ChartEditorState extends UIState // UIState derives from MusicBeatState
   }
 
   /**
+   * Set to true when a hitsound is played, then set to false the frame after.
+   * Used to prevent doubling up on hitsounds.
+   */
+  var playedHitsoundLastFrame:Bool = false;
+
+  /**
    * Handle the playback of hitsounds.
    */
   function handleHitsounds(oldSongPosition:Float, newSongPosition:Float):Void
   {
     if (!hitsoundsEnabled) return;
+    if (oldSongPosition == newSongPosition) return;
+
+    // Don't play hitsounds when moving backwards in time.
+    // This prevents issues caused by FlxSound occasionally jumping backwards in time at the start of playback.
+    if (newSongPosition < oldSongPosition) return;
+
+    // Skip hitsounds this frame if they were already played one frame ago.
+    if (playedHitsoundLastFrame)
+    {
+      // trace('IGNORING hitsound (${oldSongPosition} -> ${newSongPosition}), already played last check!');
+      playedHitsoundLastFrame = false;
+      return;
+    }
 
     // Assume notes are sorted by time.
     for (noteData in currentSongChartNoteData)
     {
       // Check for notes between the old and new song positions.
-
       if (noteData.time < oldSongPosition) // Note is in the past.
         continue;
 
-      if (noteData.time > newSongPosition) // Note is in the future.
+      if (noteData.time >= newSongPosition) // Note is in the future.
         return; // Assume all notes are also in the future.
 
       // Note was just hit.
-
       // Character preview.
-
       // NoteScriptEvent takes a sprite, ehe. Need to rework that.
       var tempNote:NoteSprite = new NoteSprite(NoteStyleRegistry.instance.fetchDefault());
       tempNote.noteData = noteData;
       tempNote.scrollFactor.set(0, 0);
-      var event:NoteScriptEvent = new HitNoteScriptEvent(tempNote, 0.0, 0, 'perfect', false, 0);
+      var event:NoteScriptEvent = new HitNoteScriptEvent(tempNote, 0.0, 0, 'perfect', 0);
       dispatchEvent(event);
-
       // Calling event.cancelEvent() skips all the other logic! Neat!
       if (event.eventCanceled) continue;
-
       // Hitsounds.
       switch (noteData.getStrumlineIndex())
       {
@@ -6379,6 +6427,8 @@ class ChartEditorState extends UIState // UIState derives from MusicBeatState
         case 1: // Opponent
           if (hitsoundVolumeOpponent > 0) this.playSound(Paths.sound('chartingSounds/hitNoteOpponent'), hitsoundVolumeOpponent);
       }
+
+      playedHitsoundLastFrame = true;
     }
   }
 
